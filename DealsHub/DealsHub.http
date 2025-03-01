@@ -1,0 +1,6 @@
+@DealsHub_HostAddress = http://localhost:5096
+
+GET {{DealsHub_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
