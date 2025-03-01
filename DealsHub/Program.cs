@@ -1,27 +1,60 @@
+﻿using DealsHub.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models; // تأكد من إضافة هذه المكتبة لحل خطأ Swagger
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// إضافة CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200") // السماح للـ Frontend بالاتصال
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
+// إضافة DbContext مع الاتصال بقاعدة البيانات
+builder.Services.AddDbContext<DealsHubDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// إضافة خدمات Swagger مع تعريف OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "DealsHub API", Version = "v1" });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// تهيئة Swagger في وضع التطوير
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "DealsHub API v1");
+    });
 }
 
 app.UseHttpsRedirection();
+
+// تفعيل CORS
+app.UseCors(MyAllowSpecificOrigins);
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
+// Endpoint تجريبي
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

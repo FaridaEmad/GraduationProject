@@ -1,0 +1,10 @@
+# استثناء ملفات Visual Studio المؤقتة
+.vs/
+*.vsidx
+*.vscode/
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
