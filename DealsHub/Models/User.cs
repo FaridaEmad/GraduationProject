@@ -9,25 +9,30 @@ namespace DealsHub.Models
         [Key]
         public int UserId { get; set; }
 
-        [Required]
-        public string Name { get; set; } = string.Empty;
+        public required string Name { get; set; }
 
-        [Required, EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        [EmailAddress]
+        public required string  Email { get; set; }
 
-        [Required]
-        public string Password { get; set; } = string.Empty;
+        public required string Password { get; set; }
 
-        public string UserType { get; set; } = "Customer"; // افتراضيًا يكون Customer
+        public required string UserType { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
-        // العلاقات
-        public List<Phone> Phones { get; set; } = new();
-        public List<Business> Businesses { get; set; } = new();
-        public List<Review> Reviews { get; set; } = new();
-        public List<Notification> Notifications { get; set; } = new();
-        public List<Payment> Payments { get; set; } = new();
-        public List<Booking> Bookings { get; set; } = new();
+        public required string Gender { get; set; }
+
+        public ICollection<Phone> Phones { get; set; } = new List<Phone>();
+
+        public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+        public ICollection<Cart> Carts { get; set; } = new List<Cart>();
     }
+
 }

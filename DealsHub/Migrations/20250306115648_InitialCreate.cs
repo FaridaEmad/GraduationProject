@@ -17,7 +17,7 @@ namespace DealsHub.Migrations
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -34,7 +34,8 @@ namespace DealsHub.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,17 +46,17 @@ namespace DealsHub.Migrations
                 name: "Businesses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    BusinessId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Businesses", x => x.Id);
+                    table.PrimaryKey("PK_Businesses", x => x.BusinessId);
                     table.ForeignKey(
                         name: "FK_Businesses_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -71,13 +72,34 @@ namespace DealsHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    CartId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NoOfItems = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.CartId);
+                    table.ForeignKey(
+                        name: "FK_Carts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
                     NotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -96,14 +118,14 @@ namespace DealsHub.Migrations
                 name: "Phones",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PhoneId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Phones", x => x.Id);
+                    table.PrimaryKey("PK_Phones", x => x.PhoneId);
                     table.ForeignKey(
                         name: "FK_Phones_Users_UserId",
                         column: x => x.UserId,
@@ -113,22 +135,22 @@ namespace DealsHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Images",
+                name: "ImageURIs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ImageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ImageUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BusinessId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.PrimaryKey("PK_ImageURIs", x => x.ImageId);
                     table.ForeignKey(
-                        name: "FK_Images_Businesses_BusinessId",
+                        name: "FK_ImageURIs_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "Id",
+                        principalColumn: "BusinessId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -142,7 +164,7 @@ namespace DealsHub.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DiscountPercentage = table.Column<double>(type: "float", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -152,7 +174,7 @@ namespace DealsHub.Migrations
                         name: "FK_Offers_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "Id",
+                        principalColumn: "BusinessId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -162,9 +184,9 @@ namespace DealsHub.Migrations
                 {
                     ReviewId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -175,7 +197,7 @@ namespace DealsHub.Migrations
                         name: "FK_Reviews_Businesses_BusinessId",
                         column: x => x.BusinessId,
                         principalTable: "Businesses",
-                        principalColumn: "Id",
+                        principalColumn: "BusinessId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reviews_Users_UserId",
@@ -186,20 +208,56 @@ namespace DealsHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bookings",
+                name: "Payments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PaymentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OfferId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.PaymentId);
+                    table.ForeignKey(
+                        name: "FK_Payments_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "CartId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    BookingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OfferId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "CartId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Bookings_Offers_OfferId",
                         column: x => x.OfferId,
@@ -214,35 +272,10 @@ namespace DealsHub.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    PaymentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    BookingId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.PaymentId);
-                    table.ForeignKey(
-                        name: "FK_Payments_Bookings_BookingId",
-                        column: x => x.BookingId,
-                        principalTable: "Bookings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Payments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_CartId",
+                table: "Bookings",
+                column: "CartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_OfferId",
@@ -265,8 +298,13 @@ namespace DealsHub.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_BusinessId",
-                table: "Images",
+                name: "IX_Carts_UserId",
+                table: "Carts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ImageURIs_BusinessId",
+                table: "ImageURIs",
                 column: "BusinessId");
 
             migrationBuilder.CreateIndex(
@@ -280,10 +318,9 @@ namespace DealsHub.Migrations
                 column: "BusinessId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payments_BookingId",
+                name: "IX_Payments_CartId",
                 table: "Payments",
-                column: "BookingId",
-                unique: true);
+                column: "CartId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_UserId",
@@ -310,7 +347,10 @@ namespace DealsHub.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "ImageURIs");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
@@ -325,10 +365,10 @@ namespace DealsHub.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "Offers");
+                name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "Businesses");

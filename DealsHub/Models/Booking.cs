@@ -1,17 +1,23 @@
-﻿namespace DealsHub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace DealsHub.Models
 {
     public class Booking
     {
-        public int Id { get; set; }
-        public string Status { get; set; } = string.Empty;
+        [Key]
+        public int BookingId { get; set; }
+        public required string Status { get; set; }
         public DateTime BookingDate { get; set; }
-        public string Country { get; set; } = string.Empty;
+        public string? Country { get; set; }
+        [ForeignKey("Offer")]
         public int OfferId { get; set; }
-        public Offer Offer { get; set; } = null!;
+        public required Offer Offer { get; set; }
+        [ForeignKey("User")]
         public int UserId { get; set; }
-        public User User { get; set; } = null!;
-
-        // علاقة الدفع
-        public Payment Payment { get; set; } = null!;
+        public required User User { get; set; }
+        [ForeignKey("Cart")]
+        public int CartId { get; set; }
+        public required Cart Cart { get; set; }
     }
 }

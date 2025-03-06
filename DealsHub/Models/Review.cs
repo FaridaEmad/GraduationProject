@@ -1,18 +1,20 @@
-﻿namespace DealsHub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace DealsHub.Models
 {
     public class Review
     {
+        [Key]
         public int ReviewId { get; set; }
-        public int Rating { get; set; } // Rating from 1 to 5
-        public string Comment { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        // Relationship with User (Who wrote the review)
+        public DateTime CreatedAt { get; set; }
+        public int Rating { get; set; }
+        public string? Text { get; set; }
+        [ForeignKey("User")]
         public int UserId { get; set; }
-        public User User { get; set; } = null!;
-
-        // Relationship with Business (Which business is being reviewed)
+        public required User User { get; set; }
+        [ForeignKey("Business")]
         public int BusinessId { get; set; }
-        public Business Business { get; set; } = null!;
+        public required Business Business { get; set; }
     }
 }

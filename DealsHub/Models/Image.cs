@@ -1,10 +1,16 @@
-﻿namespace DealsHub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace DealsHub.Models
 {
     public class Image
     {
-        public int Id { get; set; }
-        public required string  ImageUri { get; set; }  
+        [Key]
+        public int ImageId { get; set; }
+        public string? ImageURL { get; set; }
+        [ForeignKey("Business")]
         public int BusinessId { get; set; }
-        public Business Business { get; set; } = null!;
+        public required Business Business { get; set; }
     }
+
 }

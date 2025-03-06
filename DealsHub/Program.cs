@@ -1,4 +1,5 @@
 ﻿using DealsHub.Models;
+using GraduationProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models; // تأكد من إضافة هذه المكتبة لحل خطأ Swagger
 

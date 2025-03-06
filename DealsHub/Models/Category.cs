@@ -1,11 +1,11 @@
-﻿namespace DealsHub.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DealsHub.Models
 {
     public class Category
     {
+        [Key]
         public int CategoryId { get; set; }
-        public string Name { get; set; } = string.Empty;
-
-        // العلاقة مع Business
-        public List<Business> Businesses { get; set; } = new();
+        public string? Name { get; set; }
     }
 }

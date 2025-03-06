@@ -3,13 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DealsHub.Models
 {
-    public class Notification
+    public class Cart
     {
         [Key]
-        public int NotificationId { get; set; }
-        public bool IsRead { get; set; }
-        public required string Message { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int CartId { get; set; }
+        public decimal TotalAmount { get; set; }
+        public int NoOfItems { get; set; }
         [ForeignKey("User")]
         public int UserId { get; set; }
         public required User User { get; set; }
