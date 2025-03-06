@@ -7,10 +7,11 @@ namespace DealsHub.Models
     {
         [Key]
         public int CartId { get; set; }
-        public decimal TotalAmount { get; set; }
+        public decimal? TotalAmount { get; set; }
         public int NoOfItems { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public required User User { get; set; }
+        public int UserId { get; set; } // إجباري
+        public User User { get; set; } // إجباري
     }
+}
 }

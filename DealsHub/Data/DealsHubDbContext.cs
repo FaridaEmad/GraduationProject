@@ -83,19 +83,6 @@ namespace GraduationProject.Data
                 .WithMany()
                 .HasForeignKey(b => b.CartId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // إضافة دقة و مقياس للـ decimal
-            modelBuilder.Entity<Cart>()
-                .Property(c => c.TotalAmount)
-                .HasColumnType("decimal(18,2)"); // 18: الدقة و 2: المقياس
-
-            modelBuilder.Entity<Offer>()
-                .Property(o => o.Price)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.TotalPrice)
-                .HasColumnType("decimal(18,2)");
         }
     }
 }

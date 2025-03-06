@@ -10,10 +10,10 @@ namespace DealsHub.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public double DiscountPercentage { get; set; }
-        public required string Description { get; set; }
-        public decimal Price { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
         [ForeignKey("Business")]
-        public int BusinessId { get; set; }
-        public required Business Business { get; set; }
+        public int BusinessId { get; set; } // إجباري
+        public Business Business { get; set; } // إجباري
     }
 }

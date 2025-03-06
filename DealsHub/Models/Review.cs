@@ -7,14 +7,13 @@ namespace DealsHub.Models
     {
         [Key]
         public int ReviewId { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int Rating { get; set; }
-        public string? Text { get; set; }
+        public string? Content { get; set; }
+        public DateTime ReviewDate { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public required User User { get; set; }
+        public int UserId { get; set; } // إجباري
+        public User User { get; set; } // إجباري
         [ForeignKey("Business")]
-        public int BusinessId { get; set; }
-        public required Business Business { get; set; }
+        public int BusinessId { get; set; } // إجباري
+        public Business Business { get; set; } // إجباري
     }
 }

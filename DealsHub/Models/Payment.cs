@@ -7,14 +7,14 @@ namespace DealsHub.Models
     {
         [Key]
         public int PaymentId { get; set; }
-        public required string Status { get; set; }
-        public decimal TotalPrice { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public decimal? TotalPrice { get; set; }
+        public string? PaymentMethod { get; set; }
+        public DateTime PaymentDate { get; set; }
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public required User User { get; set; }
+        public int UserId { get; set; } // إجباري
+        public User User { get; set; } // إجباري
         [ForeignKey("Cart")]
-        public int CartId { get; set; }
-        public required Cart Cart { get; set; }
+        public int CartId { get; set; } // إجباري
+        public Cart Cart { get; set; } // إجباري
     }
 }

@@ -7,10 +7,10 @@ namespace DealsHub.Models
     {
         [Key]
         public int ImageId { get; set; }
-        public string? ImageURL { get; set; }
+        public string? ImageUrl { get; set; }
         [ForeignKey("Business")]
-        public int BusinessId { get; set; }
-        public required Business Business { get; set; }
+        public int BusinessId { get; set; } // إجباري
+        public Business Business { get; set; } // إجباري
     }
 
 }
