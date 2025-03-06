@@ -1,12 +1,16 @@
-﻿namespace DealsHub.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace DealsHub.Models
 {
     public class Phone
     {
-        public int Id { get; set; }
-        public string PhoneNumber { get; set; } = string.Empty;
-
-        // العلاقة مع المستخدم
-        public int UserId { get; set; }
-        public User User { get; set; } = null!;
+        [Key]
+        public int PhoneId { get; set; }
+        public string? PhoneNumber { get; set; }
+        [ForeignKey("User")]
+        public int UserId { get; set; } // إجباري
+        public User User { get; set; } // إجباري
     }
+
 }

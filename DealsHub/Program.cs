@@ -1,6 +1,7 @@
 ﻿using DealsHub.Models;
+using GraduationProject.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models; // تأكد من إضافة هذه المكتبة لحل خطأ Swagger
+using Microsoft.OpenApi.Models;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -29,6 +30,9 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "DealsHub API", Version = "v1" });
 });
 
+// إضافة خدمات Controllers
+builder.Services.AddControllers(); // إضافة خدمة الـ Controllers
+
 var app = builder.Build();
 
 // تهيئة Swagger في وضع التطوير
@@ -46,29 +50,7 @@ app.UseHttpsRedirection();
 // تفعيل CORS
 app.UseCors(MyAllowSpecificOrigins);
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-// Endpoint تجريبي
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// تفعيل الـ Controllers
+app.MapControllers(); // هذه السطر مهم لتفعيل الـ API الخاص بـ Users
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
