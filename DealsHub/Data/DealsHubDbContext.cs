@@ -83,6 +83,19 @@ namespace GraduationProject.Data
                 .WithMany()
                 .HasForeignKey(b => b.CartId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // تحديد نوع الأعمدة التي تحتوي على قيم Decimal
+            modelBuilder.Entity<Cart>()
+                .Property(c => c.TotalAmount)
+                .HasColumnType("decimal(18,2)"); // تحديد الحجم والدقة
+
+            modelBuilder.Entity<Offer>()
+                .Property(o => o.Price)
+                .HasColumnType("decimal(18,2)"); // تحديد الحجم والدقة
+
+            modelBuilder.Entity<Payment>()
+                .Property(p => p.TotalPrice)
+                .HasColumnType("decimal(18,2)"); // تحديد الحجم والدقة
         }
     }
 }

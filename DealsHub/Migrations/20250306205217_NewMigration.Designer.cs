@@ -4,6 +4,7 @@ using GraduationProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    partial class DealsHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306205217_NewMigration")]
+    partial class NewMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,44 +24,6 @@ namespace DealsHub.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Business", b =>
-                {
-                    b.Property<int>("BusinessId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BusinessId"));
-
-                    b.Property<string>("Area")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BusinessId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Businesses");
-                });
 
             modelBuilder.Entity("DealsHub.Models.Booking", b =>
                 {
@@ -95,6 +60,44 @@ namespace DealsHub.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("DealsHub.Models.Business", b =>
+                {
+                    b.Property<int>("BusinessId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BusinessId"));
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BusinessId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Businesses");
                 });
 
             modelBuilder.Entity("DealsHub.Models.Cart", b =>
@@ -328,23 +331,6 @@ namespace DealsHub.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Business", b =>
-                {
-                    b.HasOne("DealsHub.Models.Category", "Category")
-                        .WithMany("Businesses")
-                        .HasForeignKey("CategoryId");
-
-                    b.HasOne("DealsHub.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DealsHub.Models.Booking", b =>
                 {
                     b.HasOne("DealsHub.Models.Cart", "Cart")
@@ -372,6 +358,23 @@ namespace DealsHub.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Business", b =>
+                {
+                    b.HasOne("DealsHub.Models.Category", "Category")
+                        .WithMany("Businesses")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("DealsHub.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DealsHub.Models.Cart", b =>
                 {
                     b.HasOne("DealsHub.Models.User", "User")
@@ -385,7 +388,7 @@ namespace DealsHub.Migrations
 
             modelBuilder.Entity("DealsHub.Models.Image", b =>
                 {
-                    b.HasOne("Business", "Business")
+                    b.HasOne("DealsHub.Models.Business", "Business")
                         .WithMany("ImageURIs")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -407,7 +410,7 @@ namespace DealsHub.Migrations
 
             modelBuilder.Entity("DealsHub.Models.Offer", b =>
                 {
-                    b.HasOne("Business", "Business")
+                    b.HasOne("DealsHub.Models.Business", "Business")
                         .WithMany("Offers")
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -448,7 +451,7 @@ namespace DealsHub.Migrations
 
             modelBuilder.Entity("DealsHub.Models.Review", b =>
                 {
-                    b.HasOne("Business", "Business")
+                    b.HasOne("DealsHub.Models.Business", "Business")
                         .WithMany()
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -465,7 +468,7 @@ namespace DealsHub.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Business", b =>
+            modelBuilder.Entity("DealsHub.Models.Business", b =>
                 {
                     b.Navigation("ImageURIs");
 
