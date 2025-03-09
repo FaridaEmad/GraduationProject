@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    [Migration("20250306210733_updateuserclass")]
-    partial class updateuserclass
+    [Migration("20250309221751_SomeEdits")]
+    partial class SomeEdits
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -334,7 +334,7 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("Business", b =>
                 {
                     b.HasOne("DealsHub.Models.Category", "Category")
-                        .WithMany("Businesses")
+                        .WithMany()
                         .HasForeignKey("CategoryId");
 
                     b.HasOne("DealsHub.Models.User", "User")
@@ -473,11 +473,6 @@ namespace DealsHub.Migrations
                     b.Navigation("ImageURIs");
 
                     b.Navigation("Offers");
-                });
-
-            modelBuilder.Entity("DealsHub.Models.Category", b =>
-                {
-                    b.Navigation("Businesses");
                 });
 
             modelBuilder.Entity("DealsHub.Models.User", b =>
