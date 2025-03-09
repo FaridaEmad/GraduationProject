@@ -5,7 +5,7 @@
 namespace DealsHub.Migrations
 {
     /// <inheritdoc />
-    public partial class updateuserclass : Migration
+    public partial class SomeEdits : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
