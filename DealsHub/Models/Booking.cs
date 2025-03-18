@@ -7,17 +7,26 @@ namespace DealsHub.Models
     {
         [Key]
         public int BookingId { get; set; }
-        public string? Status { get; set; }
+
+        [Required]
+        public string Status { get; set; }
+
         public DateTime BookingDate { get; set; }
-        public string? Country { get; set; }
+
+        [Required]
+        public int Quantity { get; set; }
+
         [ForeignKey("Offer")]
-        public int OfferId { get; set; } // إجباري
-        public Offer Offer { get; set; } // إجباري
+        public int OfferId { get; set; }
+
         [ForeignKey("User")]
-        public int UserId { get; set; } // إجباري
-        public User User { get; set; } // إجباري
+        public int UserId { get; set; }
+
         [ForeignKey("Cart")]
-        public int CartId { get; set; } // إجباري
-        public Cart Cart { get; set; } // إجباري
+        public int CartId { get; set; }
+
+        public Offer Offer { get; set; }
+        public User User { get; set; }
+        public Cart Cart { get; set; }
     }
 }

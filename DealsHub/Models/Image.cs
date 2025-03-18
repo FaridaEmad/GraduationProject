@@ -6,11 +6,15 @@ namespace DealsHub.Models
     public class Image
     {
         [Key]
-        public int ImageId { get; set; }
-        public string? ImageUrl { get; set; }
+        public int ImageURIId { get; set; }
+
         [ForeignKey("Business")]
-        public int BusinessId { get; set; } // إجباري
-        public Business Business { get; set; } // إجباري
+        public int BusinessId { get; set; }
+
+        [Required]
+        public string URI { get; set; }
+
+        public Business Business { get; set; }
     }
 
 }

@@ -7,10 +7,14 @@ namespace DealsHub.Models
     {
         [Key]
         public int PhoneId { get; set; }
-        public string? PhoneNumber { get; set; }
-        [ForeignKey("User")]
-        public int UserId { get; set; } // إجباري
-        public User User { get; set; } // إجباري
+
+        [Required, ForeignKey("User")]
+        public int UserId { get; set; }
+
+        [Required, Phone]
+        public string Number { get; set; }
+
+        public User User { get; set; }
     }
 
 }

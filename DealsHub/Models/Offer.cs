@@ -11,9 +11,10 @@ namespace DealsHub.Models
         public DateTime EndDate { get; set; }
         public double DiscountPercentage { get; set; }
         public string? Description { get; set; }
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
         [ForeignKey("Business")]
         public int BusinessId { get; set; } // إجباري
         public Business Business { get; set; } // إجباري
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

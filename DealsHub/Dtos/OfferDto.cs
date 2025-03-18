@@ -6,8 +6,9 @@ public class OfferDto
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public double DiscountPercentage { get; set; }
-    public string? Description { get; set; }
-    public decimal? Price { get; set; }
+    public string Description { get; set; }
+    public decimal Price { get; set; }
     public int BusinessId { get; set; } // BusinessId لتحديد الـ Business
     public BusinessDto Business { get; set; } // BusinessDto لاحتواء تفاصيل النشاط التجاري
+    public bool IsActive { get; set; } // خاصية جديدة لتحديد ما إذا كان العرض نشطًا
 }
