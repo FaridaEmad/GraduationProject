@@ -7,10 +7,17 @@ namespace DealsHub.Models
     {
         [Key]
         public int NotificationId { get; set; }
-        public string? Message { get; set; }
-        public DateTime SentAt { get; set; }
+
+        public bool IsRead { get; set; }
+
+        [Required]
+        public string Message { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
         [ForeignKey("User")]
-        public int UserId { get; set; } // إجباري
-        public User User { get; set; } // إجباري
+        public int UserId { get; set; }
+
+        public User User { get; set; }
     }
 }

@@ -71,8 +71,8 @@ namespace DealsHub.Controllers
             }
 
             // تحديث البيانات
-            existingReview.Content = updatedReview.Content;
-            existingReview.ReviewDate = updatedReview.ReviewDate;
+            existingReview.Text = updatedReview.Text;
+            existingReview.CreatedAt = updatedReview.CreatedAt;
 
             _context.Entry(existingReview).State = EntityState.Modified;
 

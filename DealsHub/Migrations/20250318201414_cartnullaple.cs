@@ -5,7 +5,7 @@
 namespace DealsHub.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateRelationships : Migration
+    public partial class cartnullaple : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
