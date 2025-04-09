@@ -1,7 +1,10 @@
-﻿using DealsHub.Models;
+﻿using DealsHub.Data;
+using DealsHub.Models;
 using GraduationProject.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DealsHub.Dtos;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DealsHub.Controllers
 {
@@ -9,106 +12,76 @@ namespace DealsHub.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly DealsHubDbContext _context;
+        private readonly IDataRepository<User> _userRepository;
+        private readonly IDataRepository<Phone> _phoneRepository;
 
-        public UsersController(DealsHubDbContext context)
+        public UsersController(IDataRepository<User> userRepository,
+                                IDataRepository<Phone> PhoneRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _phoneRepository = PhoneRepository;
         }
 
-        // Get all users
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        [HttpGet("getAllUsers")]
+        public async Task<IActionResult> GetAllUsers()
         {
-            return await _context.Users.ToListAsync();
+            return Ok(await _userRepository.GetAllAsync());
         }
 
-        // Get a specific user by ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-
+            var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return user;
+            var userDto = new UserDto
+            {
+                Name = user.Name,
+                Email = user.Email,
+                Gender = user.Gender,
+                Phones = user.Phones.Select(p => p.Number).ToList(),
+                CreatedAt = user.CreatedAt,
+                IsAdmin = user.IsAdmin
+            };
+
+            return Ok(userDto);
         }
 
-        // Create a new user
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+
+        [HttpPut("changeName/{id}")]
+        public async Task<ActionResult> ChangeName(int id, string newName)
         {
-            try
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
             {
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        // Update an existing user
-        [HttpPut("{id}")]
-        // هذه هي الطريقة الخاصة بـ PUT لتحديث بيانات المستخدم
-        public async Task<IActionResult> PutUser(int id, User user)
-        {
-            // التأكد من أن id الذي أرسلته من الـ API يطابق الـ UserId المرسل في البيانات
-            if (id != user.UserId)
-            {
-                return BadRequest();  // إذا لم يتطابق الـ id نرجع رد سيء (Bad Request)
+                return NotFound("User not found.");
             }
 
-            // جلب المستخدم الموجود من قاعدة البيانات باستخدام الـ id
-            var existingUser = await _context.Users.FindAsync(id);
+            user.Name = newName;
 
-            // إذا كان المستخدم غير موجود، نرجع NotFound
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
+            await _userRepository.UpdateAsync(user);
+            await _userRepository.Save();
 
-            // تحديث قيم المستخدم الحالي بقيم المستخدم الجديد
-            existingUser.Name = user.Name;
-            existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
-            existingUser.UserType = user.UserType;
-            existingUser.Gender = user.Gender;
-
-            // حفظ التغييرات في قاعدة البيانات
-            await _context.SaveChangesAsync();
-
-            // نرجع رد ناجح بدون محتوى (No Content)
-            return NoContent();
+            return Ok("Name updated successfully.");
         }
 
 
-        // Delete a user
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetByIdAsync(id) ;
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            await _userRepository.DeleteAsync(user);
+            await _userRepository.Save();
+            return Ok("deleted successfuly");
         }
 
-        // Check if user exists
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
-        }
     }
 }

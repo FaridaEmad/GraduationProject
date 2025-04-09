@@ -113,9 +113,9 @@ namespace GraduationProject.Data
 
             // User-Cart Relationship (One-to-One)
             modelBuilder.Entity<User>()
-                .HasOne(u => u.Cart)
+                .HasMany(u => u.Carts)
                 .WithOne(c => c.User)
-                .HasForeignKey<Cart>(c => c.UserId)
+                .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // تحديد نوع الأعمدة التي تحتوي على قيم Decimal

@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DealsHub.Data;
 using DealsHub.Models;
-using Microsoft.EntityFrameworkCore;
-using GraduationProject.Data;
 using DealsHub.Dtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace DealsHub.Controllers
 {
@@ -10,117 +13,325 @@ namespace DealsHub.Controllers
     [ApiController]
     public class BusinessController : ControllerBase
     {
-        private readonly DealsHubDbContext _context;
+        private readonly IDataRepository<Business> _businessRepository;
+        private readonly IDataRepository<Image> _imageRepository;
+        private readonly IDataRepository<Review> _reviewRepository;
 
-        public BusinessController(DealsHubDbContext context)
+
+        public BusinessController(IDataRepository<Business> businessRepository, IDataRepository<Image> imageRepository, IDataRepository<Review> reviewRepository)
         {
-            _context = context;
+            _businessRepository = businessRepository;
+            _imageRepository = imageRepository;
+            _reviewRepository = reviewRepository;
         }
 
-        // GET: api/Business
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Business>>> GetBusinesses()
+        [HttpGet("getAllBusiness")]
+        public async Task<IActionResult> GetAllBusiness()
         {
-            var businesses = await _context.Businesses.Include(b => b.Category).Include(b => b.User).ToListAsync();
-            return Ok(businesses);
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+            criteria: null,
+            includes: b => b.Images
+            );
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
         }
 
-        // GET: api/Business/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Business>> GetBusiness(int id)
+        public async Task<IActionResult> GetBusinessById(int id)
         {
-            var business = await _context.Businesses.Include(b => b.Category).Include(b => b.User).FirstOrDefaultAsync(b => b.BusinessId == id);
-
+            var business = await _businessRepository.GetAllAsyncInclude(
+                b => b.BusinessId == id,
+                b => b.Images
+                );
             if (business == null)
             {
                 return NotFound();
             }
 
-            return Ok(business);
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = business.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+            return Ok(result);
         }
 
-        // POST: api/Business
-        [HttpPost]
-        public async Task<IActionResult> CreateBusiness([FromBody] BusinessDto businessDto)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("addNewBusiness")]
+        public async Task<ActionResult> addBusiness(BusinessDto newBusiness)
         {
-            var user = await _context.Users.FindAsync(businessDto.UserId);
-            if (user == null)
-            {
-                return BadRequest("User not found.");
-            }
-
-            var category = await _context.Categories.FindAsync(businessDto.CategoryId);
-            if (category == null)
-            {
-                return BadRequest("Category not found.");
-            }
-
             var business = new Business
             {
-                Name = businessDto.Name,
-                City = businessDto.City,
-                Area = businessDto.Area,
-                CategoryId = businessDto.CategoryId,
-                UserId = businessDto.UserId
+                Name = newBusiness.Name,
+                CategoryId = newBusiness.CategoryId,
+                UserId = newBusiness.UserId,
+                City = newBusiness.City,
+                Area = newBusiness.Area,
+
             };
 
-            _context.Businesses.Add(business);
-            await _context.SaveChangesAsync();
+            await _businessRepository.AddAsync(business);
+            await _businessRepository.Save();
 
-            return CreatedAtAction("GetBusiness", new { id = business.BusinessId }, business);
+            Image image = new Image
+            {
+                URL = newBusiness.ImageUrls,
+                BusinessId = business.BusinessId
+            };
+
+            await _imageRepository.AddAsync(image);
+            await _imageRepository.Save();
+
+            return Ok("Business added successfully");
+
         }
 
-
-
-        // PUT: api/Business/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBusiness(int id, Business business)
+        public async Task<ActionResult> UpdateBusiness(int id, BusinessUpdateDto newBusiness)
         {
-            if (id != business.BusinessId)
+            var business = await _businessRepository.GetByIdAsync(id);
+            if (business == null)
             {
-                return BadRequest();
+                return NotFound("Business not found.");
             }
 
-            _context.Entry(business).State = EntityState.Modified;
+            business.Area = newBusiness.Area;
+            business.City = newBusiness.City;
+            business.CategoryId = newBusiness.CategoryId;
+            business.UserId = newBusiness.UserId;
+            business.Name = newBusiness.Name;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BusinessExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _businessRepository.UpdateAsync(business);
+            await _businessRepository.Save();
 
-            return NoContent();
+            return Ok("Business updated successfully.");
         }
 
-        // DELETE: api/Business/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBusiness(int id)
         {
-            var business = await _context.Businesses.FindAsync(id);
-            if (business == null)
+            var user = await _businessRepository.GetByIdAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Businesses.Remove(business);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            await _businessRepository.DeleteAsync(user);
+            await _businessRepository.Save();
+            return Ok("deleted successfuly");
         }
 
-        private bool BusinessExists(int id)
+        [HttpGet("getBusinessByCategory{id}")]
+        public async Task<IActionResult> GetByCategory(int id)
         {
-            return _context.Businesses.Any(e => e.BusinessId == id);
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id,
+                b => b.Images
+                );
+            
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("getBusinessByCity{city}")]
+        public async Task<IActionResult> GetByCity(String city)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.City == city,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this city.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("getBusinessByArea{area}")]
+        public async Task<IActionResult> GetByArea(String area)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.Area == area,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this area.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("getBusinessByCategoryAndCity")]
+        public async Task<IActionResult> GetByCategoryAndCity(int id, String city)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id && b.City == city,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category and city.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("getBusinessByCategoryAndArea")]
+        public async Task<IActionResult> GetByCategoryAndArea(int id, String area)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id && b.Area == area,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category and area.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId) 
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId) 
+                .Average(r => r.Rating) 
+            : 0, 
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId) 
+            }).ToList();
+
+            return Ok(result);
         }
     }
-}
+} 

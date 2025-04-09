@@ -8,12 +8,12 @@ namespace DealsHub.Models
         [Key]
         public int NotificationId { get; set; }
 
-        public bool IsRead { get; set; }
+        public bool IsRead { get; set; } = false;
 
         [Required]
         public string Message { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("User")]
         public int UserId { get; set; }

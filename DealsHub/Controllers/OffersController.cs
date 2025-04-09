@@ -1,151 +1,193 @@
-﻿using DealsHub.Dtos;
+﻿using DealsHub.Data;
 using DealsHub.Models;
-using GraduationProject.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-[Route("api/[controller]")]
-[ApiController]
-public class OffersController : ControllerBase
+namespace DealsHub.Controllers
 {
-    private readonly DealsHubDbContext _context;
-
-    public OffersController(DealsHubDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OffersController : ControllerBase
     {
-        _context = context;
-    }
 
-    // ✅ 1. جلب كل العروض
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Offer>>> GetOffers()
-    {
-        return await _context.Offers.Include(o => o.Business).ToListAsync();
-    }
+        private readonly IDataRepository<Offer> _offerRepository;
+        private readonly IDataRepository<Notification> _notificationRepository;
+        private readonly IDataRepository<Review> _reviewRepository;
 
-    // ✅ 2. جلب عرض معين حسب ID
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetOfferById(int id)
-    {
-        var offer = await _context.Offers
-            .Include(o => o.Business) // لضم بيانات النشاط التجاري
-            .FirstOrDefaultAsync(o => o.OfferId == id);
-
-        if (offer == null)
+        public OffersController(IDataRepository<Offer> offerRepository, IDataRepository<Notification> notificationRepository, IDataRepository<Review> reviewRepository)
         {
-            return NotFound();
+            _offerRepository = offerRepository;
+            _notificationRepository = notificationRepository;
+            _reviewRepository = reviewRepository;
         }
 
-        var offerDto = new OfferDto
+        [HttpGet("getAllOffers")]
+        public async Task<IActionResult> GetAllCategories()
         {
-            OfferId = offer.OfferId,
-            StartDate = offer.StartDate,
-            EndDate = offer.EndDate,
-            DiscountPercentage = offer.DiscountPercentage,
-            Description = offer.Description,
-            Price = offer.Price,
-            BusinessId = offer.BusinessId,
-            Business = new BusinessDto
+            return Ok(await _offerRepository.GetAllAsync());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOfferById(int id)
+        {
+            var offer = await _offerRepository.GetByIdAsync(id);
+            if (offer == null)
             {
-                Name = offer.Business.Name,
-                City = offer.Business.City,
-                Area = offer.Business.Area,
-                CategoryId = offer.Business.CategoryId,
-                UserId = offer.Business.UserId
+                return NotFound();
             }
-        };
 
-        return Ok(offerDto);
-    }
-
-
-    // ✅ 3. إنشاء عرض جديد
-    [HttpPost]
-    public async Task<IActionResult> CreateOffer([FromBody] OfferDto offerDto)
-    {
-        var business = await _context.Businesses.FindAsync(offerDto.BusinessId);
-        if (business == null)
-        {
-            return NotFound("Business not found");
+            return Ok(offer);
         }
 
-        var offer = new Offer
+        [Authorize(Roles = "Admin")]
+        [HttpPost("addNewOffer")]
+        public async Task<ActionResult> addOffer(OfferDto newOffer)
         {
-            StartDate = offerDto.StartDate,
-            EndDate = offerDto.EndDate,
-            DiscountPercentage = offerDto.DiscountPercentage,
-            Description = offerDto.Description,
-            Price = offerDto.Price,
-            BusinessId = offerDto.BusinessId,
-            Business = business // ربط العرض بالنشاط التجاري
-        };
-
-        _context.Offers.Add(offer);
-        await _context.SaveChangesAsync();
-
-        // تحويل الـ Offer إلى OfferDto مع تفاصيل Business
-        var offerResponse = new OfferDto
-        {
-            OfferId = offer.OfferId,
-            StartDate = offer.StartDate,
-            EndDate = offer.EndDate,
-            DiscountPercentage = offer.DiscountPercentage,
-            Description = offer.Description,
-            Price = offer.Price,
-            BusinessId = offer.BusinessId,
-            Business = new BusinessDto
+            var offer = new Offer
             {
-                Name = offer.Business.Name,
-                City = offer.Business.City,
-                Area = offer.Business.Area,
-                CategoryId = offer.Business.CategoryId,
-                UserId = offer.Business.UserId
+                StartDate = newOffer.StartDate,
+                EndDate = newOffer.EndDate,
+                Description = newOffer.Description,
+                DiscountPercentage = newOffer.DiscountPercentage,
+                Price = newOffer.Price,
+                BusinessId = newOffer.BusinessId,
+            };
+
+            await _offerRepository.AddAsync(offer);
+            await _offerRepository.Save();
+
+            var reviews = await _reviewRepository.GetAllAsyncInclude(
+               r => r.Rating == 5 && r.BusinessId == offer.BusinessId
+               );
+
+            var notifiedUserIds = new HashSet<int>();
+
+            foreach (var review in reviews)
+            {
+                if (review.UserId != 0 && !notifiedUserIds.Contains(review.UserId))
+                {
+                    var notification = new Notification
+                    {
+                        Message = $"New Offer: {offer.Description}",
+                        IsRead = false,
+                        CreatedAt = DateTime.UtcNow,
+                        UserId = review.UserId
+                    };
+
+                    await _notificationRepository.AddAsync(notification);
+                    notifiedUserIds.Add(review.UserId);
+                }
             }
-        };
 
-        return CreatedAtAction(nameof(GetOfferById), new { id = offer.OfferId }, offerResponse);
-    }
+            await _notificationRepository.Save();
 
+            return Ok("Offer added successfully");
 
-    // ✅ 4. تعديل عرض معين
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateOffer(int id, Offer offer)
-    {
-        if (id != offer.OfferId)
-        {
-            return BadRequest();
         }
 
-        var existingOffer = await _context.Offers.FindAsync(id);
-        if (existingOffer == null)
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateOffer(int id, OfferDto newOffer)
         {
-            return NotFound();
+            var offer = await _offerRepository.GetByIdAsync(id);
+            if (offer == null)
+            {
+                return NotFound("Offer not found.");
+            }
+
+            offer.StartDate = newOffer.StartDate;
+            offer.EndDate = newOffer.EndDate;
+            offer.Description = newOffer.Description;
+            offer.DiscountPercentage = newOffer.DiscountPercentage;
+            offer.Price = newOffer.Price;
+            offer.BusinessId = newOffer.BusinessId;
+
+            await _offerRepository.UpdateAsync(offer);
+            await _offerRepository.Save();
+
+            return Ok("Offer updated successfully.");
         }
 
-        existingOffer.StartDate = offer.StartDate;
-        existingOffer.EndDate = offer.EndDate;
-        existingOffer.DiscountPercentage = offer.DiscountPercentage;
-        existingOffer.Description = offer.Description;
-        existingOffer.Price = offer.Price;
-        existingOffer.BusinessId = offer.BusinessId;
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // ✅ 5. حذف عرض معين
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteOffer(int id)
-    {
-        var offer = await _context.Offers.FindAsync(id);
-        if (offer == null)
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteOffer(int id)
         {
-            return NotFound();
+            var offer = await _offerRepository.GetByIdAsync(id);
+            if (offer == null)
+            {
+                return NotFound();
+            }
+
+            await _offerRepository.DeleteAsync(offer);
+            await _offerRepository.Save();
+            return Ok("deleted successfuly");
         }
 
-        _context.Offers.Remove(offer);
-        await _context.SaveChangesAsync();
+        [HttpGet("getOfferByBusiness/{id}")]
+        public async Task<IActionResult> GetByBusiness(int id)
+        {
+            var offers = await _offerRepository.GetAllAsyncInclude(
+                o => o.BusinessId == id
+                );
 
-        return NoContent();
+            if (offers == null || !offers.Any())
+                return NotFound("No offers found for this business.");
+
+            return Ok(offers);
+        }
+
+        [HttpGet("getOfferByBusinessActive/{id}")]
+        public async Task<IActionResult> GetByBusinessAndActive(int id)
+        {
+            var offers = await _offerRepository.GetAllAsyncInclude(
+                o => o.BusinessId == id && o.StartDate <= DateTime.UtcNow && o.EndDate > DateTime.UtcNow
+                );
+
+            if (offers == null || !offers.Any())
+                return NotFound("No active offers found for this business.");
+
+            return Ok(offers);
+        }
+
+        [HttpGet("getOfferByBusinessInactive/{id}")]
+        public async Task<IActionResult> GetByBusinessAndInactive(int id)
+        {
+            var offers = await _offerRepository.GetAllAsyncInclude(
+                o => o.BusinessId == id && (o.EndDate < DateTime.UtcNow || o.StartDate > DateTime.UtcNow)
+                );
+
+            if (offers == null || !offers.Any())
+                return NotFound("No inactive offers found for this business.");
+
+            return Ok(offers);
+        }
+
+        [HttpGet("getOffersInactive")]
+        public async Task<IActionResult> GetByAllInactive()
+        {
+            var offers = await _offerRepository.GetAllAsyncInclude(
+                o => o.EndDate < DateTime.UtcNow || o.StartDate > DateTime.UtcNow
+                );
+
+            if (offers == null || !offers.Any())
+                return NotFound("No inactive offers found.");
+
+            return Ok(offers);
+        }
+
+        [HttpGet("getOffersActive")]
+        public async Task<IActionResult> GetByAllActive()
+        {
+            var offers = await _offerRepository.GetAllAsyncInclude(
+                o => o.EndDate > DateTime.UtcNow || o.StartDate < DateTime.UtcNow
+                );
+
+            if (offers == null || !offers.Any())
+                return NotFound("No active offers found.");
+
+            return Ok(offers);
+        }
+
     }
+
 }

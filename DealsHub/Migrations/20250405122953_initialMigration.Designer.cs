@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    [Migration("20250318195604_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250405122953_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -109,7 +109,7 @@ namespace DealsHub.Migrations
                     b.Property<int>("NoOfItems")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("TotalAmount")
+                    b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
@@ -352,17 +352,21 @@ namespace DealsHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
                     b.HasKey("UserId");
 
@@ -391,7 +395,7 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("DealsHub.Models.Booking", b =>
                 {
                     b.HasOne("DealsHub.Models.Cart", "Cart")
-                        .WithMany()
+                        .WithMany("Bookings")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -525,6 +529,11 @@ namespace DealsHub.Migrations
                     b.Navigation("Reviews");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Cart", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
             modelBuilder.Entity("DealsHub.Models.Category", b =>
                 {
                     b.Navigation("Businesses");
@@ -546,8 +555,7 @@ namespace DealsHub.Migrations
 
                     b.Navigation("Businesses");
 
-                    b.Navigation("Cart")
-                        .IsRequired();
+                    b.Navigation("Cart");
 
                     b.Navigation("Notifications");
 

@@ -4,6 +4,7 @@ using GraduationProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    partial class DealsHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250408150613_addFees")]
+    partial class addFees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,8 @@ namespace DealsHub.Migrations
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -428,8 +432,8 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("DealsHub.Models.Cart", b =>
                 {
                     b.HasOne("DealsHub.Models.User", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
+                        .WithOne("Cart")
+                        .HasForeignKey("DealsHub.Models.Cart", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -561,7 +565,7 @@ namespace DealsHub.Migrations
 
                     b.Navigation("Businesses");
 
-                    b.Navigation("Carts");
+                    b.Navigation("Cart");
 
                     b.Navigation("Notifications");
 

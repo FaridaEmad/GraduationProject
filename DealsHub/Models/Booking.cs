@@ -11,7 +11,7 @@ namespace DealsHub.Models
         [Required]
         public string Status { get; set; }
 
-        public DateTime BookingDate { get; set; }
+        public DateTime BookingDate { get; set; } = DateTime.UtcNow;
 
         [Required]
         public int Quantity { get; set; }

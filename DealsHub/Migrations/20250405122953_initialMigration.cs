@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DealsHub.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,8 +45,9 @@ namespace DealsHub.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    IsAdmin = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -90,7 +91,7 @@ namespace DealsHub.Migrations
                 {
                     CartId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     NoOfItems = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },

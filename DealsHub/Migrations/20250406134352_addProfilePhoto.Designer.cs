@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    [Migration("20250318201414_cartnullaple")]
-    partial class cartnullaple
+    [Migration("20250406134352_addProfilePhoto")]
+    partial class addProfilePhoto
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -106,6 +106,9 @@ namespace DealsHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<int>("NoOfItems")
                         .HasColumnType("int");
 
@@ -142,20 +145,20 @@ namespace DealsHub.Migrations
 
             modelBuilder.Entity("DealsHub.Models.Image", b =>
                 {
-                    b.Property<int>("ImageURIId")
+                    b.Property<int>("ImageURLId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageURIId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageURLId"));
 
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("URI")
+                    b.Property<string>("URL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ImageURIId");
+                    b.HasKey("ImageURLId");
 
                     b.HasIndex("BusinessId");
 
@@ -352,17 +355,25 @@ namespace DealsHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ProfilePhoto")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
 
                     b.HasKey("UserId");
 

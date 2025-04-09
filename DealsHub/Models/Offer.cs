@@ -13,8 +13,8 @@ namespace DealsHub.Models
         public string? Description { get; set; }
         public decimal Price { get; set; }
         [ForeignKey("Business")]
-        public int BusinessId { get; set; } // إجباري
-        public Business Business { get; set; } // إجباري
+        public int BusinessId { get; set; } 
+        public Business Business { get; set; } 
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

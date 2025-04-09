@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DealsHub.Data;
 using DealsHub.Models;
-using GraduationProject.Data;
+using DealsHub.Dtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DealsHub.Controllers
 {
@@ -12,96 +11,107 @@ namespace DealsHub.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        private readonly DealsHubDbContext _context;
+        private readonly IDataRepository<Review> _reviewRepository;
 
-        public ReviewController(DealsHubDbContext context)
+        public ReviewController(IDataRepository<Review> reviewRepository)
         {
-            _context = context;
+            _reviewRepository = reviewRepository;
         }
 
-        // 1️⃣ جلب جميع التقييمات
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        [HttpGet("getAllReviews")]
+        public async Task<IActionResult> GetAllCategories()
         {
-            return await _context.Reviews.ToListAsync();
+            return Ok(await _reviewRepository.GetAllAsync());
         }
 
-        // 2️⃣ جلب تقييم معين عن طريق الـ ID
         [HttpGet("{id}")]
-        public async Task<ActionResult<Review>> GetReview(int id)
+        public async Task<IActionResult> GetReviewById(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
-
+            var review = await _reviewRepository.GetByIdAsync(id);
             if (review == null)
             {
-                return NotFound("التقييم غير موجود.");
+                return NotFound();
             }
 
-            return review;
+            return Ok(review);
         }
 
-        // 3️⃣ إضافة تقييم جديد
-        [HttpPost]
-        public async Task<ActionResult<Review>> CreateReview([FromBody] Review review)
+        [HttpPost("addNewReview")]
+        public async Task<ActionResult> addReview(ReviewDto newReview)
         {
-            if (review == null)
+            var review = new Review
             {
-                return BadRequest("بيانات التقييم غير صحيحة.");
-            }
+                Rating = newReview.Rating,
+                UserId = newReview.UserId,
+                BusinessId = newReview.BusinessId,
+                Text = newReview.Text
+            };
 
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
+            await _reviewRepository.AddAsync(review);
+            await _reviewRepository.Save();
 
-            return CreatedAtAction(nameof(GetReview), new { id = review.ReviewId }, review);
+            return Ok("Review added successfully");
+
         }
 
-        // 4️⃣ تعديل تقييم معين
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReview(int id, [FromBody] Review updatedReview)
+        public async Task<ActionResult> UpdateReview(int id, ReviewDto newReview)
         {
-            if (id != updatedReview.ReviewId)
+            var review = await _reviewRepository.GetByIdAsync(id);
+            if (review == null)
             {
-                return BadRequest("الـ ID غير متطابق.");
+                return NotFound("Review not found.");
             }
 
-            var existingReview = await _context.Reviews.FindAsync(id);
-            if (existingReview == null)
-            {
-                return NotFound("التقييم غير موجود.");
-            }
+            review.Text = newReview.Text;
+            review.UserId = newReview.UserId;
+            review.BusinessId = newReview.BusinessId;
+            review.Rating = newReview.Rating;
 
-            // تحديث البيانات
-            existingReview.Text = updatedReview.Text;
-            existingReview.CreatedAt = updatedReview.CreatedAt;
+            await _reviewRepository.UpdateAsync(review);
+            await _reviewRepository.Save();
 
-            _context.Entry(existingReview).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return StatusCode(500, "حدث خطأ أثناء التحديث.");
-            }
-
-            return NoContent();
+            return Ok("Review updated successfully.");
         }
 
-        // 5️⃣ حذف تقييم معين
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
-            var review = await _context.Reviews.FindAsync(id);
+            var review = await _reviewRepository.GetByIdAsync(id);
             if (review == null)
             {
-                return NotFound("التقييم غير موجود.");
+                return NotFound();
             }
 
-            _context.Reviews.Remove(review);
-            await _context.SaveChangesAsync();
+            await _reviewRepository.DeleteAsync(review);
+            await _reviewRepository.Save();
+            return Ok("deleted successfuly");
+        }
 
-            return NoContent();
+        [HttpGet("getReviewsByBusiness{id}")]
+        public async Task<IActionResult> GetByBusiness(int id)
+        {
+            var reviews = await _reviewRepository.GetAllAsyncInclude(
+                r => r.BusinessId == id
+                );
+
+            if (reviews == null || !reviews.Any())
+                return NotFound("No reviews found for this business.");
+
+            return Ok(reviews);
+        }
+
+        [HttpGet("getReviewsByUser{id}")]
+        public async Task<IActionResult> GetByUser(int id)
+        {
+            var reviews = await _reviewRepository.GetAllAsyncInclude(
+                r => r.UserId == id
+                );
+
+            if (reviews == null || !reviews.Any())
+                return NotFound("No reviews found for this user.");
+
+            return Ok(reviews);
         }
     }
 }

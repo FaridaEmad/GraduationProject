@@ -1,100 +1,89 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DealsHub.Data;
 using DealsHub.Models;
+using DealsHub.Dtos;
 using Microsoft.EntityFrameworkCore;
-using GraduationProject.Data;
-
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 namespace DealsHub.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly DealsHubDbContext _context;
+        private readonly IDataRepository<Category> _categoryRepository;
 
-        public CategoryController(DealsHubDbContext context)
+        public CategoryController(IDataRepository<Category> categoryRepository)
         {
-            _context = context;
+            _categoryRepository = categoryRepository;
         }
 
-        // GET: api/Category
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        [HttpGet("getAllCategories")]
+        public async Task<IActionResult> GetAllCategories()
         {
-            return await _context.Categories.ToListAsync();
+            return Ok(await _categoryRepository.GetAllAsync());
         }
 
-        // GET: api/Category/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(int id)
+        public async Task<IActionResult> GetCategoryById(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-
+            var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            return category;
+            return Ok(category);
         }
 
-        // POST: api/Category
-        [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        [Authorize(Roles = "Admin")]
+        [HttpPost("addNewCategory")]
+        public async Task<ActionResult> addCategory(CategoryDto newCategory)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            var category = new Category
+            {
+                Name = newCategory.Name
+            };
 
-            return CreatedAtAction(nameof(GetCategory), new { id = category.CategoryId }, category);
+            await _categoryRepository.AddAsync(category);
+            await _categoryRepository.Save();
+
+            return Ok("Category added successfully");
+
         }
 
-        // PUT: api/Category/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, Category category)
+        public async Task<ActionResult> UpdateCategory(int id, string newName)
         {
-            if (id != category.CategoryId)
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
             {
-                return BadRequest();
+                return NotFound("Category not found.");
             }
 
-            _context.Entry(category).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            category.Name = newName;
 
-            return NoContent();
+            await _categoryRepository.UpdateAsync(category);
+            await _categoryRepository.Save();
+
+            return Ok("Name updated successfully.");
         }
 
-        // DELETE: api/Category/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            await _categoryRepository.DeleteAsync(category);
+            await _categoryRepository.Save();
+            return Ok("deleted successfuly");
         }
 
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.CategoryId == id);
-        }
     }
 }

@@ -14,11 +14,12 @@ namespace DealsHub.Models
 
         [Required, EmailAddress]
         public string Email { get; set; }
+        public string ProfilePhoto { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
 
-        public UserType UserType { get; set; }
+        public bool IsAdmin { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string Gender { get; set; }
@@ -29,6 +30,6 @@ namespace DealsHub.Models
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public Cart? Cart { get; set; }
+        public ICollection<Cart> Carts { get; set; }
     }
 }

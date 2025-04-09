@@ -10,6 +10,8 @@ namespace DealsHub.Models
         [Required]
         public string Method { get; set; }
 
+        public double Fees { get; set; }
+
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }
