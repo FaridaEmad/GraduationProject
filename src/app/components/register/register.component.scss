@@ -1,0 +1,114 @@
+.register-section {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.register-title {
+    color: #d01111;
+    font-family: 'Kaushan Script', cursive;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border 0.3s ease-in-out;
+}
+
+.input-group input:focus {
+    border: 2px solid #d01111;
+    outline: none;
+}
+
+.error-message {
+    color: #d01111;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+.error-message div {
+    padding: 5px;
+    background-color: #ffe0e0;
+    border-radius: 5px;
+}
+
+.btn-main {
+    background-color: #d01111;
+    color: white;
+    font-weight: bold;
+    padding: 1px 6px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-main:hover {
+    background-color: #000000;
+}
+
+.register-icon {
+    font-size: 1.5rem;
+    animation: spin 1s infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .register-section {
+        padding: 20px;
+    }
+}
+
+.show{
+    top: 20%;
+    right: 5px;
+  }
+  

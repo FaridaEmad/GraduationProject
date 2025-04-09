@@ -1,0 +1,52 @@
+.cr {
+    cursor: pointer; 
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-family: 'Kaushan Script', sans-serif; /* Apply Kaushan Script font */
+    font-weight: bold;
+    color: #d01111; /* Text color */
+    text-transform: uppercase; /* Make the text bold and capitalized */
+    font-size: 28px; /* Adjust the size to match your design */
+    letter-spacing: 2px; /* Space out the letters for a clean look */
+    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* 3D effect for the icon */
+.navbar-brand i {
+    color: #d01111; /* Icon color */
+    font-size: 32px; /* Icon size */
+    margin-right: 10px; /* Space between icon and text */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); /* Icon shadow for 3D effect */
+    transform: translateY(-6px) scale(1.1); /* Raised effect */
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* 3D effect for the text (Makank) */
+.navbar-brand span {
+    color: #d01111; /* Text color */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 0, 0, 0.3), 0 0 50px rgba(0, 0, 0, 0.3); /* Cool shadow for text */
+    transform: translateY(-2px) scale(1.05); /* Slight 3D effect for text */
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Hover effects to make it even more dynamic */
+.navbar-brand:hover {
+    transform: translateY(-3px); /* Slight upward movement */
+    color: #d01111; /* Text color when hovered */
+}
+
+/* Hover effects for icon */
+.navbar-brand i:hover {
+    transform: translateY(-8px) scale(1.2); /* Icon grows slightly more on hover */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6); /* Stronger shadow on hover */
+}
+
+/* Hover effects for text (Makank) */
+.navbar-brand span:hover {
+    transform: translateY(-4px) scale(1.1); /* Text grows slightly */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
+}
+

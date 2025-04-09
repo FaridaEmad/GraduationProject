@@ -1,0 +1,28 @@
+
+
+name
+required
+"Name Should be more than or equal  3 chars"
+"Name Should be less than or equal  20 chars"
+ Validators.minLength(3)  , Validators.maxLength(20)
+ Name Min Length 3
+ Name Max Length 20
+---
+email
+Enter Valid Email 
+---
+password
+required
+"must be at least 6 chars"
+ Validators.pattern(/^\w{6,}$/)
+ 
+ password must start with upperCase then from 6 to more any chars 
+  Validators.pattern(/^\[A-Z][a-z0-9]{6,10}$/)
+---
+rePassword
+"Password confirmation is incorrect"
+---
+phone
+required
+"accept only egypt phone numbers"
+Validators.pattern(/^01[0125][0-9]{8}$/)
