@@ -13,12 +13,18 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Offer> _offerRepository;
         private readonly IDataRepository<Notification> _notificationRepository;
         private readonly IDataRepository<Review> _reviewRepository;
+        private readonly IDataRepository<Favourite> _favouriteRepository;
 
-        public OffersController(IDataRepository<Offer> offerRepository, IDataRepository<Notification> notificationRepository, IDataRepository<Review> reviewRepository)
+
+        public OffersController(IDataRepository<Offer> offerRepository,
+            IDataRepository<Notification> notificationRepository,
+            IDataRepository<Review> reviewRepository,
+            IDataRepository<Favourite> favouriteRepository)
         {
             _offerRepository = offerRepository;
             _notificationRepository = notificationRepository;
             _reviewRepository = reviewRepository;
+            _favouriteRepository = favouriteRepository;
         }
 
         [HttpGet("getAllOffers")]
@@ -39,7 +45,7 @@ namespace DealsHub.Controllers
             return Ok(offer);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewOffer")]
         public async Task<ActionResult> addOffer(OfferDto newOffer)
         {
@@ -51,6 +57,7 @@ namespace DealsHub.Controllers
                 DiscountPercentage = newOffer.DiscountPercentage,
                 Price = newOffer.Price,
                 BusinessId = newOffer.BusinessId,
+                Image = newOffer.Image
             };
 
             await _offerRepository.AddAsync(offer);
@@ -79,6 +86,27 @@ namespace DealsHub.Controllers
                 }
             }
 
+            var favourites = await _favouriteRepository.GetAllAsyncInclude(
+               f => f.BusinessId == offer.BusinessId
+               );
+
+            foreach (var favourite in favourites)
+            {
+                if (favourite.UserId != 0 && !notifiedUserIds.Contains(favourite.UserId))
+                {
+                    var notification = new Notification
+                    {
+                        Message = $"New Offer: {offer.Description}",
+                        IsRead = false,
+                        CreatedAt = DateTime.UtcNow,
+                        UserId = favourite.UserId
+                    };
+
+                    await _notificationRepository.AddAsync(notification);
+                    notifiedUserIds.Add(favourite.UserId);
+                }
+            }
+
             await _notificationRepository.Save();
 
             return Ok("Offer added successfully");
@@ -101,6 +129,7 @@ namespace DealsHub.Controllers
             offer.DiscountPercentage = newOffer.DiscountPercentage;
             offer.Price = newOffer.Price;
             offer.BusinessId = newOffer.BusinessId;
+            offer.Image = newOffer.Image;
 
             await _offerRepository.UpdateAsync(offer);
             await _offerRepository.Save();

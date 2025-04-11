@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DealsHub.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,7 +30,8 @@ namespace DealsHub.Migrations
                 {
                     PaymentMethodId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Fees = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,6 +46,7 @@ namespace DealsHub.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfilePhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     IsAdmin = table.Column<bool>(type: "bit", nullable: false),
@@ -65,6 +67,7 @@ namespace DealsHub.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Area = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Logo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -93,6 +96,7 @@ namespace DealsHub.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     NoOfItems = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -149,17 +153,43 @@ namespace DealsHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ImageURIs",
+                name: "Favourites",
                 columns: table => new
                 {
-                    ImageURIId = table.Column<int>(type: "int", nullable: false)
+                    FavouriteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BusinessId = table.Column<int>(type: "int", nullable: false),
-                    URI = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    BusinessId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ImageURIs", x => x.ImageURIId);
+                    table.PrimaryKey("PK_Favourites", x => x.FavouriteId);
+                    table.ForeignKey(
+                        name: "FK_Favourites_Businesses_BusinessId",
+                        column: x => x.BusinessId,
+                        principalTable: "Businesses",
+                        principalColumn: "BusinessId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Favourites_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ImageURIs",
+                columns: table => new
+                {
+                    ImageURLId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BusinessId = table.Column<int>(type: "int", nullable: false),
+                    URL = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImageURIs", x => x.ImageURLId);
                     table.ForeignKey(
                         name: "FK_ImageURIs_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -177,7 +207,8 @@ namespace DealsHub.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DiscountPercentage = table.Column<double>(type: "float", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BusinessId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -292,6 +323,32 @@ namespace DealsHub.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Wishlists",
+                columns: table => new
+                {
+                    WishlistId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OfferId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlists", x => x.WishlistId);
+                    table.ForeignKey(
+                        name: "FK_Wishlists_Offers_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offers",
+                        principalColumn: "OfferId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Wishlists_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_CartId",
                 table: "Bookings",
@@ -320,7 +377,17 @@ namespace DealsHub.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_UserId",
                 table: "Carts",
-                column: "UserId",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favourites_BusinessId",
+                table: "Favourites",
+                column: "BusinessId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favourites_UserId_BusinessId",
+                table: "Favourites",
+                columns: new[] { "UserId", "BusinessId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -367,6 +434,17 @@ namespace DealsHub.Migrations
                 name: "IX_Reviews_UserId",
                 table: "Reviews",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlists_OfferId",
+                table: "Wishlists",
+                column: "OfferId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wishlists_UserId_OfferId",
+                table: "Wishlists",
+                columns: new[] { "UserId", "OfferId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -374,6 +452,9 @@ namespace DealsHub.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Bookings");
+
+            migrationBuilder.DropTable(
+                name: "Favourites");
 
             migrationBuilder.DropTable(
                 name: "ImageURIs");
@@ -391,13 +472,16 @@ namespace DealsHub.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Offers");
+                name: "Wishlists");
 
             migrationBuilder.DropTable(
                 name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "PaymentMethods");
+
+            migrationBuilder.DropTable(
+                name: "Offers");
 
             migrationBuilder.DropTable(
                 name: "Businesses");

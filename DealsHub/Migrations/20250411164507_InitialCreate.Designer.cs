@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DealsHub.Migrations
 {
     [DbContext(typeof(DealsHubDbContext))]
-    [Migration("20250406134352_addProfilePhoto")]
-    partial class addProfilePhoto
+    [Migration("20250411164507_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,10 @@ namespace DealsHub.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -120,8 +124,7 @@ namespace DealsHub.Migrations
 
                     b.HasKey("CartId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Carts");
                 });
@@ -141,6 +144,30 @@ namespace DealsHub.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("DealsHub.Models.Favourite", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavouriteId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("UserId", "BusinessId")
+                        .IsUnique();
+
+                    b.ToTable("Favourites");
                 });
 
             modelBuilder.Entity("DealsHub.Models.Image", b =>
@@ -205,6 +232,7 @@ namespace DealsHub.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("DiscountPercentage")
@@ -212,6 +240,10 @@ namespace DealsHub.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -271,6 +303,9 @@ namespace DealsHub.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodId"));
+
+                    b.Property<double>("Fees")
+                        .HasColumnType("float");
 
                     b.Property<string>("Method")
                         .IsRequired()
@@ -380,6 +415,30 @@ namespace DealsHub.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Wishlist", b =>
+                {
+                    b.Property<int>("WishlistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WishlistId");
+
+                    b.HasIndex("OfferId");
+
+                    b.HasIndex("UserId", "OfferId")
+                        .IsUnique();
+
+                    b.ToTable("Wishlists");
+                });
+
             modelBuilder.Entity("Business", b =>
                 {
                     b.HasOne("DealsHub.Models.Category", "Category")
@@ -429,10 +488,29 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("DealsHub.Models.Cart", b =>
                 {
                     b.HasOne("DealsHub.Models.User", "User")
-                        .WithOne("Cart")
-                        .HasForeignKey("DealsHub.Models.Cart", "UserId")
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DealsHub.Models.Favourite", b =>
+                {
+                    b.HasOne("Business", "Business")
+                        .WithMany("Favourites")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DealsHub.Models.User", "User")
+                        .WithMany("Favourites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
 
                     b.Navigation("User");
                 });
@@ -527,8 +605,29 @@ namespace DealsHub.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Wishlist", b =>
+                {
+                    b.HasOne("DealsHub.Models.Offer", "Offer")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DealsHub.Models.User", "User")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Business", b =>
                 {
+                    b.Navigation("Favourites");
+
                     b.Navigation("Images");
 
                     b.Navigation("Offers");
@@ -549,6 +648,8 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("DealsHub.Models.Offer", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("DealsHub.Models.PaymentMethod", b =>
@@ -562,7 +663,9 @@ namespace DealsHub.Migrations
 
                     b.Navigation("Businesses");
 
-                    b.Navigation("Cart");
+                    b.Navigation("Carts");
+
+                    b.Navigation("Favourites");
 
                     b.Navigation("Notifications");
 
@@ -571,6 +674,8 @@ namespace DealsHub.Migrations
                     b.Navigation("Phones");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Wishlists");
                 });
 #pragma warning restore 612, 618
         }

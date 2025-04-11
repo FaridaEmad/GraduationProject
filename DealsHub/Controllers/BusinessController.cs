@@ -43,6 +43,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -79,6 +80,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -92,7 +94,7 @@ namespace DealsHub.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewBusiness")]
         public async Task<ActionResult> addBusiness(BusinessDto newBusiness)
         {
@@ -103,7 +105,7 @@ namespace DealsHub.Controllers
                 UserId = newBusiness.UserId,
                 City = newBusiness.City,
                 Area = newBusiness.Area,
-
+                Logo = newBusiness.Logo
             };
 
             await _businessRepository.AddAsync(business);
@@ -137,6 +139,7 @@ namespace DealsHub.Controllers
             business.CategoryId = newBusiness.CategoryId;
             business.UserId = newBusiness.UserId;
             business.Name = newBusiness.Name;
+            business.Logo = newBusiness.Logo;
 
             await _businessRepository.UpdateAsync(business);
             await _businessRepository.Save();
@@ -180,6 +183,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -215,6 +219,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -250,6 +255,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -285,6 +291,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId)
@@ -320,6 +327,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
             .Where(r => r.BusinessId == b.BusinessId) 

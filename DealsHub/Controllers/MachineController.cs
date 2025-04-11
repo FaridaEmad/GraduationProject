@@ -55,6 +55,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
                     .Where(r => r.BusinessId == b.BusinessId)
@@ -95,6 +96,7 @@ namespace DealsHub.Controllers
                 CategoryId = b.CategoryId,
                 City = b.City,
                 Area = b.Area,
+                Logo = b.Logo,
                 ImageUrls = b.Images.Select(img => img.URL).ToList(),
                 averageRates = allReviews
                     .Where(r => r.BusinessId == b.BusinessId)

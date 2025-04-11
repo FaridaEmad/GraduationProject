@@ -41,6 +41,10 @@ namespace DealsHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Logo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -139,6 +143,30 @@ namespace DealsHub.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Favourite", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteId"));
+
+                    b.Property<int>("BusinessId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavouriteId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.HasIndex("UserId", "BusinessId")
+                        .IsUnique();
+
+                    b.ToTable("Favourites");
+                });
+
             modelBuilder.Entity("DealsHub.Models.Image", b =>
                 {
                     b.Property<int>("ImageURLId")
@@ -201,6 +229,7 @@ namespace DealsHub.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("DiscountPercentage")
@@ -208,6 +237,10 @@ namespace DealsHub.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -379,6 +412,30 @@ namespace DealsHub.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Wishlist", b =>
+                {
+                    b.Property<int>("WishlistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WishlistId"));
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WishlistId");
+
+                    b.HasIndex("OfferId");
+
+                    b.HasIndex("UserId", "OfferId")
+                        .IsUnique();
+
+                    b.ToTable("Wishlists");
+                });
+
             modelBuilder.Entity("Business", b =>
                 {
                     b.HasOne("DealsHub.Models.Category", "Category")
@@ -432,6 +489,25 @@ namespace DealsHub.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DealsHub.Models.Favourite", b =>
+                {
+                    b.HasOne("Business", "Business")
+                        .WithMany("Favourites")
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DealsHub.Models.User", "User")
+                        .WithMany("Favourites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Business");
 
                     b.Navigation("User");
                 });
@@ -526,8 +602,29 @@ namespace DealsHub.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DealsHub.Models.Wishlist", b =>
+                {
+                    b.HasOne("DealsHub.Models.Offer", "Offer")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("OfferId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DealsHub.Models.User", "User")
+                        .WithMany("Wishlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Business", b =>
                 {
+                    b.Navigation("Favourites");
+
                     b.Navigation("Images");
 
                     b.Navigation("Offers");
@@ -548,6 +645,8 @@ namespace DealsHub.Migrations
             modelBuilder.Entity("DealsHub.Models.Offer", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("Wishlists");
                 });
 
             modelBuilder.Entity("DealsHub.Models.PaymentMethod", b =>
@@ -563,6 +662,8 @@ namespace DealsHub.Migrations
 
                     b.Navigation("Carts");
 
+                    b.Navigation("Favourites");
+
                     b.Navigation("Notifications");
 
                     b.Navigation("Payments");
@@ -570,6 +671,8 @@ namespace DealsHub.Migrations
                     b.Navigation("Phones");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("Wishlists");
                 });
 #pragma warning restore 612, 618
         }
