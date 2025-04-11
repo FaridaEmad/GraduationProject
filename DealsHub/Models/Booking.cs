@@ -8,9 +8,6 @@ namespace DealsHub.Models
         [Key]
         public int BookingId { get; set; }
 
-        [Required]
-        public string Status { get; set; }
-
         public DateTime BookingDate { get; set; } = DateTime.UtcNow;
 
         [Required]

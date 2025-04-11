@@ -45,7 +45,7 @@ namespace DealsHub.Controllers
             return Ok(offer);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("addNewOffer")]
         public async Task<ActionResult> addOffer(OfferDto newOffer)
         {

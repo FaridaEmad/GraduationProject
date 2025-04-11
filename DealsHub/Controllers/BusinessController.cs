@@ -94,7 +94,7 @@ namespace DealsHub.Controllers
             return Ok(result);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("addNewBusiness")]
         public async Task<ActionResult> addBusiness(BusinessDto newBusiness)
         {

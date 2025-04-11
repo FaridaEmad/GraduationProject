@@ -22,7 +22,7 @@ namespace DealsHub.Controllers
             _businessRepository = businessRepository;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("getAllFavourites")]
         public async Task<IActionResult> GetAllFavourites()
         {

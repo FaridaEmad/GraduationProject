@@ -29,7 +29,7 @@ namespace DealsHub.Controllers
             _notificatoinRepository = notificatoinRepository;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllBookingss")]
         public async Task<IActionResult> GetAllBookings()
         {
@@ -70,7 +70,7 @@ namespace DealsHub.Controllers
         private async Task updateCart(int cartId)
         { 
             var confirmedBookings = await _bookingRepository.GetAllAsyncInclude(
-                b => b.CartId == cartId && b.Status == "Confirmed",
+                b => b.CartId == cartId,
                 b => b.Offer
             );
 
@@ -85,75 +85,6 @@ namespace DealsHub.Controllers
             await _cartRepository.Save();
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPut("confirm/{id}")]
-        public async Task<ActionResult> confirmBooking(int id)
-        {
-            var booking = await _bookingRepository.GetByIdAsync(id);
-            if (booking == null)
-            {
-                return NotFound("Booking not found.");
-            }
-
-            if (booking.Status == "Confirmed")
-            {
-                return BadRequest("Booking is already confirmed.");
-            }
-
-            booking.Status = "Confirmed";
-            await _bookingRepository.UpdateAsync(booking);
-            await _bookingRepository.Save();
-
-            await updateCart(booking.CartId);
-
-            var notification = new Notification
-            {
-                UserId = booking.UserId,
-                IsRead = false,
-                Message = "Your Booking Has Been Confirmd"
-            };
-
-            await _notificatoinRepository.AddAsync(notification);
-            await _notificatoinRepository.Save();
-
-            return Ok("booking confrimed successfully");
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPut("cancel/{id}")]
-        public async Task<ActionResult> cancelBooking(int id)
-        {
-            var booking = await _bookingRepository.GetByIdAsync(id);
-            if (booking == null)
-            {
-                return NotFound("Booking Method not found.");
-            }
-
-            if (booking.Status == "Canceled")
-            {
-                return BadRequest("Booking is already canceled.");
-            }
-
-            booking.Status = "Canceled";
-
-            await _bookingRepository.UpdateAsync(booking);
-            await _bookingRepository.Save();
-
-            await updateCart(booking.CartId);
-
-            var notification = new Notification
-            {
-                UserId = booking.UserId,
-                IsRead = false,
-                Message = "Your Booking Has Been Canceled"
-            };
-
-            await _notificatoinRepository.AddAsync(notification);
-            await _notificatoinRepository.Save();
-
-            return Ok("Booking canceled successfully.");
-        }
-
         [HttpPost("addNewBooking")]
         public async Task<ActionResult> addBooking(BookingDto newBooking)
         {
@@ -166,12 +97,13 @@ namespace DealsHub.Controllers
                 UserId = newBooking.UserId,
                 OfferId = newBooking.OfferId,
                 Quantity = newBooking.Quantity,
-                Status = "Pending",
                 CartId = cart.CartId
             };
 
             await _bookingRepository.AddAsync(booking);
             await _bookingRepository.Save();
+
+            await updateCart(cart.CartId);
 
             return Ok("Booking added successfully");
 
@@ -192,48 +124,6 @@ namespace DealsHub.Controllers
             await updateCart(booking.CartId);
 
             return Ok("deleted successfuly");
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("getAllPending")]
-        public async Task<IActionResult> GetPending()
-        {
-            var bookings = await _bookingRepository.GetAllAsyncInclude(
-                b => b.Status == "Pending"
-                );
-
-            if (bookings == null || !bookings.Any())
-                return NotFound("No bookings found.");
-
-            return Ok(bookings);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("getAllConfirmed")]
-        public async Task<IActionResult> GetConfirmed()
-        {
-            var bookings = await _bookingRepository.GetAllAsyncInclude(
-                b => b.Status == "Confirmed"
-                );
-
-            if (bookings == null || !bookings.Any())
-                return NotFound("No bookings found.");
-
-            return Ok(bookings);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("getAllCanceled")]
-        public async Task<IActionResult> GetCanceled()
-        {
-            var bookings = await _bookingRepository.GetAllAsyncInclude(
-                b => b.Status == "Canceled"
-                );
-
-            if (bookings == null || !bookings.Any())
-                return NotFound("No bookings found.");
-
-            return Ok(bookings);
         }
 
         [HttpGet("getByCart{cartID}")]

@@ -23,7 +23,7 @@ namespace DealsHub.Controllers
             _offerRepository = offerRepository;
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("getAllWishlists")]
         public async Task<IActionResult> GetAllWishlists()
         {

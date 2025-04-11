@@ -36,7 +36,7 @@ namespace DealsHub.Controllers
             return Ok(category);
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("addNewCategory")]
         public async Task<ActionResult> addCategory(CategoryDto newCategory)
         {
