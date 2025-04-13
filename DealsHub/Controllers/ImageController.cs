@@ -37,7 +37,7 @@ namespace DealsHub.Controllers
             return Ok(image);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateImage(int id, string newImage)
         {
@@ -55,7 +55,7 @@ namespace DealsHub.Controllers
             return Ok("Image Url updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewImage")]
         public async Task<ActionResult> addImage(ImageDto newImage)
         {
@@ -72,7 +72,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImage(int id)
         {

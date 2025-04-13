@@ -94,7 +94,7 @@ namespace DealsHub.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewBusiness")]
         public async Task<ActionResult> addBusiness(BusinessDto newBusiness)
         {
@@ -124,7 +124,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateBusiness(int id, BusinessUpdateDto newBusiness)
         {
@@ -147,7 +147,7 @@ namespace DealsHub.Controllers
             return Ok("Business updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBusiness(int id)
         {

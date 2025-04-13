@@ -31,6 +31,5 @@ public class Business
     public ICollection<Image> Images { get; set; } = new List<Image>();
     public ICollection<Offer> Offers { get; set; } = new List<Offer>();
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
-    public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
 
 }

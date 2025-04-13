@@ -20,7 +20,7 @@ namespace DealsHub.Controllers
             _phoneRepository = phoneRepository;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllPhones")]
         public async Task<IActionResult> GetAllPhones()
         {

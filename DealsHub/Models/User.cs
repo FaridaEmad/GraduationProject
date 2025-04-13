@@ -31,7 +31,6 @@ namespace DealsHub.Models
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Cart> Carts { get; set; }
-        public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
         public ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
     }
 }

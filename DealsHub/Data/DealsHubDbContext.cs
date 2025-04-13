@@ -19,7 +19,6 @@ namespace GraduationProject.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
-        public DbSet<Favourite> Favourites { get; set; }
         public DbSet<Wishlist> Wishlists { get; set; }
 
 
@@ -132,22 +131,6 @@ namespace GraduationProject.Data
             modelBuilder.Entity<Payment>()
                 .Property(p => p.TotalPrice)
                 .HasColumnType("decimal(18,2)"); // تحديد الحجم والدقة
-
-            modelBuilder.Entity<Favourite>()
-                .HasIndex(f => new { f.UserId, f.BusinessId })
-                .IsUnique();
-
-            modelBuilder.Entity<Favourite>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.Favourites)
-                .HasForeignKey(f => f.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Favourite>()
-                .HasOne(f => f.Business)
-                .WithMany(b => b.Favourites)
-                .HasForeignKey(f => f.BusinessId)
-                .OnDelete(DeleteBehavior.Restrict); 
 
             modelBuilder.Entity<Wishlist>()
                 .HasIndex(w => new { w.UserId, w.OfferId })

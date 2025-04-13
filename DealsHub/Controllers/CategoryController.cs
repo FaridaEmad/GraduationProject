@@ -36,7 +36,7 @@ namespace DealsHub.Controllers
             return Ok(category);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewCategory")]
         public async Task<ActionResult> addCategory(CategoryDto newCategory)
         {
@@ -52,7 +52,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCategory(int id, string newName)
         {
@@ -70,7 +70,7 @@ namespace DealsHub.Controllers
             return Ok("Name updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

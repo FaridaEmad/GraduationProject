@@ -25,7 +25,7 @@ namespace DealsHub.Controllers
             _cartRepository = cartRepository;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllPayments")]
         public async Task<IActionResult> GetAllPayments()
         {
@@ -89,7 +89,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("ConfirmPayment/{id}")]
         public async Task<ActionResult> ConfirmPayment(int id)
         {
@@ -112,7 +112,7 @@ namespace DealsHub.Controllers
             return Ok("Payment confirmed successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("FailPayment/{id}")]
         public async Task<ActionResult> FailPayment(int id)
         {
@@ -162,7 +162,7 @@ namespace DealsHub.Controllers
             return Ok(payments);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getPaymentByMethod{id}")]
         public async Task<IActionResult> GetByMethod(int id)
         {
@@ -176,7 +176,7 @@ namespace DealsHub.Controllers
             return Ok(payments);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllPaymentsConfirmed")]
         public async Task<IActionResult> GetAllConfirmed()
         {
@@ -203,7 +203,7 @@ namespace DealsHub.Controllers
             return Ok(payments);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllPaymentsPending")]
         public async Task<IActionResult> GetAllPending()
         {
@@ -230,7 +230,7 @@ namespace DealsHub.Controllers
             return Ok(payments);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllPaymentsFailed")]
         public async Task<IActionResult> GetAllFailed()
         {

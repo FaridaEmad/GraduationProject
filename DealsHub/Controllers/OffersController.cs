@@ -13,18 +13,15 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Offer> _offerRepository;
         private readonly IDataRepository<Notification> _notificationRepository;
         private readonly IDataRepository<Review> _reviewRepository;
-        private readonly IDataRepository<Favourite> _favouriteRepository;
 
 
         public OffersController(IDataRepository<Offer> offerRepository,
             IDataRepository<Notification> notificationRepository,
-            IDataRepository<Review> reviewRepository,
-            IDataRepository<Favourite> favouriteRepository)
+            IDataRepository<Review> reviewRepository)
         {
             _offerRepository = offerRepository;
             _notificationRepository = notificationRepository;
             _reviewRepository = reviewRepository;
-            _favouriteRepository = favouriteRepository;
         }
 
         [HttpGet("getAllOffers")]
@@ -45,7 +42,7 @@ namespace DealsHub.Controllers
             return Ok(offer);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewOffer")]
         public async Task<ActionResult> addOffer(OfferDto newOffer)
         {
@@ -86,34 +83,13 @@ namespace DealsHub.Controllers
                 }
             }
 
-            var favourites = await _favouriteRepository.GetAllAsyncInclude(
-               f => f.BusinessId == offer.BusinessId
-               );
-
-            foreach (var favourite in favourites)
-            {
-                if (favourite.UserId != 0 && !notifiedUserIds.Contains(favourite.UserId))
-                {
-                    var notification = new Notification
-                    {
-                        Message = $"New Offer: {offer.Description}",
-                        IsRead = false,
-                        CreatedAt = DateTime.UtcNow,
-                        UserId = favourite.UserId
-                    };
-
-                    await _notificationRepository.AddAsync(notification);
-                    notifiedUserIds.Add(favourite.UserId);
-                }
-            }
-
             await _notificationRepository.Save();
 
             return Ok("Offer added successfully");
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateOffer(int id, OfferDto newOffer)
         {
@@ -137,7 +113,7 @@ namespace DealsHub.Controllers
             return Ok("Offer updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOffer(int id)
         {

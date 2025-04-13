@@ -37,7 +37,7 @@ namespace DealsHub.Controllers
             return Ok(method);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMethod(int id, PaymentMethodDto newMethod)
         {
@@ -56,7 +56,7 @@ namespace DealsHub.Controllers
             return Ok("Method updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewMethod")]
         public async Task<ActionResult> addMethod(PaymentMethodDto newMethod)
         {
@@ -73,7 +73,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMethod(int id)
         {

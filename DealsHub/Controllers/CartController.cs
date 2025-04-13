@@ -19,7 +19,7 @@ namespace DealsHub.Controllers
             _cartRepository = cartRepository;
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpGet("getAllCarts")]
         public async Task<IActionResult> GetAllCarts()
         {
@@ -38,14 +38,24 @@ namespace DealsHub.Controllers
             return Ok(cart);
         }
 
-        [HttpGet("getCartByUser{userId}")]
-        public async Task<IActionResult> GetByUser(int userId)
+        [HttpGet("getCartActiveByUser{userId}")]
+        public async Task<IActionResult> GetActiveByUser(int userId)
         {
             var cart = await _cartRepository.GetByIdAsyncInclude(
                 c => c.UserId == userId && c.IsActive == true
                 );
 
             return Ok(cart);
+        }
+
+        [HttpGet("getCartsByUser{userId}")]
+        public async Task<IActionResult> GetByUser(int userId)
+        {
+            var carts = await _cartRepository.GetAllAsyncInclude(
+                c => c.UserId == userId
+                );
+
+            return Ok(carts);
         }
 
     }

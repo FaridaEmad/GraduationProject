@@ -116,7 +116,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addAdmin")]
         public async Task<IActionResult> addAdmin(RegisterDto userForRegisterDto)
         {

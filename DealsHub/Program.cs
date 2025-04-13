@@ -53,7 +53,6 @@ builder.Services.AddScoped<IDataRepository<Image>, DataRepository<Image>>();
 builder.Services.AddScoped<IDataRepository<Notification>, DataRepository<Notification>>();
 builder.Services.AddScoped<IDataRepository<PaymentMethod>, DataRepository<PaymentMethod>>();
 builder.Services.AddScoped<IDataRepository<Payment>, DataRepository<Payment>>();
-builder.Services.AddScoped<IDataRepository<Favourite>, DataRepository<Favourite>>();
 builder.Services.AddScoped<IDataRepository<Wishlist>, DataRepository<Wishlist>>();
 builder.Services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 builder.Services.AddAuthentication(opt =>

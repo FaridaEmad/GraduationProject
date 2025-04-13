@@ -37,7 +37,7 @@ namespace DealsHub.Controllers
             return Ok(notification);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateNotification(int id, NotificationDto newNotification)
         {
@@ -56,7 +56,7 @@ namespace DealsHub.Controllers
             return Ok("Notification updated successfully.");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addNewNotification")]
         public async Task<ActionResult> addNotification(NotificationDto newNotification)
         {
@@ -73,7 +73,7 @@ namespace DealsHub.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNotification(int id)
         {
