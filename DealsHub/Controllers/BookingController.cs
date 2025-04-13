@@ -130,7 +130,8 @@ namespace DealsHub.Controllers
         public async Task<IActionResult> GetByCart(int cartID)
         {
             var bookings = await _bookingRepository.GetAllAsyncInclude(
-                b => b.CartId == cartID
+                b => b.CartId == cartID,
+                b => b.Offer
                 );
 
             if (bookings == null || !bookings.Any())
