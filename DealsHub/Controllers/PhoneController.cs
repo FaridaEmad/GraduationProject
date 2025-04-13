@@ -39,6 +39,19 @@ namespace DealsHub.Controllers
             return Ok(phone);
         }
 
+        [HttpGet("ByUser{id}")]
+        public async Task<IActionResult> GetPhoneByUser(int id)
+        {
+            var phone = await _phoneRepository.GetAllAsyncInclude(
+                p => p.UserId == id);
+            if (phone == null)
+            {
+                return NotFound("No phone numbers yet.");
+            }
+
+            return Ok(phone);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdatePhone(int id, string newPhone)
         {

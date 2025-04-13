@@ -37,6 +37,19 @@ namespace DealsHub.Controllers
             return Ok(notification);
         }
 
+        [HttpGet("ByUserNotRead{id}")]
+        public async Task<IActionResult> GetNotificationByUser(int id)
+        {
+            var notification = await _notificationRepository.GetAllAsyncInclude(
+                n => n.UserId == id && n.IsRead == false);
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(notification);
+        }
+
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateNotification(int id, NotificationDto newNotification)

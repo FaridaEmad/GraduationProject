@@ -60,7 +60,7 @@ namespace DealsHub.Controllers
                 UserId = newPayment.UserId,
                 CartId = newPayment.CartId,
                 PaymentMethodId = newPayment.PaymentMethodId,
-                TotalPrice = cart.TotalAmount + (cart.TotalAmount * (decimal)method.Fees),
+                TotalPrice = cart.TotalAmount + (cart.TotalAmount * ((decimal)method.Fees)/100),
                 Status = newPayment.PaymentMethodId == 1 ? "Pending" : "Confirmed"
             };
 
