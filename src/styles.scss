@@ -2,8 +2,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300&display=swap");
 
 
+
 :root {
-    --main-color: #000000;
+    --main-color: #d01111;
     --light-color: #f0f3f2;
     --shadow: rgba(145, 158, 171, 0.2) 0px 2px 4px -1px,
       rgba(145, 158, 171, 0.14) 0px 4px 5px 0px,
@@ -43,10 +44,63 @@
     transition: box-shadow 0.5s;
     overflow: hidden;
   }
+
+  .product-img {
+    width: 100%; /* يملأ الصورة العرض بالكامل */
+    height: 250px; /* تحديد ارتفاع ثابت */
+    object-fit: contain; /* تغطي الصورة الفريم دون تشويه */
+    border-radius: 12px; /* إضافة حواف مدورة لجعل الصورة تبدو أفضل */
+    
+  }
+  
   
   .product:hover {
-    box-shadow: 0 0 10px #11bd1168;
+    box-shadow: 0 0 10px #c62432;
   }
+  
+  
+  .ngx-pagination .current {
+    background: var(--main-color) !important;
+}
+// .box_of_cat {
+//   overflow: hidden;
+//   border-radius: 4px;
+//   background-color: #ffffff;
+//   box-shadow: 0 12px 31px 0 rgba(0, 0, 0, 0.1);
+//   max-width: 350px; 
+// }
+.top_widget {
+  position: relative;
+}
+.company-logo {
+  position: absolute;
+  top: -48%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  border: solid 2px #e2e2e2;
+  border-radius: 50px;
+  background-color: #fff;
+  overflow: hidden;
+  display: flex
+;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%);
+}
+h3.slid_title {
+    font-size: 16px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.31;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    padding-top: 41px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
   
   .font-sm {
     font-size: 12px;

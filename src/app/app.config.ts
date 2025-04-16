@@ -15,6 +15,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideAnimations(),
     provideToastr(), 
-    importProvidersFrom(NgxSpinnerModule) 
+    importProvidersFrom(NgxSpinnerModule) ,
   ]
 };

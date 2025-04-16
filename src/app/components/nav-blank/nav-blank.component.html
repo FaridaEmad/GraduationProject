@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <a class="navbar-brand" routerLink="/user/home">
             <i class="fa-solid fa-location-dot fa-lg" style="color: #d01111;"></i>
-                        Makank
+            Makank
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -22,20 +22,18 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active-link" routerLink="/user/booking">Booking</a>
+                    <a class="nav-link" routerLinkActive="active-link" routerLink="/user/booking">Offers</a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active-link" routerLink="/user/search">Category</a>
+                    <a class="nav-link" routerLinkActive="active-link" routerLink="/user/category">Category</a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/favorite">Wishlist</a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" routerLinkActive="active-link" routerLink="/user/payment">Payment</a>
-                </li>
+                
 
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/profile">Profile</a>
@@ -43,51 +41,18 @@
 
             </ul>
 
-            <ul class="navbar-nav ms-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-instagram"></i>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                <li class="nav-item position-relative">
+                    <a class="nav-link " routerLink="cart">
+                        <i class="fa-solid fa-cart-shopping fs-3"></i>
+                        <div class="badge position-absolute text-white top-0 end-0 bg-main">
+                            0
+                        </div>
                     </a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-facebook"></i>
-                    </a>
+                <li class="nav-item ">
+                    <a class="nav-link cursor-pointer" (click)="SignOut()">log out</a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-tiktok"></i>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-twitter"></i>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-linkedin"></i>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link">
-                        <i class="fa-brands fa-youtube"></i>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link cr" (click)="SignOut()">
-                        SignOut 
-                    </a>
-                </li>
-
-
             </ul>
         </div>
     </div>

@@ -25,18 +25,23 @@ import { RegisterComponent } from './components/register/register.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 import { logedGuard } from './core/guards/loged.guard';
+// import { DetailComponent } from './user/detail/detail.component';
+import { CategoriesComponent } from './user/categories/categories.component';
+import { OfferComponent } from './user/offer/offer.component';
 
 export const routes: Routes = [
   // Auth Layout Routes (for login and register)
-  {
-    path:'',component:AuthLayoutComponent,canActivate:[logedGuard] ,title:"Login",children:[
-      { path: '', redirectTo: '/login', pathMatch: 'full' },
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-      {path:"forget", loadComponent:()=>import('./components/forget/forget.component').then((c)=> c.ForgetComponent), title:'Forget Password'}
+  // {
+  //   path:'',component:AuthLayoutComponent,canActivate:[logedGuard] ,title:"Login",children:[
+  //     // { path: '', redirectTo: '/login', pathMatch: 'full' },
+  //     { path: '', redirectTo: '/user/home', pathMatch: 'full' },
+  //     { path: 'login', component: LoginComponent },
+  //     { path: 'register', component: RegisterComponent },
+  //     {path:"forget", loadComponent:()=>import('./components/forget/forget.component').then((c)=> c.ForgetComponent), title:'Forget Password'}
 
-    ]
-  },
+  //   ]
+  // },
+  
 
   // Blank Layout Routes (for User and Admin)
   {
@@ -46,7 +51,9 @@ export const routes: Routes = [
       { path: 'user/home', component: UserHome },
       { path: 'user/profile', component: UserProfile },
       { path: 'user/business', component: BusinessComponent },
-      { path: 'user/search', component: SearchByCategoryComponent },
+      { path: 'user/category', component: CategoriesComponent },
+      { path: 'user/offer/:id', component: OfferComponent },
+      // { path: 'user/search', component: SearchByCategoryComponent },
       { path: 'user/favorite', component: FavoriteComponent },
       { path: 'user/booking', component: BookingComponent },
       { path: 'user/payment', component: PaymentComponent },
@@ -60,13 +67,14 @@ export const routes: Routes = [
       { path: 'admin/offers-management', component: OffersManagementComponent },
       { path: 'admin/booking', component: AdminBooking },
       { path: 'admin/payment', component: AdminPayment },
+      { path: 'register/home', component: UserHome },
     ]
   },
 
           // Not Found Route (for unmatched paths)
-  { path: '**', component: NotfoundComponent } // Catch-all route for 404 page
+  // { path: '**', component: NotfoundComponent } // Catch-all route for 404 page
 
-
+  { path: '**', redirectTo: '/user/home' }
 ];
 
 @NgModule({

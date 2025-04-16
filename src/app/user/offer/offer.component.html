@@ -1,0 +1,21 @@
+<section>
+    <h2 class="text-white mb-4">All Offers</h2>
+    <div class="row g-4">
+      @for (offer of offersList; track offer.offerId) {
+        <div class="col-md-3 mb-4">
+          <div class="card offer-card p-3 text-center shadow ">
+            <div class="position-relative">
+              <img [src]="offer.image" class="w-100 rounded-top" [alt]="offer.description">
+              <span class="text-danger">{{ offer.discountPercentage }}% OFF</span>
+            </div>
+        
+            <h4 class="text-success fw-bold">${{ offer.price }}</h4>
+            <p class="text-muted">{{ offer.description }}</p>
+            <button class="btn btn-main" >add to cart</button>
+          </div>
+        </div>
+
+    
+      }
+    </div>
+  </section>
