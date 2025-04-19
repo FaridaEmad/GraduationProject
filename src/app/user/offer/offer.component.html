@@ -1,3 +1,109 @@
+@if (detailsProduct) {
+
+  <section>
+          
+              <div class="row justify-content-center align-items-center gx-5 my-3">
+                  <div class="col-md-4">
+                      
+                      
+                      <owl-carousel-o [options]="customOptions">
+      
+                          @for (cat of detailsProduct.imageUrls; track $index) {
+                              <ng-template carouselSlide >
+                                  <div>
+                                      <img [src]="cat" class="w-100  px-2 py-2"  [alt]="">
+                                      
+                                      
+                                  </div>
+                                </ng-template>
+                          }
+                      
+                        </owl-carousel-o>
+                      
+                       
+                  </div>
+                  <div class="col-md-8">
+                      <h4 class="h2 fw-bold">{{detailsProduct.name}}</h4>
+                      <p class="small text-black fw-semibold py-2">{{detailsProduct.name}}</p>
+                      <div class="d-flex justify-content-between align-items-cente py-2">
+                          <span>{{detailsProduct.noOfReviews}}</span>
+                         
+                      </div>
+                      
+                      
+                      <div class="d-flex justify-content-between align-items-center"> 
+                          <button class="btn-main w-75" >+Add</button>
+                          
+                          
+  
+                              <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
+                          
+                      </div>
+          
+                  </div>
+              </div>
+         
+      </section> 
+  
+  <!-- <section class="container my-5">
+      <div class="row justify-content-center align-items-center gx-5">
+          <div class="col-md-5">
+              
+              <owl-carousel-o [options]="customOptions">
+                  @for (cat of detailsProduct.imageUrls; track $index) {
+                  <ng-template carouselSlide>
+                      <img [src]="cat" class="w-100 px-2 py-2" [alt]="detailsProduct.title" />
+                  </ng-template>
+                  }
+              </owl-carousel-o>
+          </div>
+  
+          <div class="col-md-7">
+              <h2 class="fw-bold">{{ detailsProduct.title.split(" ", 2).join(" ") }}</h2>
+              <p class="text-muted py-2">{{ detailsProduct.description }}</p>
+              <div class="d-flex justify-content-between align-items-center py-2">
+                  <span class="h5 text-danger">{{ detailsProduct.price }} EGP</span>
+              </div>
+  
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                  <button class="btn btn-main w-75">+ Add</button>
+                  <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer text-danger"></i>
+              </div>
+          </div>
+      </div>
+  
+     
+      <ul class="nav nav-tabs mt-5">
+          <li class="nav-item">
+              <a class="nav-link active" data-bs-toggle="tab" href="#terms">Terms & Conditions</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#about">About Merchant</a>
+          </li>
+      </ul>
+  
+      <div class="tab-content mt-3">
+          <div class="tab-pane fade show active" id="terms">
+              <div class="bg-light p-3 rounded">
+                  <h5>Terms of Use</h5>
+                  <p>{{ detailsProduct.description }}</p>
+              </div>
+          </div>
+          <div class="tab-pane fade" id="about">
+              <div class="bg-light p-3 rounded">
+                  <h5>Merchant Info</h5>
+                  <p>This product is provided by one of our trusted merchants.</p>
+              </div>
+          </div>
+      </div>
+  </section>  -->
+  
+    
+  }
+
+
+
+
 <section>
     <h2 class="text-white mb-4">All Offers</h2>
     <div class="row g-4">

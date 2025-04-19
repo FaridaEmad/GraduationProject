@@ -1,0 +1,56 @@
+// اللون الأساسي للموقع
+$text-primary: #d01111;
+
+// نص باللون الأساسي
+.text-primary-custom {
+  color: $text-primary !important;
+}
+
+// زر مخصص باللون الأساسي
+.btn-custom {
+  background-color: $text-primary;
+  border-color: $text-primary;
+  color: #fff;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: darken($text-primary, 8%);
+    border-color: darken($text-primary, 8%);
+  }
+}
+
+// شارة بالحالة باللون الأساسي
+.badge-custom {
+  background-color: $text-primary;
+  color: #fff;
+  font-size: 0.9rem;
+  padding: 0.35em 0.65em;
+  border-radius: 0.5rem;
+}
+
+// تحسين مظهر البطاقات
+.card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+// إعادة ضبط ترويسة البطاقات
+.card-title {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+// جسم البطاقات
+.card-text {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+// فوتر البطاقة (زر) بدون حدود
+.card-footer {
+  background-color: transparent;
+  border: none;
+}
