@@ -16,6 +16,9 @@ export class OffersService  {
     return this._HttpClient.get(`https://localhost:7273/api/Offers/getOfferByBusiness/${id}`);
   }
   
-
+  getOfferById(id:number): Observable<any> {
+    return this._HttpClient.get(`https://localhost:7273/api/Offers/${id}`);
+  }
+  
   
 }

@@ -1,0 +1,88 @@
+<section class="container mt-4">
+    <!-- Section Title -->
+    <h2 class="mb-4 text-center text-primary-custom">User Bookings & Offers</h2>
+  
+    <!-- If there are bookings -->
+    <div *ngIf="bookings.length > 0; else noBookings" class="row g-4">
+      <div
+        *ngFor="let booking of bookings; let i = index"
+        class="col-sm-6 col-md-4"
+      >
+        <div class="card h-100">
+          <!-- Offer Image -->
+          <img
+            *ngIf="offers[i]?.image"
+            [src]="offers[i].image"
+            class="card-img-top"
+            alt="Offer Image"
+            style="object-fit: cover; height: 180px;"
+          />
+  
+          <div class="card-body d-flex flex-column">
+            <!-- Offer Description -->
+            <h5 class="card-title text-primary-custom">
+              {{ offers[i]?.description }}
+            </h5>
+  
+            <!-- Offer Price & Discount -->
+            <p class="card-text mb-1">
+              <strong>Price:</strong>
+              {{ offers[i]?.price | number:'1.2-2' }} EGP
+            </p>
+            <p class="card-text mb-3">
+              <strong>Discount:</strong>
+              {{ offers[i]?.discountPercentage }}%
+            </p>
+  
+            <hr />
+  
+            <!-- Booking Details -->
+            <p class="card-text mb-1">
+              <strong>Booking #:</strong> {{ booking.bookingId }}
+            </p>
+            <p class="card-text mb-1">
+              <strong>Date:</strong>
+              {{ booking.bookingDate | date:'mediumDate' }}
+            </p>
+            <p class="card-text mt-auto">
+              <strong>Quantity:</strong> {{ booking.quantity }}
+            </p>
+          </div>
+  
+         
+        </div>
+      </div>
+    </div>
+  
+    <!-- No bookings message -->
+    <ng-template #noBookings>
+      <p class="text-center">No bookings available.</p>
+    </ng-template>
+  
+    <!-- Cart Information -->
+    <div *ngIf="cart" class="mt-5">
+      <h3 class="text-primary-custom">Cart Information</h3>
+      <div class="card p-3">
+        <div class="row gy-2">
+          <div class="col-6"><strong>Cart ID:</strong></div>
+          <div class="col-6 text-end">{{ cart.cartId }}</div>
+  
+          <div class="col-6"><strong>Total Amount:</strong></div>
+          <div class="col-6 text-end">
+            {{ cart.totalAmount | number:'1.2-2' }} EGP
+          </div>
+  
+          <div class="col-6"><strong>Number of Items:</strong></div>
+          <div class="col-6 text-end">{{ cart.noOfItems }}</div>
+  
+          <div class="col-6"><strong>Status:</strong></div>
+          <div class="col-6 text-end">
+            <span class="badge badge-custom">
+              {{ cart.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
