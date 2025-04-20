@@ -12,9 +12,9 @@ export class NavBlankComponent {
 
   private readonly _AuthService = inject(AuthService)
 
-  SignOut() :void
-  {
-     this._AuthService.logOut()
+  SignOut(): void {
+    this._AuthService.logOut();  // استدعاء logOut من الـ AuthService
   }
+  
 
 }

@@ -1,67 +1,48 @@
-<section class="bg-main-light shadow rounded-4 my-5 mt-5 p-4 login-section">
+<section class="bg-light shadow rounded-4 my-5 p-4 login-section">
     <h1 class="text-center login-title">Login</h1>
-
+  
     <form [formGroup]="loginForm" (ngSubmit)="loginSubmit()" class="login-form">
-
-        <!-- ==================== Email ==================== -->
-        <div>
-            <label for="email">Email:</label>
-            <input [ngClass]="{
-            'is-valid': !loginForm.get('email')?.errors && loginForm.get('email')?.touched,
-            'is-invalid': loginForm.get('email')?.errors && loginForm.get('email')?.touched
-          }" formControlName="email" class="form-control" type="email" id="email" name="email"
-                placeholder="Enter Your Email...">
-
-            @if (loginForm.get('email')?.errors && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)) {
-            <div class="alert alert-danger my-2">
-                @if (loginForm.get('email')?.getError('required')) {
-                <p class="m-0">Email Is Required</p>
-                }
-                @else if (loginForm.get('email')?.getError('email')) {
-                <p class="m-0">Email Is Invalid</p>
-                }
-            </div>
-            }
+  
+      <!-- ==================== Email ==================== -->
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input [ngClass]="{
+          'is-valid': !loginForm.get('email')?.errors && loginForm.get('email')?.touched,
+          'is-invalid': loginForm.get('email')?.errors && loginForm.get('email')?.touched
+        }" formControlName="email" class="form-control" type="email" id="email" name="email" placeholder="Enter Your Email...">
+        <div *ngIf="loginForm.get('email')?.errors && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)" class="alert alert-danger my-2">
+          <p *ngIf="loginForm.get('email')?.hasError('required')">Email is required</p>
+          <p *ngIf="loginForm.get('email')?.hasError('email')">Invalid email address</p>
         </div>
-
-        <!-- ==================== Password ==================== -->
-        <div>
-            <label for="password">Password:</label>
-            <div class="position-relative">
-                <input #inputPassword [ngClass]="{
-              'is-valid': !loginForm.get('password')?.errors && loginForm.get('password')?.touched,
-              'is-invalid': loginForm.get('password')?.errors && loginForm.get('password')?.touched
-            }" formControlName="password" class="form-control" type="password" id="password" name="password"
-                    placeholder="Enter Your Password...">
-
-                <span class="show position-absolute">
-                    <i (click)="show()" #showIcone class="fa-solid fa-eye-slash"></i>
-                    <i (click)="hide()" #hideIcone class="fa-solid fa-eye d-none"></i>
-                </span>
-            </div>
-
-            @if (loginForm.get('password')?.errors && (loginForm.get('password')?.touched ||
-            loginForm.get('password')?.dirty)) {
-            <div class="alert alert-danger my-2">
-                @if (loginForm.get('password')?.getError('required')) {
-                <p class="m-0">Password Is Required</p>
-                }
-                @else if (loginForm.get('password')?.getError('pattern')) {
-                <p class="m-0">Password Must Be More Than 6 Char</p>
-                }
-            </div>
-            }
+      </div>
+  
+      <!-- ==================== Password ==================== -->
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <div class="position-relative">
+          <input #inputPassword [ngClass]="{
+            'is-valid': !loginForm.get('password')?.errors && loginForm.get('password')?.touched,
+            'is-invalid': loginForm.get('password')?.errors && loginForm.get('password')?.touched
+          }" formControlName="password" class="form-control" type="password" id="password" name="password" placeholder="Enter Your Password...">
+          <span class="show position-absolute">
+            <i (click)="show()" #showIcone class="fa-solid fa-eye-slash"></i>
+            <i (click)="hide()" #hideIcone class="fa-solid fa-eye d-none"></i>
+          </span>
         </div>
-
-        <!-- ==================== Actions ==================== -->
-        <div class="d-flex align-items-center justify-content-end gap-3 mt-2">
-            <a routerLink="/forget" class="link-primary text-decoration-none">Forget Password</a>
-            <button class="btn btn-main" type="submit" [disabled]="isLoading || loginForm.invalid">
-                @if (isLoading) {
-                <span><i class="fas fa-spin fa-spinner"></i></span>
-                }
-                Login
-            </button>
+        <div *ngIf="loginForm.get('password')?.errors && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)" class="alert alert-danger my-2">
+          <p *ngIf="loginForm.get('password')?.hasError('required')">Password is required</p>
+          <p *ngIf="loginForm.get('password')?.hasError('pattern')">Password must be at least 6 characters, including a lowercase, uppercase, number, and symbol</p>
         </div>
+      </div>
+  
+      <!-- ==================== Actions ==================== -->
+      <div class="d-flex align-items-center justify-content-end gap-3 mt-2">
+        <a routerLink="/forget" class="link-primary text-decoration-none">Forgot Password?</a>
+        <button class="btn btn-main" type="submit" [disabled]="isLoading || loginForm.invalid">
+          <span *ngIf="isLoading"><i class="fas fa-spin fa-spinner"></i></span>
+          Login
+        </button>
+      </div>
     </form>
-</section>
+  </section>
+  

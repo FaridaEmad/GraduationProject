@@ -1,154 +1,137 @@
-<section class="bg-main-light shadow rounded-4 my-5 mt-5 p-4 register-section">
-    <h1 class=" text-center register-title">Register Now</h1>
+<section class="bg-light shadow rounded-4 my-5 p-4 register-section">
+    <h1 class="text-center text-danger register-title">Register Now</h1>
 
-    @if(serverErrorMessage) {
-        <div class="alert alert-danger text-center my-2">
-          {{ serverErrorMessage }}
-        </div>
-      }
+    <div *ngIf="serverErrorMessage" class="alert alert-danger text-center my-2">
+        {{ serverErrorMessage }}
+    </div>
 
     <form [formGroup]="registerForm" (ngSubmit)="registerSubmit()" class="register-form">
 
+        <!--################################# Profile Photo Input ##############################################-->
+        <div class="mb-4 text-center">
+            <label for="profilePhoto" class="form-label">Profile Photo</label>
+            <input formControlName="profilePhoto" type="file" id="profilePhoto" class="form-control mx-auto d-block" />
+        </div>
+
         <!--################################# Name Input ##############################################-->
-        <div>
-            <label for="name">Name</label>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
             <input [ngClass]="{
               'is-valid' : !registerForm.get('name')?.errors && registerForm.get('name')?.touched,
               'is-invalid' : registerForm.get('name')?.errors && registerForm.get('name')?.touched
             }" formControlName="name" type="text" id="name" class="form-control" placeholder="Sarah Zeid">
 
-            @if(registerForm.get('name')?.errors && (registerForm.get('name')?.touched ||
-            registerForm.get('name')?.dirty))
-            {
-            <div class="alert alert-danger my-2">
-                @if(registerForm.get('name')?.getError('required')){
-                <p class="m-0">Name Is Required</p>
-                } @else if(registerForm.get('name')?.getError('minlength')){
-                <p class="m-0">Name MinLenght is 3 Char</p>
-                }
-                @else if(registerForm.get('name')?.getError('maxlength')){
-                <p class="m-0">Name MaxLenght is 20 Char</p>
-                }
+            <div *ngIf="registerForm.get('name')?.errors && (registerForm.get('name')?.touched || registerForm.get('name')?.dirty)" class="alert alert-danger my-2">
+                <div *ngIf="registerForm.get('name')?.getError('required')">
+                    <p class="m-0">Name Is Required</p>
+                </div>
+                <div *ngIf="registerForm.get('name')?.getError('minlength')">
+                    <p class="m-0">Name Min Length is 3 Char</p>
+                </div>
+                <div *ngIf="registerForm.get('name')?.getError('maxlength')">
+                    <p class="m-0">Name Max Length is 20 Char</p>
+                </div>
             </div>
-            }
         </div>
 
         <!--################################# Email Input ##############################################-->
-        <div>
-            <label for="email">Email</label>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
             <input [ngClass]="{
-          'is-valid': !registerForm.get('email')?.errors && registerForm.get('email')?.touched,
-          'is-invalid': registerForm.get('email')?.errors && registerForm.get('email')?.touched,
-        }" formControlName="email" type="email" id="email" class="form-control"
-                placeholder="saraabdelmoniaam@gmail.com">
+              'is-valid': !registerForm.get('email')?.errors && registerForm.get('email')?.touched,
+              'is-invalid': registerForm.get('email')?.errors && registerForm.get('email')?.touched,
+            }" formControlName="email" type="email" id="email" class="form-control" placeholder="saraabdelmoniaam@gmail.com">
 
-            @if(registerForm.get('email')?.errors && (registerForm.get('email')?.touched ||
-            registerForm.get('email')?.dirty))
-            {
-            <div class="alert alert-danger my-2">
-                @if(registerForm.get('email')?.getError('required')){
-                <p class="m-0">Email Is Required</p>
-                } @else if(registerForm.get('email')?.getError('email')){
-                <p class="m-0">Please Enter Valid Email: Ex., Sarah&#64;gmail.com</p>
-                }
+            <div *ngIf="registerForm.get('email')?.errors && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)" class="alert alert-danger my-2">
+                <div *ngIf="registerForm.get('email')?.getError('required')">
+                    <p class="m-0">Email Is Required</p>
+                </div>
+                <div *ngIf="registerForm.get('email')?.getError('email')">
+                    <p class="m-0">Please Enter Valid Email: Ex., Sarah&#64;gmail.com</p>
+                </div>
             </div>
-            }
         </div>
 
-
         <!--################################# Password Input ##############################################-->
-        <div>
-            <label for="password">Password</label>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
             <div class="position-relative">
                 <input [ngClass]="{
-                'is-valid': !registerForm.get('password')?.errors && registerForm.get('password')?.touched,
-                'is-invalid': registerForm.get('password')?.errors && registerForm.get('password')?.touched,
-              }" #inputPassword formControlName="password" type="password" id="password" class="form-control"
-                    placeholder="••••••••••">
-                <span class="show position-absolute cr">
+                  'is-valid': !registerForm.get('password')?.errors && registerForm.get('password')?.touched,
+                  'is-invalid': registerForm.get('password')?.errors && registerForm.get('password')?.touched,
+                }" #inputPassword formControlName="password" type="password" id="password" class="form-control" placeholder="••••••••••">
+                <span class="show position-absolute" style="top: 20%; right: 10px;">
                     <i (click)="showPassword()" #showPasswordIcone class="fa-solid fa-eye-slash"></i>
                     <i (click)="hidePassword()" #hidePasswordIcone class="fa-solid fa-eye d-none"></i>
                 </span>
             </div>
 
-            @if(registerForm.get('password')?.errors && (registerForm.get('password')?.touched ||
-            registerForm.get('password')?.dirty))
-            {
-            <div class="alert alert-danger my-2">
-                @if(registerForm.get('password')?.getError('required')){
-                <p class="m-0">Password Is Required</p>
-                } @else if(registerForm.get('password')?.getError('pattern')){
-                <p class="m-0">Please Enter Strong Valid Password : <br>
-                    Password Must Be At least 6 Characters Long And At Least Contains (one uppercase letter , one
-                    lowercase letter , one digit and one special character(!&#64;#$%^&*) ).</p>
-                }
+            <div *ngIf="registerForm.get('password')?.errors && (registerForm.get('password')?.touched || registerForm.get('password')?.dirty)" class="alert alert-danger my-2">
+                <div *ngIf="registerForm.get('password')?.getError('required')">
+                    <p class="m-0">Password Is Required</p>
+                </div>
+                <div *ngIf="registerForm.get('password')?.getError('pattern')">
+                    <p class="m-0">Please Enter Strong Valid Password</p>
+                </div>
             </div>
-            }
         </div>
 
-        <!--################################# rePassword Input ##############################################-->
-        <div>
-            <label for="rePassword">rePassword</label>
+        <!--################################# RePassword Input ##############################################-->
+        <div class="mb-3">
+            <label for="rePassword" class="form-label">Confirm Password</label>
             <div class="position-relative">
                 <input [ngClass]="{
-                'is-valid': !registerForm.getError('mismatch') && registerForm.get('rePassword')?.touched,
-                'is-invalid': registerForm.getError('mismatch') && registerForm.get('rePassword')?.touched,
-              }" #inputRepassword formControlName="rePassword" type="password" id="rePassword" class="form-control"
-                    placeholder="••••••••••">
-                <span class="show position-absolute cr">
+                  'is-valid': !registerForm.getError('mismatch') && registerForm.get('rePassword')?.touched,
+                  'is-invalid': registerForm.getError('mismatch') && registerForm.get('rePassword')?.touched,
+                }" #inputRepassword formControlName="rePassword" type="password" id="rePassword" class="form-control" placeholder="••••••••••">
+                <span class="show position-absolute" style="top: 20%; right: 10px;">
                     <i (click)="showRepassword()" #showRepasswordIcone class="fa-solid fa-eye-slash"></i>
                     <i (click)="hideRepassword()" #hideRepasswordIcone class="fa-solid fa-eye d-none"></i>
                 </span>
             </div>
 
-            @if(registerForm.getError('mismatch') && (registerForm.get('rePassword')?.touched ||
-            registerForm.get('rePassword')?.dirty))
-            {
-            <div class="alert alert-danger my-2">
+            <div *ngIf="registerForm.getError('mismatch') && (registerForm.get('rePassword')?.touched || registerForm.get('rePassword')?.dirty)" class="alert alert-danger my-2">
                 <p class="m-0">The Confirm Password Is Invalid</p>
             </div>
-            }
-
         </div>
-
-
 
         <!--################################# Phone Input ##############################################-->
-
-        <div>
-
-            <label for="phone">Phone</label>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
             <input [ngClass]="{
-              'is-valid' : !registerForm.get('phone')?.errors && registerForm.get('phone')?.touched,
-              'is-invalid' : registerForm.get('phone')?.errors && registerForm.get('phone')?.touched
+              'is-valid': !registerForm.get('phone')?.errors && registerForm.get('phone')?.touched,
+              'is-invalid': registerForm.get('phone')?.errors && registerForm.get('phone')?.touched
             }" formControlName="phone" type="tel" id="phone" class="form-control" placeholder="01157696688">
 
-            @if(registerForm.get('phone')?.errors && (registerForm.get('phone')?.touched ||
-            registerForm.get('phone')?.dirty))
-            {
-            <div class="alert alert-danger my-2">
-                @if(registerForm.get('phone')?.getError('required')){
-                <p class="m-0">phone Is Required</p>
-                } @else if(registerForm.get('phone')?.getError('pattern')){
-                <p class="m-0">Please Enter Valid Phone</p>
-                }
+            <div *ngIf="registerForm.get('phone')?.errors && (registerForm.get('phone')?.touched || registerForm.get('phone')?.dirty)" class="alert alert-danger my-2">
+                <div *ngIf="registerForm.get('phone')?.getError('required')">
+                    <p class="m-0">Phone Is Required</p>
+                </div>
+                <div *ngIf="registerForm.get('phone')?.getError('pattern')">
+                    <p class="m-0">Please Enter Valid Phone</p>
+                </div>
             </div>
-            }
         </div>
 
-
+        <!--################################# Gender Input ##############################################-->
+        <div class="mb-3">
+            <label for="gender" class="form-label">Gender</label>
+            <select formControlName="gender" id="gender" class="form-select">
+                <option value="" disabled selected>Select Your Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
 
         <!--################################# Button Submit ##############################################-->
-        <button [disabled]="isLoading || registerForm.invalid" class="btn btn-main d-block ms-auto mt-3" type="submit">
-            @if(isLoading){
-            Register <span><i class="fas fa-spin fa-spinner"></i></span>
-            }
-            @else {
-            <span class="register-icon">🚀</span> Register
-            }
+        <button [disabled]="isLoading || registerForm.invalid" class="btn btn-danger d-block ms-auto mt-3" type="submit">
+            <span *ngIf="isLoading">
+                Register <span><i class="fas fa-spin fa-spinner"></i></span>
+            </span>
+            <span *ngIf="!isLoading">
+                <span class="register-icon">🚀</span> Register
+            </span>
         </button>
-
-
-
+        
     </form>
 </section>

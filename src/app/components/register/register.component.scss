@@ -1,114 +1,70 @@
 .register-section {
-    background-color: #f9f9f9;
+    background-color: #f8f9fa;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-}
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
-.register-title {
-    color: #d01111;
-    font-family: 'Kaushan Script', cursive;
-    font-size: 2rem;
-    margin-bottom: 30px;
-    text-align: center;
-    animation: bounce 1s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
+    .register-title {
+        font-size: 32px;
+        color: #d9534f;
+        font-weight: bold;
     }
-    50% {
-        transform: translateY(-10px);
-    }
-}
 
-.input-group {
-    margin-bottom: 20px;
-}
+    .register-form {
+        max-width: 600px;
+        margin: 0 auto;
 
-.input-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-}
+        .form-label {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
 
-.input-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: border 0.3s ease-in-out;
-}
+        .form-control {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+        }
 
-.input-group input:focus {
-    border: 2px solid #d01111;
-    outline: none;
-}
+        .form-select {
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+        }
 
-.error-message {
-    color: #d01111;
-    font-size: 0.875rem;
-    margin-top: 5px;
-}
+        .alert {
+            font-size: 14px;
+            margin-top: 5px;
+        }
 
-.error-message div {
-    padding: 5px;
-    background-color: #ffe0e0;
-    border-radius: 5px;
-}
+        .mb-3 {
+            margin-bottom: 15px;
+        }
 
-.btn-main {
-    background-color: #d01111;
-    color: white;
-    font-weight: bold;
-    padding: 1px 6px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .mb-4 {
+            margin-bottom: 25px;
+        }
 
-.btn-main:hover {
-    background-color: #000000;
-}
+        .btn {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            width: 100%;
+        }
 
-.register-icon {
-    font-size: 1.5rem;
-    animation: spin 1s infinite;
-}
+        .show {
+            cursor: pointer;
+        }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
+        .register-icon {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .mx-auto {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 }
-
-.register-form {
-    display: flex;
-    flex-direction: column;
-}
-
-@media (max-width: 768px) {
-    .register-section {
-        padding: 20px;
-    }
-}
-
-.show{
-    top: 20%;
-    right: 5px;
-  }
-  

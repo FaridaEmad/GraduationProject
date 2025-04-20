@@ -1,90 +1,89 @@
 .login-section {
-    background-color: #f9f9f9;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 0 auto;
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.login-title {
+  color: #d01111;
+  font-family: 'Kaushan Script', cursive;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
   }
-  
-  .login-title {
-    color: #d01111;
-    font-family: 'Kaushan Script', cursive;
-    font-size: 2rem;
-    margin-bottom: 30px;
-    text-align: center;
-    animation: bounce 1s infinite;
+  50% {
+    transform: translateY(-10px);
   }
-  
-  @keyframes bounce {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+}
+
+.form-control {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border 0.3s ease-in-out;
+}
+
+.form-control:focus {
+  border: 2px solid #d01111;
+  outline: none;
+}
+
+.btn-main {
+  background-color: #d01111;
+  color: white;
+  font-weight: bold;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-main:hover {
+  background-color: #000000;
+}
+
+.alert-danger {
+  font-size: 0.9rem;
+  padding: 8px;
+  background-color: #ffe0e0;
+  border-radius: 5px;
+  color: #d01111;
+}
+
+.show {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .login-section {
+    padding: 20px;
   }
-  
-  .form-control {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-    transition: border 0.3s ease-in-out;
-  }
-  
-  .form-control:focus {
-    border: 2px solid #d01111;
-    outline: none;
-  }
-  
-  .btn-main {
-    background-color: #d01111;
-    color: white;
-    font-weight: bold;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .btn-main:hover {
-    background-color: #000000;
-  }
-  
-  .alert-danger {
-    font-size: 0.9rem;
-    padding: 8px;
-    background-color: #ffe0e0;
-    border-radius: 5px;
-    color: #d01111;
-  }
-  
-  .show {
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-  }
-  
-  .position-absolute {
-    position: absolute;
-  }
-  
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  @media (max-width: 768px) {
-    .login-section {
-      padding: 20px;
-    }
-  }
-  
+}

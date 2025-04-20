@@ -27,16 +27,13 @@ export const logedGuard: CanActivateFn = (route, state) => {
   const _PLATFORM_ID = inject(PLATFORM_ID);
 
   if (isPlatformBrowser(_PLATFORM_ID)) {
-    // إذا كان المستخدم قد سجل الدخول (يوجد userToken)
-    if (localStorage.getItem('userToken') == null) {
-      // توجيه المستخدم إلى صفحة home مباشرة
-      _Router.navigate(['/user/home']);
-      return false;
+    if (localStorage.getItem('userToken')) {  // تحقق إذا كانت قيمة userToken موجودة وليست فارغة
+      return true;
     } else {
-      return true;  // يسمح بالوصول إلى صفحة Login و Register إذا لم يكن هناك userToken
+      _Router.navigate(['/login']);
+      return false;
     }
   } else {
     return false;
   }
 };
-
