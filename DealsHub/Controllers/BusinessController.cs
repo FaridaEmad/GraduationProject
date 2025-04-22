@@ -341,5 +341,49 @@ namespace DealsHub.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(String keyword)
+        {
+            if (String.IsNullOrWhiteSpace(keyword))
+                return BadRequest("Search keyword can not be empty");
+
+            keyword = keyword.ToLower();
+
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.Name.ToLower().Contains(keyword) ||
+                     b.City.ToLower().Contains(keyword) ||
+                     b.Area.ToLower().Contains(keyword) ||
+                     (b.Category.Name != null && b.Category.Name.ToLower().Contains(keyword)),
+                b => b.Category
+            );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No matching businesses found.");
+
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            var result = businesses.Select(b => new BusinessWithRatingDto
+            {
+                Id = b.BusinessId,
+                Name = b.Name,
+                UserId = b.UserId,
+                CategoryId = b.CategoryId,
+                City = b.City,
+                Area = b.Area,
+                Logo = b.Logo,
+                ImageUrls = b.Images.Select(img => img.URL).ToList(),
+                averageRates = allReviews
+            .Where(r => r.BusinessId == b.BusinessId)
+            .Any()
+            ? allReviews
+                .Where(r => r.BusinessId == b.BusinessId)
+                .Average(r => r.Rating)
+            : 0,
+                noOfReviews = allReviews.Count(r => r.BusinessId == b.BusinessId)
+            }).ToList();
+
+            return Ok(result);
+        }
     }
 } 
