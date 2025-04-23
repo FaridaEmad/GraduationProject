@@ -1,49 +1,88 @@
+import { jwtDecode } from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { jwtDecode } from 'jwt-decode';
+import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly _HttpClient = inject(HttpClient)
-  private readonly _Router = inject(Router)
+  private readonly _HttpClient = inject(HttpClient);
+  private readonly _Router = inject(Router);
 
+  userData: any = null;
 
-  userData:string =''
-
-  setRegisterForm(data:object):Observable<any>{
-    return this._HttpClient.post('https://ecommerce.routemisr.com/api/v1/auth/signup', data)
+  setRegisterForm(data: object): Observable<any> {
+    return this._HttpClient.post('https://localhost:7273/api/Auth/register', data, {
+      responseType: 'text' as 'json'
+    });
   }
 
-  setLoginFrom(data:object):Observable<any>{
-    return this._HttpClient.post('https://ecommerce.routemisr.com/api/v1/auth/signin', data)
+  setLoginFrom(data: object): Observable<any> {
+    return this._HttpClient.post('https://localhost:7273/api/Auth/login', data).pipe(
+      tap((res: any) => {
+        if (res && res.token) {
+          localStorage.setItem('userToken', res.token);
+  
+          const decoded: any = jwtDecode(res.token);
+          const user = {
+            name: decoded.name,
+            email: decoded.email,
+            profilePhoto: decoded.profilePhoto // فقط لو موجود
+          };
+  
+          localStorage.setItem('userData', JSON.stringify(user));
+          this.userData = user;
+        }
+      })
+    );
   }
-
-  saveUserData():void{
-    if(localStorage.getItem('userToken') !== null){
-      this.userData = jwtDecode( localStorage.getItem('userToken')! )
+  
+  
+  saveUserData(): void {
+    const rawUserData = localStorage.getItem('userData');
+    if (rawUserData && rawUserData !== 'undefined') {
+      try {
+        this.userData = JSON.parse(rawUserData);
+      } catch (err) {
+        console.error('Failed to parse userData from localStorage', err);
+        this.userData = null;
+      }
+    } else {
+      this.userData = null;
     }
   }
 
-  setVerifiyEmail(data:object):Observable<any>{
-    return this._HttpClient.post('https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords', data)
+  getUserData(): any {
+    const storedUser = localStorage.getItem('userData');
+    if (storedUser && storedUser !== 'undefined') {
+      try {
+        return JSON.parse(storedUser);
+      } catch (err) {
+        console.error('Failed to parse userData from localStorage', err);
+        return null;
+      }
+    }
+    return null;
   }
 
-  setVerifyCode(data:object):Observable<any>{
-    return this._HttpClient.post('https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode', data)
+  setResetPassword(data: object): Observable<any> {
+    const { email, newPassword } = data as any;
+    const url = `https://localhost:7273/api/Auth/forgetPassword?email=${encodeURIComponent(email)}&newPass=${encodeURIComponent(newPassword)}`;
+    return this._HttpClient.put(url, null, {
+      responseType: 'text' as 'json'
+    });
   }
+  
+ 
 
-  setResetPassword(data:object):Observable<any>{
-    return this._HttpClient.put('https://ecommerce.routemisr.com/api/v1/auth/verifyResetCode', data)
+  
+
+  logOut(): void {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('userData');
+    this.userData = null;
+    this._Router.navigate(['/login']);
   }
-
-  logOut():void{
-    localStorage.removeItem('userToken')
-    this._Router.navigate(['/login'])
-  }
-
-
 }

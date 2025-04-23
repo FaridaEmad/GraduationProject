@@ -1,98 +1,67 @@
-<section class="bg-light my-2 p-4 shadow rounded">
-    <!-- ########################################## Verifiy Email Input ##############################################-->
-      @if( step == 1 ){
-        <div>
-          <h1 class="text-success text-center">Verifiy Email</h1>
-          <form [formGroup]="verifiyEmailInput" (ngSubmit)="verifiyEmailSubmit()">
-            <label for="email">Email</label>
-            <input [ngClass]="{
-              'is-valid' : !verifiyEmailInput.get('email')?.errors && verifiyEmailInput.get('email')?.touched,
-              'is-invalid' : verifiyEmailInput.get('email')?.errors && verifiyEmailInput.get('email')?.touched
-            }" formControlName="email" type="email" name="email" id="email" class="form-control">
-    
-            @if(verifiyEmailInput.get('email')?.getError('required') && verifiyEmailInput.get('email')?.touched){
-              <p class="alert alert-danger mt-2">Email is Required</p>
-            } @else if (verifiyEmailInput.get('email')?.getError('email') && verifiyEmailInput.get('email')?.touched) {
-              <p class="alert alert-danger mt-2">Email is invalid</p>
-            }
-            <button class="btn btn-outline-success mt-2" [disabled]="isLoading || verifiyEmailInput.invalid">
-              @if(isLoading){
-              <span><i class="fas fa-spin fa-spinner"></i></span>
+<section class="bg-main-light shadow rounded-4 my-5 mt-5 p-4 forget-section">
+
+
+  <h1 class="text-center forget-title">Change Password</h1>
+
+  <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()">
+    <div>
+      <label for="email">Email</label>
+      <input [ngClass]="{
+        'is-valid': !changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched,
+        'is-invalid': changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched
+      }" formControlName="email" type="email" id="email" class="form-control" placeholder="saraabdelmoniaam@gmail.com">
+
+      @if(changePasswordForm.get('email')?.errors && (changePasswordForm.get('email')?.touched || changePasswordForm.get('email')?.dirty)) {
+          <div class="alert alert-danger my-2">
+              @if(changePasswordForm.get('email')?.getError('required')) {
+                  <p class="m-0">Email Is Required</p>
               }
-              Verifiy
-            </button>
-          </form>
-        </div>
+              @else if(changePasswordForm.get('email')?.getError('email')) {
+                  <p class="m-0">Please Enter Valid Email: Ex., Sarah&#64;gmail.com</p>
+              }
+          </div>
       }
-    
-    <!-- ########################################## Verifiy Code Input ##############################################-->
-      @if( step == 2 ){
-        <div>
-          <h1 class="text-success text-center">Verifiy Code</h1>
-          <form [formGroup]="verifiyCodeInput" (ngSubmit)="verifiyCodeSubmit()">
-            <label for="code">Verifiy Code</label>
-            <input  [ngClass]="{
-              'is-valid' : !verifiyCodeInput.get('resetCode')?.errors && verifiyCodeInput.get('resetCode')?.touched,
-              'is-invalid' : verifiyCodeInput.get('resetCode')?.errors && verifiyCodeInput.get('resetCode')?.touched
-              }" formControlName="resetCode" type="text" name="text" id="code" class="form-control">
-    
-          @if(verifiyCodeInput.get('resetCode')?.getError('required') && verifiyCodeInput.get('resetCode')?.touched){
-            <p class="alert alert-danger mt-2">resetCode is Required</p>
-          } @else if (verifiyCodeInput.get('resetCode')?.getError('pattern') && verifiyCodeInput.get('resetCode')?.touched) {
-            <p class="alert alert-danger mt-2">resetCode is invalid</p>
-          }
-            <button class="btn btn-outline-success mt-2" [disabled]="isLoading || verifiyCodeInput.invalid">
-              @if(isLoading){
-              <span><i class="fas fa-spin fa-spinner"></i></span>
+  </div>
+
+    <div>
+      <label for="New password">New Password</label>
+      <div class="position-relative">
+          <input [ngClass]="{
+            'is-valid': !changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched,
+            'is-invalid': changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched
+          }" #inputPassword formControlName="newPassword" type="password" id="newPassword" class="form-control" placeholder="••••••••••">
+          <span class="show position-absolute cr">
+              <i (click)="showPassword()" #showPasswordIcone class="fa-solid fa-eye-slash"></i>
+              <i (click)="hidePassword()" #hidePasswordIcone class="fa-solid fa-eye d-none"></i>
+          </span>
+      </div>
+
+      @if(changePasswordForm.get('newPassword')?.errors && (changePasswordForm.get('newPassword')?.touched || changePasswordForm.get('newPassword')?.dirty)) {
+          <div class="alert alert-danger my-2">
+              @if(changePasswordForm.get('newPassword')?.getError('required')) {
+                  <p class="m-0">Password Is Required</p>
               }
-              Verifiy
-            </button>
-          </form>
-        </div>
+              @else if(changePasswordForm.get('newPassword')?.getError('pattern')) {
+                  <p class="m-0">Please Enter Strong Valid Password : <br>
+                      Password Must Be At least 6 Characters Long And At least Contains (one uppercase letter, one lowercase letter, one digit, and one special character(!&#64;#$%^&*) ).
+                  </p>
+              }
+          </div>
       }
-    
-    <!-- ########################################## Reset Password Input ##############################################-->
-      @if( step == 3 ){
-        <div>
-          <h1 class="text-success text-center">Reset Password</h1>
-          <form [formGroup]="resetPasswordInput" (ngSubmit)="resetPasswordSubmit()">
-            <div>
-              <label for="email">Email</label>
-              <input  [ngClass]="{
-                'is-valid' : !resetPasswordInput.get('email')?.errors && resetPasswordInput.get('email')?.touched,
-                'is-invalid' : resetPasswordInput.get('email')?.errors && resetPasswordInput.get('email')?.touched
-                }" formControlName="email" type="email" name="email" id="email" class="form-control" readonly>
-    
-              @if(resetPasswordInput.get('email')?.getError('required') && resetPasswordInput.get('email')?.touched){
-                <p class="alert alert-danger mt-2">email is Required</p>
-              } @else if (resetPasswordInput.get('email')?.getError('email') && resetPasswordInput.get('email')?.touched) {
-                <p class="alert alert-danger mt-2">email is invalid</p>
-              }
-            </div>
-    
-            <div>
-              <label for="newPassword">New Password</label>
-              <input [ngClass]="{
-                'is-valid' : !resetPasswordInput.get('newPassword')?.errors && resetPasswordInput.get('newPassword')?.touched,
-                'is-invalid' : resetPasswordInput.get('newPassword')?.errors && resetPasswordInput.get('newPassword')?.touched
-                }" formControlName="newPassword" type="password" name="newPassword" id="newPassword" class="form-control">
-    
-              @if(resetPasswordInput.get('newPassword')?.getError('required') && resetPasswordInput.get('newPassword')?.touched){
-                <p class="alert alert-danger mt-2">newPassword is Required</p>
-              } @else if (resetPasswordInput.get('newPassword')?.getError('pattern') && resetPasswordInput.get('newPassword')?.touched) {
-                <p class="alert alert-danger mt-2">newPassword is invalid</p>
-              }
-            </div>
-    
-            <button class="btn btn-outline-success mt-2" [disabled]="isLoading || resetPasswordInput.invalid">
-              @if(isLoading){
-              <span><i class="fas fa-spin fa-spinner"></i></span>
-              }
-              Reset Password
-            </button>
-          </form>
-        </div>
-    
+  </div>
+
+    <button [disabled]="isLoading || changePasswordForm.invalid" class="btn btn-main d-block ms-auto mt-3"
+      type="submit">
+      @if(isLoading) {
+      Change <span><i class="fas fa-spin fa-spinner"></i></span>
       }
-    </section>
-    
+      @else {
+      <span class="forget-icon">🚀</span> Change
+      }
+    </button>
+  </form>
+
+  <div *ngIf="msgAlert" class="alert alert-danger mt-3 text-center">
+    {{ msgAlert }}
+  </div>
+  </section>

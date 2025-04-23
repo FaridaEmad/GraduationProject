@@ -30,17 +30,17 @@ import { CategoriesComponent } from './user/categories/categories.component';
 import { OfferComponent } from './user/offer/offer.component';
 
 export const routes: Routes = [
-  // Auth Layout Routes (for login and register)
-  // {
-  //   path:'',component:AuthLayoutComponent,canActivate:[logedGuard] ,title:"Login",children:[
-  //     // { path: '', redirectTo: '/login', pathMatch: 'full' },
-  //     { path: '', redirectTo: '/user/home', pathMatch: 'full' },
-  //     { path: 'login', component: LoginComponent },
-  //     { path: 'register', component: RegisterComponent },
-  //     {path:"forget", loadComponent:()=>import('./components/forget/forget.component').then((c)=> c.ForgetComponent), title:'Forget Password'}
+  //Auth Layout Routes (for login and register)
+  {
+    path:'',component:AuthLayoutComponent,canActivate:[logedGuard] ,title:"Login",children:[
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
+      // { path: '', redirectTo: '/user/home', pathMatch: 'full' },
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      {path:"forget", loadComponent:()=>import('./components/forget/forget.component').then((c)=> c.ForgetComponent), title:'Forget Password'}
 
-  //   ]
-  // },
+    ]
+  },
   
 
   // Blank Layout Routes (for User and Admin)
@@ -74,7 +74,8 @@ export const routes: Routes = [
           // Not Found Route (for unmatched paths)
   // { path: '**', component: NotfoundComponent } // Catch-all route for 404 page
 
-  { path: '**', redirectTo: '/user/home' }
+  // { path: '**', redirectTo: '/user/home' }
+  { path: '**', component: NotfoundComponent }
 ];
 
 @NgModule({

@@ -41,10 +41,13 @@ export class LoginComponent implements OnDestroy {
       this.allLoginSubmit = this._AuthService.setLoginFrom(this.loginForm.value).subscribe({
         next: (res) => {
           this.isLoading = false;
-          if (res.message === 'success') {
+          console.log('Login Response:', res);
+          if (res.token) {
             localStorage.setItem("userToken", res.token);
             this._AuthService.saveUserData();
             this._Router.navigate(['/user/home']);
+          } else {
+            this.serverErrorMessage = 'Invalid response from server.';
           }
         },
         error: (err: HttpErrorResponse) => {

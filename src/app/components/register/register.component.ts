@@ -3,50 +3,58 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 import { AuthService } from '../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass],
+  imports: [ReactiveFormsModule, NgClass, NgIf],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent implements OnDestroy {
-  private readonly _FormBuilder = inject(FormBuilder)
-  private readonly _AuthService = inject(AuthService)
-  private readonly _Router = inject(Router)
+  private readonly _FormBuilder = inject(FormBuilder);
+  private readonly _AuthService = inject(AuthService);
+  private readonly _Router = inject(Router);
 
-  allRegisterSubmit!: Subscription
-  isLoading: boolean = false
-  serverErrorMessage: string | null = null
+  allRegisterSubmit!: Subscription;
+  isLoading: boolean = false;
+  serverErrorMessage: string | null = null;
 
   registerForm: FormGroup = this._FormBuilder.group({
     name: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
     phone: [null, [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]],
     email: [null, [Validators.required, Validators.email]],
     password: [null, [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]],
-    rePassword: [null],
-  }, { validators: this.confirmPassword });
+    gender: [null, Validators.required],
+    profilePhoto: [null, [Validators.required, Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]]
 
-  confirmPassword(g: AbstractControl) {
-    return g.get('password')?.value === g.get('rePassword')?.value ? null : { mismatch: true };
-  }
+  });
+
+  
 
   registerSubmit(): void {
     if (this.registerForm.valid) {
       this.isLoading = true;
       this.serverErrorMessage = null;
 
-      this.allRegisterSubmit = this._AuthService.setRegisterForm(this.registerForm.value).subscribe({
-        next: (res) => {
+      const formValues = this.registerForm.value;
+
+      const jsonPayload = {
+        name: formValues.name,
+        phone: formValues.phone,
+        email: formValues.email,
+        password: formValues.password,
+        gender: formValues.gender,
+        profilePhoto: formValues.profilePhoto // سيتم إرسال الرابط مباشرة
+      };
+
+      this.allRegisterSubmit = this._AuthService.setRegisterForm(jsonPayload).subscribe({
+        next: () => {
+          console.log('Registered successfully');
           this.isLoading = false;
-          if (res.message === 'success') {
-            this._Router.navigate(['./login']);
-          } else {
-            this.serverErrorMessage = 'An unknown error occurred. Please try again.';
-          }
+          this._Router.navigate(['./login']);
         },
         error: (err: HttpErrorResponse) => {
           this.isLoading = false;
@@ -59,16 +67,13 @@ export class RegisterComponent implements OnDestroy {
       });
     } else {
       this.registerForm.markAllAsTouched();
-      this.registerForm.setErrors({ mismatch: true });
     }
   }
 
+
   @ViewChild('inputPassword') myPassword!: ElementRef;
-  @ViewChild('inputRepassword') myRepassword!: ElementRef;
   @ViewChild('showPasswordIcone') showPasswordIcone!: ElementRef;
   @ViewChild('hidePasswordIcone') hidePasswordIcone!: ElementRef;
-  @ViewChild('showRepasswordIcone') showRepasswordIcone!: ElementRef;
-  @ViewChild('hideRepasswordIcone') hideRepasswordIcone!: ElementRef;
 
   showPassword(): void {
     this.myPassword.nativeElement.setAttribute('type', 'text');
@@ -80,18 +85,6 @@ export class RegisterComponent implements OnDestroy {
     this.myPassword.nativeElement.setAttribute('type', 'password');
     this.showPasswordIcone.nativeElement.classList.remove('d-none');
     this.hidePasswordIcone.nativeElement.classList.add('d-none');
-  }
-
-  showRepassword(): void {
-    this.myRepassword.nativeElement.setAttribute('type', 'text');
-    this.showRepasswordIcone.nativeElement.classList.add('d-none');
-    this.hideRepasswordIcone.nativeElement.classList.remove('d-none');
-  }
-
-  hideRepassword(): void {
-    this.myRepassword.nativeElement.setAttribute('type', 'password');
-    this.showRepasswordIcone.nativeElement.classList.remove('d-none');
-    this.hideRepasswordIcone.nativeElement.classList.add('d-none');
   }
 
   ngOnDestroy(): void {
