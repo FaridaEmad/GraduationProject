@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -14,17 +15,14 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnDestroy {
-  // Inject Services
   private readonly _FormBuilder = inject(FormBuilder);
   private readonly _AuthService = inject(AuthService);
   private readonly _Router = inject(Router);
 
-  // Global Properties
   isLoading: boolean = false;
   serverErrorMessage: string = '';
   allLoginSubmit?: Subscription;
 
-  // FormGroup and Validation
   loginForm: FormGroup = this._FormBuilder.group({
     email: [null, [Validators.required, Validators.email]],
     password: [null, [
@@ -33,7 +31,6 @@ export class LoginComponent implements OnDestroy {
     ]]
   });
 
-  // Handle Submit
   loginSubmit(): void {
     this.serverErrorMessage = '';
     if (this.loginForm.valid) {
@@ -42,10 +39,29 @@ export class LoginComponent implements OnDestroy {
         next: (res) => {
           this.isLoading = false;
           console.log('Login Response:', res);
+  
           if (res.token) {
             localStorage.setItem("userToken", res.token);
-            this._AuthService.saveUserData();
-            this._Router.navigate(['/user/home']);
+            const decoded: any = jwtDecode(res.token);
+  
+            const user = {
+              name: decoded.unique_name,
+              email: decoded.email,
+              profilePhoto: decoded.profilePhoto || '',
+              isAdmin: decoded.role?.toLowerCase() === 'admin'
+            };
+  
+            console.log('Decoded Token:', decoded);
+            console.log('user:', user);
+            console.log('isAdmin?', user.isAdmin);
+  
+            localStorage.setItem('userData', JSON.stringify(user));
+  
+            if (user.isAdmin) {
+              this._Router.navigate(['/admin/home']); // ✅ أدمن
+            } else {
+              this._Router.navigate(['/user/home']); // ✅ يوزر
+            }
           } else {
             this.serverErrorMessage = 'Invalid response from server.';
           }
@@ -59,8 +75,8 @@ export class LoginComponent implements OnDestroy {
       this.loginForm.markAllAsTouched();
     }
   }
+  
 
-  // Show and Hide Password
   @ViewChild('inputPassword') inputPassword!: ElementRef;
   @ViewChild('showIcone') showIcon!: ElementRef;
   @ViewChild('hideIcone') hideIcone!: ElementRef;
@@ -77,7 +93,6 @@ export class LoginComponent implements OnDestroy {
     this.hideIcone.nativeElement.classList.add('d-none');
   }
 
-  // Unsubscribe
   ngOnDestroy(): void {
     this.allLoginSubmit?.unsubscribe();
   }

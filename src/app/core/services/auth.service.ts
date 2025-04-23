@@ -27,17 +27,30 @@ export class AuthService {
   
           const decoded: any = jwtDecode(res.token);
           const user = {
-            name: decoded.name,
+            name: decoded.unique_name,
             email: decoded.email,
-            profilePhoto: decoded.profilePhoto // فقط لو موجود
+            profilePhoto: decoded.profilePhoto || '',
+            isAdmin: decoded.role === 'Admin'
           };
   
           localStorage.setItem('userData', JSON.stringify(user));
           this.userData = user;
+  
+          // التأكد من أن التوجيه يحدث فقط إذا لم يكن المستخدم مدخلًا إلى الصفحة الصحيحة مسبقًا
+          if (user.isAdmin) {
+            console.log('user:', user);
+console.log('isAdmin?', user.isAdmin);
+
+            this._Router.navigate(['/admin/home']);
+          } else {
+            this._Router.navigate(['/user/home']);
+          }
         }
       })
     );
   }
+  
+  
   
   
   saveUserData(): void {

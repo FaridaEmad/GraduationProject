@@ -20,7 +20,7 @@ import { BookingComponent as AdminBooking } from './admin/booking/booking.compon
 import { PaymentComponent as AdminPayment } from './admin/payment/payment.component';
 
 import { NotfoundComponent } from './components/notfound/notfound.component';
-import { LoginComponent } from './components/login/login.component';  
+import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
@@ -28,26 +28,27 @@ import { logedGuard } from './core/guards/loged.guard';
 // import { DetailComponent } from './user/detail/detail.component';
 import { CategoriesComponent } from './user/categories/categories.component';
 import { OfferComponent } from './user/offer/offer.component';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   //Auth Layout Routes (for login and register)
   {
-    path:'',component:AuthLayoutComponent,canActivate:[logedGuard] ,title:"Login",children:[
+    path: '', component: AuthLayoutComponent, canActivate: [logedGuard], title: "Login", children: [
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       // { path: '', redirectTo: '/user/home', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      {path:"forget", loadComponent:()=>import('./components/forget/forget.component').then((c)=> c.ForgetComponent), title:'Forget Password'}
+      { path: "forget", loadComponent: () => import('./components/forget/forget.component').then((c) => c.ForgetComponent), title: 'Forget Password' }
 
     ]
   },
-  
+
 
   // Blank Layout Routes (for User and Admin)
   {
-    path:'',component:BlankLayoutComponent,canActivate:[authGuard] , title: 'home',children:[
+    path: '', component: BlankLayoutComponent, canActivate: [authGuard], title: 'home', children: [
       // User Routes
-      { path: '', redirectTo: '/user/home', pathMatch: 'full' }, // Redirecting to user home
+      // { path: '', redirectTo: '/user/home', pathMatch: 'full' }, // Redirecting to user home
       { path: 'user/home', component: UserHome },
       { path: 'user/profile', component: UserProfile },
       { path: 'user/business', component: BusinessComponent },
@@ -57,8 +58,16 @@ export const routes: Routes = [
       { path: 'user/favorite', component: FavoriteComponent },
       { path: 'user/booking', component: BookingComponent },
       { path: 'user/payment', component: PaymentComponent },
-  
+
       // Admin Routes
+
+    ]
+  },
+
+  {
+
+    path: '', canActivate: [adminGuard], title: 'home', children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'admin/home', component: AdminHome },
       { path: 'admin/profile', component: AdminProfile },
       { path: 'admin/user-management', component: UserManagementComponent },
