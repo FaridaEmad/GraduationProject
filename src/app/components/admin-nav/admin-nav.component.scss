@@ -1,0 +1,31 @@
+.sidebar {
+    width: 220px;
+    background-color:#163758 !important;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  
+  .sidebar .nav-link {
+    color: #fff;
+    padding: 15px;
+    
+  }
+  
+
+  
+  .title {
+   
+    font-family: 'Kaushan Script', cursive;
+    font-size: 2rem; 
+  }
+  .sub-title {
+   
+    font-family: 'Kaushan Script', cursive;
+    font-size: 1.5rem; 
+  }
+  .active-link{
+    background-color: #eff1f3 !important;
+    color: #163758 !important;
+  }

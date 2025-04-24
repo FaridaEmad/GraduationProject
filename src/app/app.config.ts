@@ -16,5 +16,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideToastr(), 
     importProvidersFrom(NgxSpinnerModule) ,
+    
   ]
 };

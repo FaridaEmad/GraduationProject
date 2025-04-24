@@ -4,10 +4,12 @@ import { jwtDecode } from 'jwt-decode';
 
 export const adminGuard: CanActivateFn = (route, state) => {
   const _Router = inject(Router);
-  const token = localStorage.getItem('userToken');
 
-  if (token) {
-    const decoded: any = jwtDecode(token);
+  // ✅ تأكيد إننا في المتصفح قبل استخدام localStorage
+  if (typeof window !== 'undefined' && localStorage.getItem('userToken')) {
+    const token = localStorage.getItem('userToken');
+    const decoded: any = jwtDecode(token!);
+    
     if (decoded.role === 'Admin') {
       return true;
     } else {
