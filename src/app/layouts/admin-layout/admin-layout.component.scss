@@ -1,0 +1,17 @@
+.admin-container {
+    height: 100vh;
+  
+    .sidebar {
+      width: 220px;
+      min-height: 100vh;
+      background-color: #1e1e2f;
+      a.nav-link:hover {
+        background-color: #163758;
+      }
+    }
+  
+    main {
+      background-color: #f8f9fa;
+    }
+  }
+  

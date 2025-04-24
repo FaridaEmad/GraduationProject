@@ -9,8 +9,8 @@ import { Subscription } from 'rxjs';
 
 import { BusinessService } from '../../core/services/business.service';
 import { CategoryService } from '../../core/services/category.service';
-import { IBusiness } from '../../interfaces/ibusiness';
-import { ICategory } from '../../interfaces/icategory';
+import { IBusiness } from '../../core/interfaces/ibusiness';
+import { ICategory } from '../../core/interfaces/icategory';
 
 @Component({
   selector: 'app-business',

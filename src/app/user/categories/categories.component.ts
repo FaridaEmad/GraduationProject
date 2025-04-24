@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CategoryService } from '../../core/services/category.service';
-import { ICategory } from '../../interfaces/icategory';
+import { ICategory } from '../../core/interfaces/icategory';
 import { Subscription } from 'rxjs';
 
 @Component({

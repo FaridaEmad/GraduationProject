@@ -29,6 +29,7 @@ import { logedGuard } from './core/guards/loged.guard';
 import { CategoriesComponent } from './user/categories/categories.component';
 import { OfferComponent } from './user/offer/offer.component';
 import { adminGuard } from './core/guards/admin.guard';
+import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 
 export const routes: Routes = [
   //Auth Layout Routes (for login and register)
@@ -66,7 +67,7 @@ export const routes: Routes = [
 
   {
 
-    path: '', canActivate: [adminGuard], title: 'home', children: [
+    path: '',component: AdminLayoutComponent, canActivate: [adminGuard], title: 'home', children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'admin/home', component: AdminHome },
       { path: 'admin/profile', component: AdminProfile },
