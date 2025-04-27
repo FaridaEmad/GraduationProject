@@ -12,5 +12,8 @@ export class CategoryService {
   getallcategories():Observable<any>{
     return this.__HttpClient.get(`${this.baseUrl}/api/Category/getAllCategories`)
   }
+  getBusinessByCategory(categoryId: number): Observable<any> {
+    return this.__HttpClient.get(`https://localhost:7273/api/Business/getBusinessByCategory${categoryId}`);
+  }
   
 }
