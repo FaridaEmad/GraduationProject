@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-admin-nav',
@@ -8,5 +9,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './admin-nav.component.scss'
 })
 export class AdminNavComponent {
-
+  private readonly _AuthService = inject(AuthService)
+  SignOut(): void {
+    this._AuthService.logOut();
+  }
 }
