@@ -31,7 +31,7 @@ namespace DealsHub.Controllers
             var method = await _paymentMethodRepository.GetByIdAsync(id);
             if (method == null)
             {
-                return NotFound();
+                return NotFound("Method not found");
             }
 
             return Ok(method);

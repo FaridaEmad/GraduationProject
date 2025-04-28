@@ -13,15 +13,17 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Offer> _offerRepository;
         private readonly IDataRepository<Notification> _notificationRepository;
         private readonly IDataRepository<Review> _reviewRepository;
-
+        private readonly IDataRepository<Business> _businessRepository;
 
         public OffersController(IDataRepository<Offer> offerRepository,
             IDataRepository<Notification> notificationRepository,
-            IDataRepository<Review> reviewRepository)
+            IDataRepository<Review> reviewRepository,
+            IDataRepository<Business> businessRepository)
         {
             _offerRepository = offerRepository;
             _notificationRepository = notificationRepository;
             _reviewRepository = reviewRepository;
+            _businessRepository = businessRepository;
         }
 
         [HttpGet("getAllOffers")]
@@ -46,6 +48,12 @@ namespace DealsHub.Controllers
         [HttpPost("addNewOffer")]
         public async Task<ActionResult> addOffer(OfferDto newOffer)
         {
+            var business = await _businessRepository.GetByIdAsync(newOffer.BusinessId);
+            if (business == null)
+            {
+                return NotFound("Wrong business id");
+            }
+
             var offer = new Offer
             {
                 StartDate = newOffer.StartDate,
@@ -120,7 +128,7 @@ namespace DealsHub.Controllers
             var offer = await _offerRepository.GetByIdAsync(id);
             if (offer == null)
             {
-                return NotFound();
+                return NotFound("Offer not found");
             }
 
             await _offerRepository.DeleteAsync(offer);
@@ -131,6 +139,12 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusiness/{id}")]
         public async Task<IActionResult> GetByBusiness(int id)
         {
+            var business = await _businessRepository.GetByIdAsync(id);
+            if (business == null)
+            {
+                return NotFound("Wrong business id");
+            }
+
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id
                 );
@@ -144,6 +158,12 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusinessActive/{id}")]
         public async Task<IActionResult> GetByBusinessAndActive(int id)
         {
+            var business = await _businessRepository.GetByIdAsync(id);
+            if (business == null)
+            {
+                return NotFound("Wrong business id");
+            }
+
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id && o.StartDate <= DateTime.UtcNow && o.EndDate > DateTime.UtcNow
                 );
@@ -157,6 +177,12 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusinessInactive/{id}")]
         public async Task<IActionResult> GetByBusinessAndInactive(int id)
         {
+            var business = await _businessRepository.GetByIdAsync(id);
+            if (business == null)
+            {
+                return NotFound("Wrong business id");
+            }
+
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id && (o.EndDate < DateTime.UtcNow || o.StartDate > DateTime.UtcNow)
                 );

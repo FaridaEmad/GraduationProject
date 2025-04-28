@@ -36,7 +36,7 @@ namespace DealsHub.Controllers
             var wishlist = await _wishlistRepository.GetByIdAsync(id);
             if (wishlist == null)
             {
-                return NotFound();
+                return NotFound("Wishlist not found.");
             }
 
             return Ok(wishlist);
@@ -94,7 +94,7 @@ namespace DealsHub.Controllers
             var wishlist = await _wishlistRepository.GetByIdAsync(id);
             if (wishlist == null)
             {
-                return NotFound();
+                return NotFound("Wishlist not found.");
             }
 
             await _wishlistRepository.DeleteAsync(wishlist);
@@ -105,6 +105,12 @@ namespace DealsHub.Controllers
         [HttpGet("getWishlistByUser/{id}")]
         public async Task<IActionResult> GetByUser(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
             var wishlists = await _wishlistRepository.GetAllAsyncInclude(
                 w => w.UserId == id
                 );

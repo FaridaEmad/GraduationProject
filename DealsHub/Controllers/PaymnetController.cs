@@ -15,14 +15,20 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Payment> _paymentRepository;
         private readonly IDataRepository<PaymentMethod> _paymentMethodRepository;
         private readonly IDataRepository<Cart> _cartRepository;
+        private readonly IDataRepository<Notification> _notificationRepository;
+        private readonly IDataRepository<User> _userRepository;
 
         public PaymnetController(IDataRepository<Payment> paymentRepository,
             IDataRepository<PaymentMethod> paymentMethodRepository,
-            IDataRepository<Cart> cartRepository)
+            IDataRepository<Cart> cartRepository,
+            IDataRepository<Notification> notificationRepository,
+            IDataRepository<User> userRepository)
         {
             _paymentRepository = paymentRepository;
             _paymentMethodRepository = paymentMethodRepository;
             _cartRepository = cartRepository;
+            _notificationRepository = notificationRepository;
+            _userRepository = userRepository;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -38,7 +44,7 @@ namespace DealsHub.Controllers
             var payment = await _paymentRepository.GetByIdAsync(id);
             if (payment == null)
             {
-                return NotFound();
+                return NotFound("Payment not found");
             }
 
             return Ok(payment);
@@ -48,9 +54,18 @@ namespace DealsHub.Controllers
         public async Task<ActionResult> addPaymnet(PaymentDto newPayment)
         {
             var method = await _paymentMethodRepository.GetByIdAsync(newPayment.PaymentMethodId);
+            if(method == null)
+            {
+                return NotFound("Method not found.");
+            }
+
             var cart = await _cartRepository.GetByIdAsync(newPayment.CartId);
-            
-            if(cart.NoOfItems == 0)
+            if (cart == null)
+            {
+                return NotFound("cart not found.");
+            }
+
+            if (cart.NoOfItems == 0)
             {
                 return BadRequest("Nothing to pay.");
             }
@@ -109,6 +124,15 @@ namespace DealsHub.Controllers
             await _paymentRepository.UpdateAsync(payment);
             await _paymentRepository.Save();
 
+            var notification = new Notification
+            {
+                UserId = payment.UserId,
+                Message = "Your payment has been confirmed"
+            };
+
+            await _notificationRepository.AddAsync(notification);
+            await _notificationRepository.Save();
+
             return Ok("Payment confirmed successfully.");
         }
 
@@ -141,7 +165,7 @@ namespace DealsHub.Controllers
             var payment = await _paymentRepository.GetByIdAsync(id);
             if (payment == null)
             {
-                return NotFound();
+                return NotFound("Payment not found.");
             }
 
             await _paymentRepository.DeleteAsync(payment);
@@ -152,6 +176,12 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentByUser{id}")]
         public async Task<IActionResult> GetByUser(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id
                 );
@@ -166,6 +196,12 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentByMethod{id}")]
         public async Task<IActionResult> GetByMethod(int id)
         {
+            var method = await _paymentMethodRepository.GetByIdAsync(id);
+            if (method == null)
+            {
+                return NotFound("method not found.");
+            }
+
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.PaymentMethodId == id
                 );
@@ -193,6 +229,12 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserConfirmed")]
         public async Task<IActionResult> GetByUserConfirmed(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Confirmed"
                 );
@@ -220,6 +262,12 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserPending")]
         public async Task<IActionResult> GetByUserPending(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Pending"
                 );
@@ -247,6 +295,12 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserFailed")]
         public async Task<IActionResult> GetByUserFailed(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Failed"
                 );

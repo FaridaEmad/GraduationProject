@@ -13,10 +13,12 @@ namespace DealsHub.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IDataRepository<Image> _imageRepository;
+        private readonly IDataRepository<Business> _businessRepository;
 
-        public ImageController(IDataRepository<Image> imageRepository)
+        public ImageController(IDataRepository<Image> imageRepository, IDataRepository<Business> businessRepository)
         {
             _imageRepository = imageRepository;
+            _businessRepository = businessRepository;
         }
 
         [HttpGet("getAllImages")]
@@ -59,6 +61,10 @@ namespace DealsHub.Controllers
         [HttpPost("addNewImage")]
         public async Task<ActionResult> addImage(ImageDto newImage)
         {
+            var business = await _businessRepository.GetByIdAsync(newImage.BusinessId);
+            if (business == null)
+                return NotFound("Wrong business id");
+
             var image = new Image
             {
                 BusinessId = newImage.BusinessId,
@@ -79,7 +85,7 @@ namespace DealsHub.Controllers
             var image = await _imageRepository.GetByIdAsync(id);
             if (image == null)
             {
-                return NotFound();
+                return NotFound("Image not found");
             }
 
             await _imageRepository.DeleteAsync(image);

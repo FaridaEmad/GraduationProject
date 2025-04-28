@@ -14,10 +14,12 @@ namespace DealsHub.Controllers
     public class PhoneController : ControllerBase
     {
         private readonly IDataRepository<Phone> _phoneRepository;
+        private readonly IDataRepository<User> _userRepository;
 
-        public PhoneController(IDataRepository<Phone> phoneRepository)
+        public PhoneController(IDataRepository<Phone> phoneRepository, IDataRepository<User> userRepository)
         {
             _phoneRepository = phoneRepository;
+            _userRepository = userRepository;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -42,6 +44,12 @@ namespace DealsHub.Controllers
         [HttpGet("ByUser{id}")]
         public async Task<IActionResult> GetPhoneByUser(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var phone = await _phoneRepository.GetAllAsyncInclude(
                 p => p.UserId == id);
             if (phone == null)
@@ -91,7 +99,7 @@ namespace DealsHub.Controllers
             var phone = await _phoneRepository.GetByIdAsync(id);
             if (phone == null)
             {
-                return NotFound();
+                return NotFound("Phone not found.");
             }
 
             await _phoneRepository.DeleteAsync(phone);

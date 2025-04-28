@@ -13,10 +13,12 @@ namespace DealsHub.Controllers
     public class CartController : ControllerBase
     {
         private readonly IDataRepository<Cart> _cartRepository;
+        private readonly IDataRepository<User> _userRepository;
 
-        public CartController(IDataRepository<Cart> cartRepository)
+        public CartController(IDataRepository<Cart> cartRepository, IDataRepository<User> userRepository)
         {
             _cartRepository = cartRepository;
+            _userRepository = userRepository;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -41,6 +43,10 @@ namespace DealsHub.Controllers
         [HttpGet("getCartActiveByUser{userId}")]
         public async Task<IActionResult> GetActiveByUser(int userId)
         {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound("Wrong user id");
+
             var cart = await _cartRepository.GetByIdAsyncInclude(
                 c => c.UserId == userId && c.IsActive == true
                 );
@@ -51,6 +57,10 @@ namespace DealsHub.Controllers
         [HttpGet("getCartsByUser{userId}")]
         public async Task<IActionResult> GetByUser(int userId)
         {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound("Wrong user id");
+
             var carts = await _cartRepository.GetAllAsyncInclude(
                 c => c.UserId == userId
                 );

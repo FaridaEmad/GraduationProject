@@ -16,13 +16,15 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Business> _businessRepository;
         private readonly IDataRepository<Image> _imageRepository;
         private readonly IDataRepository<Review> _reviewRepository;
+        private readonly IDataRepository<Category> _categoryRepository;
 
 
-        public BusinessController(IDataRepository<Business> businessRepository, IDataRepository<Image> imageRepository, IDataRepository<Review> reviewRepository)
+        public BusinessController(IDataRepository<Business> businessRepository, IDataRepository<Image> imageRepository, IDataRepository<Review> reviewRepository, IDataRepository<Category> categoryRepository)
         {
             _businessRepository = businessRepository;
             _imageRepository = imageRepository;
             _reviewRepository = reviewRepository;
+            _categoryRepository = categoryRepository;
         }
 
         [HttpGet("getAllBusiness")]
@@ -151,13 +153,13 @@ namespace DealsHub.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBusiness(int id)
         {
-            var user = await _businessRepository.GetByIdAsync(id);
-            if (user == null)
+            var business = await _businessRepository.GetByIdAsync(id);
+            if (business == null)
             {
-                return NotFound();
+                return NotFound("Business not found");
             }
 
-            await _businessRepository.DeleteAsync(user);
+            await _businessRepository.DeleteAsync(business);
             await _businessRepository.Save();
             return Ok("deleted successfuly");
         }
@@ -165,6 +167,10 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategory{id}")]
         public async Task<IActionResult> GetByCategory(int id)
         {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return NotFound("Wrong category id");
+
             var businesses = await _businessRepository.GetAllAsyncInclude(
                 b => b.CategoryId == id,
                 b => b.Images
@@ -273,6 +279,10 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategoryAndCity")]
         public async Task<IActionResult> GetByCategoryAndCity(int id, String city)
         {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return NotFound("Wrong category id");
+
             var businesses = await _businessRepository.GetAllAsyncInclude(
                 b => b.CategoryId == id && b.City == city,
                 b => b.Images
@@ -309,6 +319,10 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategoryAndArea")]
         public async Task<IActionResult> GetByCategoryAndArea(int id, String area)
         {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if (category == null)
+                return NotFound("Wrong category id");
+
             var businesses = await _businessRepository.GetAllAsyncInclude(
                 b => b.CategoryId == id && b.Area == area,
                 b => b.Images

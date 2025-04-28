@@ -34,7 +34,7 @@ namespace DealsHub.Controllers
             var user = await _userRepository.GetByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found.");
             }
 
             var userDto = new UserDto
@@ -75,7 +75,7 @@ namespace DealsHub.Controllers
             var user = await _userRepository.GetByIdAsync(id) ;
             if (user == null)
             {
-                return NotFound();
+                return NotFound("User not found.");
             }
 
             await _userRepository.DeleteAsync(user);

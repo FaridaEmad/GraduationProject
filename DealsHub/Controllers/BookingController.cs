@@ -17,16 +17,19 @@ namespace DealsHub.Controllers
         private readonly IDataRepository<Cart> _cartRepository;
         private readonly IDataRepository<Offer> _offerRepository;
         private readonly IDataRepository<Notification> _notificatoinRepository;
+        private readonly IDataRepository<User> _userRepository;
 
         public BookingController(IDataRepository<Booking> bookingRepository,
                                     IDataRepository<Cart> cartRepository,
                                     IDataRepository<Offer> offerRepository,
-                                    IDataRepository<Notification> notificatoinRepository)
+                                    IDataRepository<Notification> notificatoinRepository,
+                                    IDataRepository<User> userRepository)
         {
             _bookingRepository = bookingRepository;
             _cartRepository = cartRepository;
             _offerRepository = offerRepository;
             _notificatoinRepository = notificatoinRepository;
+            _userRepository = userRepository;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -88,9 +91,17 @@ namespace DealsHub.Controllers
         [HttpPost("addNewBooking")]
         public async Task<ActionResult> addBooking(BookingDto newBooking)
         {
+            var user = await _userRepository.GetByIdAsync(newBooking.UserId);
+            if (user == null)
+                return NotFound("Wrong user id");
+
             var cart = await _cartRepository.GetByIdAsyncInclude(
                 c => c.UserId == newBooking.UserId && c.IsActive == true
              );
+
+            var offer = await _offerRepository.GetByIdAsync(newBooking.OfferId);
+            if (offer == null)
+                return NotFound("Wrong offer id");
 
             var booking = new Booking
             {
@@ -129,6 +140,10 @@ namespace DealsHub.Controllers
         [HttpGet("getByCart{cartID}")]
         public async Task<IActionResult> GetByCart(int cartID)
         {
+            var cart = await _cartRepository.GetByIdAsync(cartID);
+            if (cart == null)
+                return NotFound("Wrong cart id");
+
             var bookings = await _bookingRepository.GetAllAsyncInclude(
                 b => b.CartId == cartID,
                 b => b.Offer
@@ -143,6 +158,10 @@ namespace DealsHub.Controllers
         [HttpGet("getByUser{userId}")]
         public async Task<IActionResult> GetByUser(int userId)
         {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+                return NotFound("Wrong user id");
+
             var bookings = await _bookingRepository.GetAllAsyncInclude(
                 b => b.UserId == userId
                 );

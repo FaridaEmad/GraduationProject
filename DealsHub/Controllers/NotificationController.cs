@@ -13,10 +13,12 @@ namespace DealsHub.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly IDataRepository<Notification> _notificationRepository;
+        private readonly IDataRepository<User> _userRepository;
 
-        public NotificationController(IDataRepository<Notification> notificationRepository)
+        public NotificationController(IDataRepository<Notification> notificationRepository, IDataRepository<User> userRepository)
         {
             _notificationRepository = notificationRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet("getAllNotifications")]
@@ -31,7 +33,7 @@ namespace DealsHub.Controllers
             var notification = await _notificationRepository.GetByIdAsync(id);
             if (notification == null)
             {
-                return NotFound();
+                return NotFound("Notification not found");
             }
 
             return Ok(notification);
@@ -40,6 +42,12 @@ namespace DealsHub.Controllers
         [HttpGet("ByUserNotRead{id}")]
         public async Task<IActionResult> GetNotificationByUser(int id)
         {
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var notification = await _notificationRepository.GetAllAsyncInclude(
                 n => n.UserId == id && n.IsRead == false);
             if (notification == null)
@@ -73,6 +81,12 @@ namespace DealsHub.Controllers
         [HttpPost("addNewNotification")]
         public async Task<ActionResult> addNotification(NotificationDto newNotification)
         {
+            var user = await _userRepository.GetByIdAsync(newNotification.UserId);
+            if (user == null)
+            {
+                return NotFound("Wrong user id");
+            }
+
             var notification = new Notification
             {
                 UserId = newNotification.UserId,
