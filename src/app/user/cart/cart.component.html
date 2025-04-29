@@ -1,31 +1,45 @@
-<div *ngIf="bookings.length > 0">
-    <!-- Loop through each booking and display it inside a Bootstrap card -->
-    <div class="card mb-4" *ngFor="let booking of bookings">
-      <div class="card-body">
-        <h4 class="card-title">Booking ID: {{ booking.bookingId }}</h4>
-        <p><strong>Quantity:</strong> {{ booking.quantity }}</p>
-        <p><strong>Booking Date:</strong> {{ booking.bookingDate }}</p>
-        
-        <div *ngIf="booking.offer">
-          <p><strong>Price:</strong> {{ booking.offer.price * booking.quantity }} EGP</p>
-          <p><strong>Offer Description:</strong> {{ booking.offer.description }}</p>
-          <img [src]="booking.offer.image" alt="Offer Image" class="img-fluid" width="100">
-        </div>
+<div *ngIf="bookings.length > 0" class="container my-4">
+  <div class="bg-white p-4 rounded shadow-sm">
+    <h4 class="mb-4 fw-bold"  style="color: var(--main-color); font-size: 1.5rem;">Your Bookings:</h4>
+
+    <!-- Loop through bookings -->
+    <div *ngFor="let booking of bookings" 
+         class="d-flex align-items-center justify-content-between flex-wrap mb-3 p-3 rounded" 
+         style="background-color: var(--light-color);">
+
+      <!-- Image -->
+      <div>
+        <img [src]="booking.offer?.image" alt="Offer Image" class="img-thumbnail" style="width: 100px; height: auto;">
+      </div>
+
+      <!-- Details -->
+      <div class="flex-grow-1 px-3">
+        <p class="mb-1"><strong>Booking ID:</strong> {{ booking.bookingId }}</p>
+        <p class="mb-1"><strong>Quantity:</strong> {{ booking.quantity }}</p>
+        <p class="mb-1"><strong>Booking Date:</strong> {{ booking.bookingDate }}</p>
+        <p class="mb-1" *ngIf="booking.offer"><strong>Total Price:</strong> {{ booking.offer.price * booking.quantity }} EGP</p>
+        <p class="mb-1" *ngIf="booking.offer"><strong>Description:</strong> {{ booking.offer.description }}</p>
+      </div>
+
+      <!-- Delete Icon -->
+      <div>
+        <button class="btn" title="Delete booking"
+          style="color: var(--main-color); font-size: 1.5rem;" (click)="deleteBooking(booking.bookingId)">
+          <i class="bi bi-trash3-fill"></i> 
+        </button>
       </div>
     </div>
-  
-    <!-- Cart summary section -->
-    <div class="card mt-4">
-      <div class="card-body text-center">
-        <h3>Total Amount: {{ totalAmount }} EGP</h3>
-        <p><strong>Number of items:</strong> {{ noOfItems }}</p>
-        <p><strong>Cart Status:</strong> {{ isActive ? 'Active' : 'Inactive' }}</p>
-        <button class="btn btn-success mt-3" (click)="confirmCart()">Confirm</button>
-      </div>
+
+    <!-- Cart Summary -->
+    <div class="text-center mt-5">
+      <h3>Total Amount: {{ totalAmount }} EGP</h3>
+      <p><strong>Number of Items:</strong> {{ noOfItems }}</p>
+      <p><strong>Cart Status:</strong> {{ isActive ? 'Active' : 'Inactive' }}</p>
+      <button class="btn text-white mt-2 btn-success w-100"  (click)="confirmCart()">Confirm</button>
     </div>
   </div>
-  
-  <ng-template #noBookings>
-    <p>No bookings found for this user.</p>
-  </ng-template>
-  
+</div>
+
+<ng-template #noBookings>
+  <p class="text-center my-5">No bookings found for this user.</p>
+</ng-template>

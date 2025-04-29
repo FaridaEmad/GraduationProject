@@ -33,4 +33,11 @@ export class BookingService {
   getBookingById(id: number): Observable<any> {
     return this._HttpClient.get<any>(`${this.apiUrl}/${id}`);
   }
+
+
+  // Delete booking by ID
+deleteBookingById(id: number): Observable<any> {
+  return this._HttpClient.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+}
+
 }
