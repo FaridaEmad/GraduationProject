@@ -5,24 +5,25 @@ import { BookingService } from '../../core/services/booking.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cart',
-  standalone: true, // تأكد من أن الكومبوننت يستخدم بشكل مستقل في حالة Standalone Component
+  standalone: true,
   imports: [
-    CommonModule, // تأكد من استيراد CommonModule هنا
+    CommonModule,
   ],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
 export class CartComponent implements OnInit {
   cartData: any;
-  bookings: any[] = []; // حفظ بيانات الحجوزات
-  offerData: any = {}; // حفظ بيانات العرض
+  bookings: any[] = [];
+  offerData: any = {};
   userId: number | null = null;
-  totalAmount: number = 0; // لحساب المبلغ الإجمالي
-  noOfItems: number = 0; // لحساب عدد العناصر في السلة
-  isActive: boolean = true; // تحديد إذا كانت السلة مفعلّة
+  totalAmount: number = 0;
+  noOfItems: number = 0;
+  isActive: boolean = true;
 
   constructor(
     private cartService: CartService,
@@ -47,7 +48,6 @@ export class CartComponent implements OnInit {
     }
   }
 
-  // جلب الحجوزات باستخدام userId
   getBookingsByUserId(): void {
     this.bookingService.getBookingsByUser(this.userId!).subscribe({
       next: (res) => {
@@ -60,27 +60,22 @@ export class CartComponent implements OnInit {
     });
   }
 
-  // حساب المبلغ الإجمالي وعدد العناصر في السلة
   calculateTotalAmount(): void {
     this.totalAmount = 0;
     this.noOfItems = 0;
 
-    // هنا نستخدم forkJoin لتنفيذ عدة طلبات متوازية بشكل غير متزامن
     const offerRequests = this.bookings.map((booking: any) => {
-      if (booking.offerId) {
-        return this.offersService.getOfferById(booking.offerId);
-      }
-      return null; // إذا لم يكن هناك عرض، نرجع null
-    }).filter(request => request !== null); // تصفية القيم null
+      return booking.offerId
+        ? this.offersService.getOfferById(booking.offerId)
+        : null;
+    }).filter(request => request !== null);
 
     if (offerRequests.length > 0) {
       forkJoin(offerRequests).subscribe({
         next: (offers: any[]) => {
           offers.forEach((offer: any, index: number) => {
             this.bookings[index].offer = offer;
-            // حساب المجموع الإجمالي
             this.totalAmount += offer.price * this.bookings[index].quantity;
-            // حساب عدد العناصر في السلة
             this.noOfItems += this.bookings[index].quantity;
           });
         },
@@ -92,8 +87,33 @@ export class CartComponent implements OnInit {
   }
 
   confirmCart(): void {
-    // هنا تضع الكود الخاص بتأكيد السلة، مثل إرسال الطلب إلى الخادم أو معالجة الدفع
     console.log('Cart confirmed!');
   }
-  
+
+  deleteBooking(bookingId: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'The reservation will be removed from the cart!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.bookingService.deleteBookingById(bookingId).subscribe({
+          next: () => {
+            this.bookings = this.bookings.filter(b => b.bookingId !== bookingId);
+            this.calculateTotalAmount();
+            Swal.fire('Deleted!', 'The reservation was successfully deleted.', 'success');
+          },
+          error: (err) => {
+            console.error(`Error deleting booking ${bookingId}:`, err);
+            Swal.fire('Error!', 'An error occurred while deleting the reservation.', 'error');
+          }
+        });
+      }
+    });
+  }
 }

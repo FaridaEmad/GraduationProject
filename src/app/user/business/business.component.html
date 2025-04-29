@@ -21,7 +21,7 @@
                 <label class="form-label">Category</label>
                 <select class="form-select" [(ngModel)]="selectedCategory">
                     <option value="null">All Categories</option>
-                    <option *ngFor="let cat of categories; let i = index" [value]="cat.categoryId">{{ cat.name }}</option>
+                    <option *ngFor="let cat of categories; let i = index" [value]="cat.id">{{ cat.name }}</option>
                 </select>
             </div>
 
