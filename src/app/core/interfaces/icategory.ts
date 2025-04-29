@@ -1,5 +1,8 @@
+import { IBusiness } from "./ibusiness";
+
 export interface ICategory {
-    id:       Number;
+    categoryId:        number;
     name:      string;
+    businesses: IBusiness[]; 
     
 }
