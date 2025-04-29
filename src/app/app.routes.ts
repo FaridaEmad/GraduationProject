@@ -26,7 +26,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { BlankLayoutComponent } from './layouts/blank-layout/blank-layout.component';
 import { logedGuard } from './core/guards/loged.guard';
 // import { DetailComponent } from './user/detail/detail.component';
-import { CategoriesComponent } from './user/categories/categories.component';
+// import { CategoriesComponent } from './user/categories/categories.component';
 import { OfferComponent } from './user/offer/offer.component';
 import { adminGuard } from './core/guards/admin.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
@@ -54,7 +54,7 @@ export const routes: Routes = [
       { path: 'user/home', component: UserHome },
       { path: 'user/profile', component: UserProfile },
       { path: 'user/business', component: BusinessComponent },
-      { path: 'user/category', component: CategoriesComponent },
+      // { path: 'user/category', component: CategoriesComponent },
       { path: 'user/offer/:id', component: OfferComponent },
       // { path: 'user/search', component: SearchByCategoryComponent },
       { path: 'user/favorite', component: FavoriteComponent },

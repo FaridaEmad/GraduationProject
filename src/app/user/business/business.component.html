@@ -3,31 +3,25 @@
         <div class="row g-3 justify-content-center">
             <div class="col-md-3">
                 <label class="form-label">City</label>
-                <select class="form-select" [(ngModel)]="selectedCity"  >
+                <select class="form-select" [(ngModel)]="selectedCity">
                     <option value="">All Cities</option>
-                    @for (city of cities; track $index) {
-                        <option [value]="city">{{ city }}</option>
-                    }
+                    <option *ngFor="let city of cities; let i = index" [value]="city">{{ city }}</option>
                 </select>
             </div>
 
             <div class="col-md-3">
                 <label class="form-label">Area</label>
-                <select class="form-select" [(ngModel)]="selectedArea" >
+                <select class="form-select" [(ngModel)]="selectedArea">
                     <option value="">All Areas</option>
-                    @for (area of areas; track $index) {
-                        <option [value]="area">{{ area }}</option>
-                    }
+                    <option *ngFor="let area of areas; let i = index" [value]="area">{{ area }}</option>
                 </select>
             </div>
 
             <div class="col-md-3">
                 <label class="form-label">Category</label>
-                <select class="form-select" [(ngModel)]="selectedCategory" >
-                    <option value="">All Categories</option>
-                    @for ( cat of categories; track $index) {
-                        <option [value]="cat.id">{{ cat.name }}</option>
-                    }
+                <select class="form-select" [(ngModel)]="selectedCategory">
+                    <option value="null">All Categories</option>
+                    <option *ngFor="let cat of categories; let i = index" [value]="cat.categoryId">{{ cat.name }}</option>
                 </select>
             </div>
 
@@ -37,51 +31,65 @@
         </div>
     </div>
 
-    <input [(ngModel)]="searchText" placeholder="Search..." type="search" name="search" id="search"
+    <input [(ngModel)]="searchText" (input)="onSearchChange()" placeholder="Search..." type="search" name="search" id="search"
            class="form-control w-75 my-4 mx-auto">
-    
+
     <div class="container">
         <div class="row">
-            @for (product of Businesslist | search : searchText | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; track product.id) {
-                <div class="col-md-3 col-sm-6 col-xs-12 my-3" >
-                    <div class="product">
-                        <div class="position-relative">
-                            <div class="slider-img">
-                                <img [src]="product.imageUrls[0]" alt="product-image" class="product-img">
-                            </div>
-                        </div>
-                        <div class="bottom-widget position-relative">
-                            <div class="company-logo">
-                                <img [src]="product.logo" class="w-100">
-                            </div>
-                            <h3 class="slid_title">{{ product.name | termtxt:2 }}</h3>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-center">
-                            <span class="text-muted">{{ product.ratingsAverage }}</span>
-                            @for (star of [1, 2, 3, 4, 5].slice(0, product.averageRates ); track $index) {
-                                <span><i class="fas fa-star rating-color"></i></span>
-                            }
-                            @if (product.ratingsAverage % 1 !== 0) {
-                                <span><i class="fas fa-star-half-alt rating-color"></i></span>
-                            }
-                        </div>
-                        <span class="d-flex align-items-center justify-content-center">
-                            <span class="salery_after">
-                                {{ product.price | currency: 'EGP' }}
-                            </span>
-                        </span>
-                        <div class="d-flex align-items-center justify-content-center">
-                            <a class="w-75 btn-main my-2" [routerLink]="['/user/offer', product.id]"> Show Offers</a>
-                            <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
+            <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" class="col-md-3 col-sm-6 col-xs-12 my-3">
+                <div class="product">
+                    <div class="position-relative">
+                        <div class="slider-img">
+                            <img [src]="product.imageUrls[0]" alt="product-image" class="product-img">
                         </div>
                     </div>
+                    <div class="bottom-widget position-relative">
+                        <div class="company-logo">
+                            <img [src]="product.logo" class="w-100">
+                        </div>
+                        <h3 class="slid_title">{{ product.name | termtxt:2 }}</h3>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <span class="text-muted">{{ product.averageRates }}</span>
+                        <span *ngFor="let star of [1, 2, 3, 4, 5].slice(0, product.averageRates); let i = index">
+                            <i class="fas fa-star rating-color"></i>
+                        </span>
+                        <span *ngIf="product.averageRates % 1 !== 0">
+                            <i class="fas fa-star-half-alt rating-color"></i>
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <a class="w-75 btn-main my-2" [routerLink]="['/user/offer', product.id]">Show Offers</a>
+                        <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
+                    </div>
                 </div>
-            }
+            </div>
         </div>
     </div>
 
-    <div class="overlay-container" aria-live="polite">
-        <div id="toast-container" class="toast-top-right toast-container"></div>
+    <div *ngIf="noDataMessage" class="alert alert-danger alert-dismissible  mx-auto w-50" role="alert">
+        
+            <p class="m-0 text-center">No businesses match your selected filters!</p>
+          
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      
+      <!-- <div class="alert alert-danger my-2">
+        @if (loginForm.get('password')?.getError('required')) {
+        <p class="m-0">Password Is Required</p>
+        }
+        @else if (loginForm.get('password')?.getError('pattern')) {
+        <p class="m-0">Password Must Be More Than 6 Char</p>
+        }
+    </div> -->
+      
+      
+      
+      
+    <div *ngIf="Businesslist.length > 0">
+        <div *ngFor="let business of Businesslist">
+          <!-- عرض بيانات الأعمال هنا -->
+        </div>
     </div>
 
     <div class="d-flex justify-content-center align-items-center my-4">
