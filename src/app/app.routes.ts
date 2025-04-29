@@ -30,6 +30,7 @@ import { CategoriesComponent } from './user/categories/categories.component';
 import { OfferComponent } from './user/offer/offer.component';
 import { adminGuard } from './core/guards/admin.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
+import { CartComponent } from './user/cart/cart.component';
 
 export const routes: Routes = [
   //Auth Layout Routes (for login and register)
@@ -59,7 +60,7 @@ export const routes: Routes = [
       { path: 'user/favorite', component: FavoriteComponent },
       { path: 'user/booking', component: BookingComponent },
       { path: 'user/payment', component: PaymentComponent },
-
+      {path:'user/cart',component:CartComponent}
       // Admin Routes
 
     ]
