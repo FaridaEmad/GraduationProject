@@ -1,0 +1,17 @@
+
+  
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #721c24;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
+  
+    
+  

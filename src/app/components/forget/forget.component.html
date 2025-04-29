@@ -1,0 +1,67 @@
+<section class="bg-main-light shadow rounded-4 my-5 mt-5 p-4 forget-section">
+
+
+  <h1 class="text-center forget-title">Change Password</h1>
+
+  <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()">
+    <div>
+      <label for="email">Email</label>
+      <input [ngClass]="{
+        'is-valid': !changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched,
+        'is-invalid': changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched
+      }" formControlName="email" type="email" id="email" class="form-control" placeholder="saraabdelmoniaam@gmail.com">
+
+      @if(changePasswordForm.get('email')?.errors && (changePasswordForm.get('email')?.touched || changePasswordForm.get('email')?.dirty)) {
+          <div class="alert alert-danger my-2">
+              @if(changePasswordForm.get('email')?.getError('required')) {
+                  <p class="m-0">Email Is Required</p>
+              }
+              @else if(changePasswordForm.get('email')?.getError('email')) {
+                  <p class="m-0">Please Enter Valid Email: Ex., Sarah&#64;gmail.com</p>
+              }
+          </div>
+      }
+  </div>
+
+    <div>
+      <label for="New password">New Password</label>
+      <div class="position-relative">
+          <input [ngClass]="{
+            'is-valid': !changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched,
+            'is-invalid': changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched
+          }" #inputPassword formControlName="newPassword" type="password" id="newPassword" class="form-control" placeholder="••••••••••">
+          <span class="show position-absolute cr">
+              <i (click)="showPassword()" #showPasswordIcone class="fa-solid fa-eye-slash"></i>
+              <i (click)="hidePassword()" #hidePasswordIcone class="fa-solid fa-eye d-none"></i>
+          </span>
+      </div>
+
+      @if(changePasswordForm.get('newPassword')?.errors && (changePasswordForm.get('newPassword')?.touched || changePasswordForm.get('newPassword')?.dirty)) {
+          <div class="alert alert-danger my-2">
+              @if(changePasswordForm.get('newPassword')?.getError('required')) {
+                  <p class="m-0">Password Is Required</p>
+              }
+              @else if(changePasswordForm.get('newPassword')?.getError('pattern')) {
+                  <p class="m-0">Please Enter Strong Valid Password : <br>
+                      Password Must Be At least 6 Characters Long And At least Contains (one uppercase letter, one lowercase letter, one digit, and one special character(!&#64;#$%^&*) ).
+                  </p>
+              }
+          </div>
+      }
+  </div>
+
+    <button [disabled]="isLoading || changePasswordForm.invalid" class="btn btn-main d-block ms-auto mt-3"
+      type="submit">
+      @if(isLoading) {
+      Change <span><i class="fas fa-spin fa-spinner"></i></span>
+      }
+      @else {
+      <span class="forget-icon">🚀</span> Change
+      }
+    </button>
+  </form>
+
+  <div *ngIf="msgAlert" class="alert alert-danger mt-3 text-center">
+    {{ msgAlert }}
+  </div>
+  </section>

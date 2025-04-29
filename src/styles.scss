@@ -1,0 +1,146 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300&display=swap");
+
+
+
+:root {
+    --main-color: #d01111;
+    --light-color: #f0f3f2;
+    --shadow: rgba(145, 158, 171, 0.2) 0px 2px 4px -1px,
+      rgba(145, 158, 171, 0.14) 0px 4px 5px 0px,
+      rgba(145, 158, 171, 0.12) 0px 1px 10px 0px;
+    --font-family: "Encode Sans Expanded", sans-serif;
+    --rating-color: #ffc908;
+  }
+  
+  body {
+    font-family: var(--font-family) !important;
+  }
+  
+  .nav-link {
+    transition: unset !important;
+  }
+  .active-link {
+    background-color: var(--main-color) !important;
+    color: var(--light-color) !important;
+    border-radius: 5px;
+  }
+  
+  .rating-color {
+    color: var(--rating-color);
+  }
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  a,
+  a:hover {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .product {
+    border-radius: 5px;
+    border: solid 1px var(--main-color);
+    transition: box-shadow 0.5s;
+    overflow: hidden;
+  }
+
+  .product-img {
+    width: 100%; /* يملأ الصورة العرض بالكامل */
+    height: 250px; /* تحديد ارتفاع ثابت */
+    object-fit: contain; /* تغطي الصورة الفريم دون تشويه */
+    border-radius: 12px; /* إضافة حواف مدورة لجعل الصورة تبدو أفضل */
+    
+  }
+  
+  
+  .product:hover {
+    box-shadow: 0 0 10px #c62432;
+  }
+  
+  
+  .ngx-pagination .current {
+    background: var(--main-color) !important;
+}
+// .box_of_cat {
+//   overflow: hidden;
+//   border-radius: 4px;
+//   background-color: #ffffff;
+//   box-shadow: 0 12px 31px 0 rgba(0, 0, 0, 0.1);
+//   max-width: 350px; 
+// }
+.top_widget {
+  position: relative;
+}
+.company-logo {
+  position: absolute;
+  top: -48%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
+  border: solid 2px #e2e2e2;
+  border-radius: 50px;
+  background-color: #fff;
+  overflow: hidden;
+  display: flex
+;
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%);
+}
+h3.slid_title {
+    font-size: 16px;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.31;
+    letter-spacing: normal;
+    text-align: center;
+    color: #000000;
+    padding-top: 41px;
+    padding-left: 12px;
+    padding-right: 12px;
+}
+  
+  .font-sm {
+    font-size: 12px;
+  }
+  .text-main {
+    color: var(--main-color);
+  }
+  .bg-main {
+    background-color: var(--main-color) !important;
+  }
+  .bg-main-light {
+    background-color: var(--light-color) !important;
+  }
+  .btn-main {
+    background-color: var(--main-color);
+    padding: 7px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.5s;
+  }
+  .btn-main:disabled {
+    cursor: not-allowed;
+    background-color: #ccc;
+  }
+  .btn-main:disabled:hover {
+    background-color: #ccc;
+  }
+  .btn-main:hover {
+    background-color: #d01111;
+  }
+  
+  .title {
+   
+    font-family: 'Kaushan Script', cursive;
+    font-size: 2rem; 
+  }
+  .sub-title {
+   
+    font-family: 'Kaushan Script', cursive;
+    font-size: 1.5rem; 
+  }

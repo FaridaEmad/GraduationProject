@@ -1,0 +1,100 @@
+/* Existing navbar brand and icon styles */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-family: 'Kaushan Script', sans-serif; /* Apply Kaushan Script font */
+    font-weight: bold;
+    color: #d01111; /* Text color */
+    text-transform: uppercase; /* Make the text bold and capitalized */
+    font-size: 28px; /* Adjust the size to match your design */
+    letter-spacing: 2px; /* Space out the letters for a clean look */
+    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* 3D effect for the icon */
+.navbar-brand i {
+    color: #d01111; /* Icon color */
+    font-size: 32px; /* Icon size */
+    margin-right: 10px; /* Space between icon and text */
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); /* Icon shadow for 3D effect */
+    transform: translateY(-6px) scale(1.1); /* Raised effect */
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* 3D effect for the text (Makank) */
+.navbar-brand span {
+    color: #d01111; /* Text color */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 0, 0, 0.3), 0 0 50px rgba(0, 0, 0, 0.3); /* Cool shadow for text */
+    transform: translateY(-2px) scale(1.05); /* Slight 3D effect for text */
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Hover effects to make it even more dynamic */
+.navbar-brand:hover {
+    transform: translateY(-3px); /* Slight upward movement */
+    color: #d01111; /* Text color when hovered */
+}
+
+/* Hover effects for icon */
+.navbar-brand i:hover {
+    transform: translateY(-8px) scale(1.2); /* Icon grows slightly more on hover */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6); /* Stronger shadow on hover */
+}
+
+/* Hover effects for text (Makank) */
+.navbar-brand span:hover {
+    transform: translateY(-4px) scale(1.1); /* Text grows slightly */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
+}
+
+
+/* Social icons styling */
+.social-icon {
+    font-size: 1.1rem; /* Adjust the size of icons */
+    color: #444; /* Default icon color */
+    transition: all 0.3s ease;
+    margin: 0 10px; /* Space between icons */
+}
+
+/* Normal colorful social icons */
+.social-icon.instagram { color: #e1306c; } /* Instagram */
+.social-icon.facebook { color: #3b5998; } /* Facebook */
+.social-icon.tiktok { color: #000000; } /* TikTok */
+.social-icon.twitter { color: #1da1f2; } /* Twitter */
+.social-icon.linkedin { color: #0077b5; } /* LinkedIn */
+.social-icon.youtube { color: #ff0000; } /* YouTube */
+
+/* Hover Effects */
+.social-icon:hover {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+}
+
+/* Hover Effects with Color Transitions */
+.social-icon.instagram:hover { color: #f56040; } /* Instagram Hover */
+.social-icon.facebook:hover { color: #8b9dc3; } /* Facebook Hover */
+.social-icon.tiktok:hover { color: #69a5ff; } /* TikTok Hover */
+.social-icon.twitter:hover { color: #1b95e0; } /* Twitter Hover */
+.social-icon.linkedin:hover { color: #0a66c2; } /* LinkedIn Hover */
+.social-icon.youtube:hover { color: #c4302b; } /* YouTube Hover */
+
+/* Smaller Link Styling for Login and Register */
+.smaller-link {
+    font-size: 1rem; /* Make the text smaller */
+    color: #444; /* Default color */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover Effects for Login and Register */
+.smaller-link:hover {
+    color: #d01111; /* Change color on hover */
+    transform: scale(1.1);
+}
+
+/* Active Link Styling */
+.nav-link.active-link {
+    background-color: #d01111;
+    color: white !important;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

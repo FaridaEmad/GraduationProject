@@ -1,0 +1,109 @@
+<div class="row mb-4">
+    <!-- Users Card -->
+    <div class="col-12 col-md-4 mb-3">
+      <div class="card text-white bg-primary h-100 rounded-4 shadow-sm"
+           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'users' }"
+           style="cursor: pointer; transition: 0.3s;"
+           (click)="selectedSection = 'users'">
+        <div class="card-body d-flex justify-content-around align-items-center">
+          <i class="fa-solid fa-users fa-2xl text-white"></i>
+          <div class="text-center">
+            <p class="mb-0 title">Users</p>
+            <h3 class="title">{{ usersCount }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Businesses Card -->
+    <div class="col-12 col-md-4 mb-3">
+      <div class="card text-white bg-success h-100 rounded-4 shadow-sm"
+           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'business' }"
+           style="cursor: pointer; transition: 0.3s;"
+           (click)="selectedSection = 'business'">
+        <div class="card-body d-flex justify-content-around align-items-center">
+          <i class="fa-solid fa-briefcase fa-2xl text-white"></i>
+          <div class="text-center">
+            <p class="mb-0 title">Businesses</p>
+            <h3 class="title">{{ businessCount }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Categories Card -->
+    <div class="col-12 col-md-4 mb-3">
+      <div class="card text-white bg-warning h-100 rounded-4 shadow-sm"
+           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'categories' }"
+           style="cursor: pointer; transition: 0.3s;"
+           (click)="selectedSection = 'categories'">
+        <div class="card-body d-flex justify-content-around align-items-center">
+          <i class="fa-solid fa-folder-open fa-2xl text-white"></i>
+          <div class="text-center">
+            <p class="mb-0 title">Categories</p>
+            <h3 class="title">{{ categoriesCount }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Row for Chart and Table -->
+  <div class="row fade-in">
+    <div class="col-12 col-lg-6 mb-3">
+      <div class="card p-3 h-100">
+        <h5 class="mb-3 text-capitalize">{{ selectedSection }} Chart</h5>
+        <div *ngIf="isLoading" class="text-center p-3">
+          <div class="spinner-border text-primary"></div>
+        </div>
+  
+        <canvas *ngIf="!isLoading && selectedSection === 'business'" baseChart
+                [data]="barChartData" [type]="barChartType">
+        </canvas>
+  
+        <canvas *ngIf="!isLoading && selectedSection === 'users'" baseChart
+                [data]="userChartData" [type]="barChartType">
+        </canvas>
+  
+        <canvas *ngIf="!isLoading && selectedSection === 'categories'" baseChart
+                [data]="categoryChartData" [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+  
+    <div class="col-12 col-lg-6 mb-3">
+      <div class="card p-3 h-100">
+        <h5 class="mb-3 text-capitalize">Latest {{ selectedSection }}</h5>
+  
+        <table *ngIf="selectedSection === 'business'" class="table fade-in">
+          <thead><tr><th>Name</th><th>Area</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let b of latestBusiness">
+              <td>{{ b.name }}</td>
+              <td>{{ b.area }}</td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <table *ngIf="selectedSection === 'users'" class="table fade-in">
+          <thead><tr><th>Name</th><th>Email</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let u of latestUsers">
+              <td>{{ u.name }}</td>
+              <td>{{ u.email }}</td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <table *ngIf="selectedSection === 'categories'" class="table fade-in">
+          <thead><tr><th>Name</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let c of latestCategories">
+              <td>{{ c.name }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

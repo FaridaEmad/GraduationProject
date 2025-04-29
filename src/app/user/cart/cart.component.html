@@ -1,0 +1,31 @@
+<div *ngIf="bookings.length > 0">
+    <!-- Loop through each booking and display it inside a Bootstrap card -->
+    <div class="card mb-4" *ngFor="let booking of bookings">
+      <div class="card-body">
+        <h4 class="card-title">Booking ID: {{ booking.bookingId }}</h4>
+        <p><strong>Quantity:</strong> {{ booking.quantity }}</p>
+        <p><strong>Booking Date:</strong> {{ booking.bookingDate }}</p>
+        
+        <div *ngIf="booking.offer">
+          <p><strong>Price:</strong> {{ booking.offer.price * booking.quantity }} EGP</p>
+          <p><strong>Offer Description:</strong> {{ booking.offer.description }}</p>
+          <img [src]="booking.offer.image" alt="Offer Image" class="img-fluid" width="100">
+        </div>
+      </div>
+    </div>
+  
+    <!-- Cart summary section -->
+    <div class="card mt-4">
+      <div class="card-body text-center">
+        <h3>Total Amount: {{ totalAmount }} EGP</h3>
+        <p><strong>Number of items:</strong> {{ noOfItems }}</p>
+        <p><strong>Cart Status:</strong> {{ isActive ? 'Active' : 'Inactive' }}</p>
+        <button class="btn btn-success mt-3" (click)="confirmCart()">Confirm</button>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noBookings>
+    <p>No bookings found for this user.</p>
+  </ng-template>
+  
