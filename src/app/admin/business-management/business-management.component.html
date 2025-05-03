@@ -1,1 +1,132 @@
-<p>business-management works!</p>
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="title ">Business Mangement</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">+ Add Business</button>
+  </div>
+
+  <!-- فلاتر البحث -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-3">
+      <input type="text" class="form-control" placeholder="Search by name.." [(ngModel)]="searchText" (input)="onSearchChange()" />
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()" [ngModelOptions]="{standalone: true}">
+        <option [ngValue]="null"> All Categories</option>
+        <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+          {{ category.name }}
+        </option>
+      </select>
+      
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedCity" (change)="applyFilters()">
+        <option value="">All Cities</option>
+        <option *ngFor="let city of cities">{{ city }}</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select class="form-select" [(ngModel)]="selectedArea" (change)="applyFilters()">
+        <option value="">All Areas</option>
+        <option *ngFor="let area of areas">{{ area }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- جدول الأعمال -->
+  <div *ngIf="paginatedBusinesses.length > 0; else noData">
+    <table class="table table-bordered table-hover text-center align-middle">
+      <thead class="table-light">
+        <tr>
+          
+          <th>Logo</th>
+          <th>Name</th>
+          <th>City</th>
+          <th>Area</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let business of paginatedBusinesses; let i = index; trackBy: trackById">
+         
+          <img [src]="business.logo" alt="Profile Photo" class=" rounded-circle my-2" style="width: 50px; height: 50px;">
+          <td>{{ business.name }}</td>
+          <td>{{ business.city }}</td>
+          <td>{{ business.area }}</td>
+          <td>{{ getCategoryName(business.categoryId) }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="openEditModal(business)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="confirmDelete(business.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+   
+    <div class="pagination d-flex justify-content-center mt-4">
+      <button *ngFor="let page of totalPages" class="btn btn-outline-primary mx-1"
+          [class.active]="page === currentPage" (click)="changePage(page)">
+          {{ page }}
+      </button>
+  </div>
+  </div>
+
+  <!-- لا توجد بيانات -->
+  <ng-template #noData>
+    <div class="alert alert-warning text-center">
+      {{ noDataMessage || 'There is no data to display' }}
+    </div>
+  </ng-template>
+
+  <!-- Modal للإضافة أو التعديل -->
+  <dialog #businessModal class="modal-dialog" style="max-width: 600px;">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="modal-content p-4">
+      <h5 class="mb-3">{{ isEditMode ? 'Edit Business' : 'Add Business'  }}</h5>
+
+      <div class="mb-3">
+        <label class="form-label">Business Name</label>
+        <input class="form-control" formControlName="name" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">City</label>
+        <input class="form-control" formControlName="city" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Area</label>
+        <input class="form-control" formControlName="area" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Logo</label>
+        <input class="form-control" formControlName="logo" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Categoty</label>
+        <select class="form-select" formControlName="categoryId">
+          <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">User ID</label>
+        <input type="number" class="form-control" formControlName="userId" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Image URLs</label>
+        <textarea class="form-control" formControlName="imageUrls" rows="2"></textarea>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-success" [disabled]="form.invalid">
+          {{ isEditMode ? 'Update' : 'Add'}}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+</div>

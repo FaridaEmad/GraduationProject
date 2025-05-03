@@ -1,31 +1,73 @@
+/* Sidebar Style */
 .sidebar {
-    width: 220px;
-    background-color:#163758 !important;
-    min-height: 100vh;
-    position: sticky;
+  width: 220px;
+  background-color: #163758 !important;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modify the display properties on small screens */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -220px;
     top: 0;
+    width: 220px;
+    height: 100%;
+    overflow-y: auto;
     z-index: 100;
   }
-  
-  .sidebar .nav-link {
-    color: #fff;
-    padding: 15px;
-    
-  }
-  
 
-  
-  .title {
-   
-    font-family: 'Kaushan Script', cursive;
-    font-size: 2rem; 
+  .sidebar.open {
+    left: 0;
   }
-  .sub-title {
-   
-    font-family: 'Kaushan Script', cursive;
-    font-size: 1.5rem; 
+}
+
+/* Nav Link Style */
+.sidebar .nav-link {
+  color: #fff;
+  padding: 15px;
+}
+
+/* Title and Subtitle Styles */
+.title {
+  font-family: 'Kaushan Script', cursive;
+  font-size: 2rem;
+}
+
+.sub-title {
+  font-family: 'Kaushan Script', cursive;
+  font-size: 1.5rem;
+}
+
+/* Active Link Style */
+.active-link {
+  background-color: #eff1f3 !important;
+  color: #163758 !important;
+}
+
+/* Hover Effects for Links */
+.sidebar .nav-link:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Sidebar Toggle Button */
+#sidebarToggle {
+  background-color: #163758;
+  border: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 200;
+}
+
+/* Adjustments on Larger Screens */
+@media (min-width: 768px) {
+  #sidebarToggle {
+    display: none;
   }
-  .active-link{
-    background-color: #eff1f3 !important;
-    color: #163758 !important;
-  }
+}

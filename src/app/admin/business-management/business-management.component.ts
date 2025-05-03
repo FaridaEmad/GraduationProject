@@ -1,11 +1,288 @@
-import { Component } from '@angular/core';
+import { CategoryService } from './../../core/services/category.service';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
+import { IBusiness, IBusinessCreate, IBusinessUpdate } from '../../core/interfaces/ibusiness';
+import { ICategory } from '../../core/interfaces/icategory';
+import { BusinessService } from '../../core/services/business.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-business-management',
-  imports: [],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './business-management.component.html',
-  styleUrl: './business-management.component.scss'
+  styleUrls: ['./business-management.component.scss']
 })
-export class BusinessManagementComponent {
+export class BusinessManagementComponent implements OnInit, OnDestroy {
+  businesses: IBusiness[] = [];
+  allBusiness: IBusiness[] = [];
+  filteredBusinesses: IBusiness[] = [];
 
+  categories: ICategory[] = [];
+  allcategories: ICategory[] = [];
+
+  cities: string[] = [];
+  areas: string[] = [];
+
+  searchText = '';
+  selectedCategoryId: number | null = null;
+  selectedCity: string = '';
+  selectedArea: string = '';
+  noDataMessage: string = '';
+
+  currentPage = 1;
+  itemsPerPage = 5;
+
+  form!: FormGroup;
+  isEditMode = false;
+  selectedBusinessId: number | null = null;
+
+  getallbusiness!: Subscription;
+  getallcategories!: Subscription;
+  filterSubscription!: Subscription;
+
+  @ViewChild('businessModal') businessModal!: ElementRef<HTMLDialogElement>;
+
+  constructor(
+    private businessService: BusinessService,
+    private categoryService: CategoryService,
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    this.initForm();
+    this.loadCategories();
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      const categoryIdParam = params['categoryId'];
+      if (categoryIdParam && !isNaN(+categoryIdParam)) {
+        this.selectedCategoryId = +categoryIdParam;
+      }
+      this.getAllBusiness();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.getallcategories?.unsubscribe();
+    this.getallbusiness?.unsubscribe();
+    this.filterSubscription?.unsubscribe();
+  }
+
+  initForm() {
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      city: ['', Validators.required],
+      area: ['', Validators.required],
+      logo: ['', Validators.required],
+      categoryId: [0, Validators.required],
+      userId: [0, Validators.required],
+      imageUrls: ['']
+    });
+  }
+
+  loadCategories(): void {
+    this.getallcategories = this.categoryService.getallcategories().subscribe({
+      next: (res) => {
+        this.allcategories = res;
+        this.categories = res;
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+      }
+    });
+  }
+
+  getAllBusiness(): void {
+    this.getallbusiness = this.businessService.getallbusiness().subscribe({
+      next: (res) => {
+        if (res) {
+          this.allBusiness = res;
+          this.businesses = res;
+          this.filteredBusinesses = res;
+          this.extractFilterData();
+          this.applyFilters();
+        } else {
+          console.error('The returned data is invalid');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
+    });
+  }
+
+  extractFilterData(): void {
+    if (!this.allBusiness || this.allBusiness.length === 0) return;
+
+    this.cities = [...new Set(this.allBusiness.map(b => b.city).filter(Boolean))];
+    this.areas = [...new Set(this.allBusiness.map(b => b.area).filter(Boolean))];
+  }
+
+  applyFilters(): void {
+    let filtered = this.allBusiness;
+
+    if (this.selectedCategoryId != null) {
+      filtered = filtered.filter(b => b.categoryId === this.selectedCategoryId);
+      console.log('selectedCategoryId type:', typeof this.selectedCategoryId, this.selectedCategoryId);
+
+    }
+
+
+    if (this.selectedCity) {
+      filtered = filtered.filter(b => b.city === this.selectedCity);
+    }
+
+    if (this.selectedArea) {
+      filtered = filtered.filter(b => b.area === this.selectedArea);
+    }
+
+    if (this.searchText.trim()) {
+      const text = this.searchText.trim().toLowerCase();
+      filtered = filtered.filter(b =>
+        b.name.toLowerCase().includes(text)
+      );
+    }
+
+    this.filteredBusinesses = filtered;
+    this.noDataMessage = filtered.length === 0 ? 'No Businesses Found' : '';
+    this.currentPage = 1;
+  }
+
+  onSearchChange(): void {
+    this.applyFilters();
+  }
+
+  onCategoryChange(): void {
+    this.applyFilters();
+  }
+
+  openAddModal(): void {
+    this.isEditMode = false;
+    this.selectedBusinessId = null;
+    this.form.reset();
+    this.businessModal?.nativeElement.showModal();
+  }
+
+  openEditModal(business: IBusiness): void {
+    this.isEditMode = true;
+    this.selectedBusinessId = business.id;
+
+    this.form.patchValue({
+      name: business.name,
+      city: business.city,
+      area: business.area,
+      logo: business.logo,
+      categoryId: business.categoryId,
+      userId: business.userId,
+      imageUrls: business.imageUrls?.join(',') || ''
+    });
+
+    this.businessModal?.nativeElement.showModal();
+  }
+
+  closeModal(): void {
+    if (this.businessModal?.nativeElement.open) {
+      this.businessModal.nativeElement.close();
+    }
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) return;
+
+    const formValue = this.form.value;
+
+    if (this.isEditMode && this.selectedBusinessId !== null) {
+      const updateData: IBusinessUpdate = {
+        name: formValue.name,
+        city: formValue.city,
+        area: formValue.area,
+        logo: formValue.logo,
+        categoryId: formValue.categoryId,
+        userId: formValue.userId
+      };
+
+      this.businessService.updateBusiness(this.selectedBusinessId, updateData).subscribe(
+        () => {
+          Swal.fire('Updated!', 'Business updated successfully.', 'success');
+          this.closeModal();
+          this.refreshData();
+        },
+        (error) => {
+          console.error('Error updating business:', error);
+          Swal.fire('Error', 'There was an error updating the business.', 'error');
+        }
+      );
+    } else {
+      const newBusiness: IBusinessCreate = {
+        name: formValue.name,
+        city: formValue.city,
+        area: formValue.area,
+        logo: formValue.logo,
+        categoryId: formValue.categoryId,
+        userId: formValue.userId,
+        imageUrls: formValue.imageUrls
+      };
+
+      this.businessService.addBusiness(newBusiness).subscribe(() => {
+        Swal.fire('Added!', 'New business added successfully.', 'success');
+        this.closeModal();
+        this.refreshData();
+      });
+    }
+  }
+
+  confirmDelete(id: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.businessService.deleteBusiness(id).subscribe(() => {
+          Swal.fire('Deleted!', 'Business has been deleted.', 'success');
+          this.refreshData();
+        });
+      }
+    });
+  }
+
+  refreshData(): void {
+    this.businessService.getallbusiness().subscribe(res => {
+      this.allBusiness = res;
+      this.businesses = res;
+      this.filteredBusinesses = res;
+      this.extractFilterData();
+      this.applyFilters();
+    });
+  }
+
+  get paginatedBusinesses(): IBusiness[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredBusinesses.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number[] {
+    const total = Math.ceil(this.filteredBusinesses.length / this.itemsPerPage);
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+  }
+
+  getCategoryName(id: number): string {
+    return this.categories.find(cat => cat.categoryId === id)?.name || 'Unknown';
+  }
+
+  trackById(index: number, item: IBusiness): string {
+    return item.id?.toString() ?? index.toString();
+  }
 }
