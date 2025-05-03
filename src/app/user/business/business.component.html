@@ -21,7 +21,7 @@
                 <label class="form-label">Category</label>
                 <select class="form-select" [(ngModel)]="selectedCategory">
                     <option value="null">All Categories</option>
-                    <option *ngFor="let cat of categories; let i = index" [value]="cat.id">{{ cat.name }}</option>
+                    <option *ngFor="let cat of categories; let i = index" [value]="cat.categoryId">{{ cat.name }}</option>
                 </select>
             </div>
 
@@ -34,23 +34,39 @@
     <input [(ngModel)]="searchText" (input)="onSearchChange()" placeholder="Search..." type="search" name="search" id="search"
            class="form-control w-75 my-4 mx-auto">
 
-    <div class="container">
-        <div class="row">
-            <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" class="col-md-3 col-sm-6 col-xs-12 my-3">
-                <div class="product">
-                    <div class="position-relative">
-                        <div class="slider-img">
-                            <img [src]="product.imageUrls[0]" alt="product-image" class="product-img">
-                        </div>
+           <!-- <div class="container">
+            <div class="row">
+              <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" class="col-xl-3 col-md-4 col-sm-6 col-12 mb-4">
+                <div class="card h-100 shadow-sm position-relative product-card">
+                 
+          
+                  
+                  <img [src]="product.imageUrls[0]" class="card-img-top object-fit-cover" alt="Product Image" style="height: 180px;" />
+                  <div class="bottom-widget position-relative card-body text-center">
+                    <div class="company-logo">
+                        <img [src]="product.logo" class="w-100">
                     </div>
-                    <div class="bottom-widget position-relative">
-                        <div class="company-logo">
-                            <img [src]="product.logo" class="w-100">
-                        </div>
-                        <h3 class="slid_title">{{ product.name | termtxt:2 }}</h3>
-                    </div>
+                    
+                        <h6 class="card-title fw-bold text-truncate">{{ product.name | termtxt:2 }}</h6>
+    
+                    
+                </div>
+          
+                 
+                  <div class="card-body text-center">
+                    
+                    <div class="logo mb-2 mx-auto" style="width: 60px; height: 60px;">
+                      <img [src]="product.logo" class="img-fluid rounded-circle border" alt="Logo" />
+                    </div> 
+          
+                    
+                    <h6 class="card-title fw-bold text-truncate">{{  product.name | termtxt:2 }}</h6>
+          
+                    
+          
+                   
                     <div class="d-flex align-items-center justify-content-center">
-                        <span class="text-muted">{{ product.averageRates }}</span>
+                        
                         <span *ngFor="let star of [1, 2, 3, 4, 5].slice(0, product.averageRates); let i = index">
                             <i class="fas fa-star rating-color"></i>
                         </span>
@@ -63,9 +79,40 @@
                         <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+        
+            <div class="container">
+                <div class="row">
+                    <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" class="col-md-3 col-sm-6 col-xs-12 my-3">
+                        <div class="card h-100 shadow-sm position-relative product-card">
+                            <img [src]="product.imageUrls[0]" class="card-img-top object-fit-cover" alt="Product Image" style="height: 180px;" />
+
+                            <div class="bottom-widget position-relative">
+                                <div class="company-logo">
+                                    <img [src]="product.logo" class="w-100">
+                                </div>
+                                <h3 class="slid_title">{{ product.name | termtxt:2}}</h3>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center">
+                               
+                                <span *ngFor="let star of [1, 2, 3, 4, 5].slice(0, product.averageRates); let i = index">
+                                    <i class="fas fa-star rating-color"></i>
+                                </span>
+                                <span *ngIf="product.averageRates % 1 !== 0">
+                                    <i class="fas fa-star-half-alt rating-color"></i>
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center text-center">
+                                <a class="w-75 btn-main my-2 border-0 rounded-3 fw-bold" [routerLink]="['/user/offer', product.id]">Show Offers</a>
+                                <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
 
     <div *ngIf="noDataMessage" class="alert alert-danger alert-dismissible  mx-auto w-50" role="alert">
         
@@ -74,14 +121,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       
-      <!-- <div class="alert alert-danger my-2">
-        @if (loginForm.get('password')?.getError('required')) {
-        <p class="m-0">Password Is Required</p>
-        }
-        @else if (loginForm.get('password')?.getError('pattern')) {
-        <p class="m-0">Password Must Be More Than 6 Char</p>
-        }
-    </div> -->
+      
       
       
       
@@ -96,3 +136,4 @@
         <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
     </div>
 </section>
+ 
