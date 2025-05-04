@@ -23,8 +23,7 @@ export class AuthService {
     return this._HttpClient.post('https://localhost:7273/api/Auth/login', data).pipe(
       tap((res: any) => {
         if (res && res.token) {
-          localStorage.setItem('userToken', res.token);
-  
+          localStorage.setItem('userToken', res.token);  // تخزين التوكن في localStorage
           const decoded: any = jwtDecode(res.token);
           const user = {
             name: decoded.unique_name,
@@ -32,15 +31,9 @@ export class AuthService {
             profilePhoto: decoded.profilePhoto || '',
             isAdmin: decoded.role === 'Admin'
           };
-  
           localStorage.setItem('userData', JSON.stringify(user));
           this.userData = user;
-  
-          // التأكد من أن التوجيه يحدث فقط إذا لم يكن المستخدم مدخلًا إلى الصفحة الصحيحة مسبقًا
           if (user.isAdmin) {
-            console.log('user:', user);
-console.log('isAdmin?', user.isAdmin);
-
             this._Router.navigate(['/admin/home']);
           } else {
             this._Router.navigate(['/user/home']);

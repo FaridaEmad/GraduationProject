@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
+import { IBusiness, IBusinessCreate, IBusinessUpdate } from '../interfaces/ibusiness';
 
 @Injectable({
   providedIn: 'root'
@@ -82,4 +83,40 @@ getBusinessByCategoryAndArea(categoryId: number, area: string): Observable<any> 
   searchItems(searchText: string) {
     return this.__HttpClient.get(`https://localhost:7273/api/Business/search?keyword=${searchText}`);
   }
+
+  addBusiness(business: IBusinessCreate): Observable<any> {
+    return this.__HttpClient.post('https://localhost:7273/api/Business/addNewBusiness', business, {
+      responseType: 'text' as 'json'
+    }).pipe(
+      catchError((error) => {
+        console.error('Error adding business:', error);
+        return throwError(() => new Error('Failed to add business.'));
+      })
+    );
+  }
+      
+
+  deleteBusiness(id: number): Observable<any> {
+    return this.__HttpClient.delete(`https://localhost:7273/api/Business/${id}`,{
+      responseType: 'text' as 'json'
+    }).pipe(
+      catchError((error) => {
+        console.error(`Error deleting business with id: ${id}`, error);
+        return throwError(() => new Error(`Error deleting business with id: ${id}`));
+      })
+    );
+  }
+
+  updateBusiness(id: number, business: IBusinessUpdate): Observable<string> {
+    return this.__HttpClient.put<string>(`https://localhost:7273/api/Business/${id}`, business, {
+      responseType: 'text' as 'json'
+    }).pipe(
+      catchError((error) => {
+        console.error(`Error updating business with id: ${id}`, error);
+        return throwError(() => new Error(`Error updating business with id: ${id}`));
+      })
+    );
+  }
+  
 }
+
