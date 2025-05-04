@@ -1,1 +1,42 @@
-<p>category-management works!</p>
+<div class="container my-4">
+    <h2 class="mb-4 text-center title">Manage Categories</h2>
+  
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="mb-4 row g-2">
+      <div class="col-md-6">
+        <input type="text" class="form-control" formControlName="name" placeholder="Category Name" required />
+      </div>
+      <div class="col-md-auto">
+        <button type="submit" class="btn btn-primary">
+          {{ isEdit ? 'Update' : 'Add' }}
+        </button>
+      </div>
+      <div class="col-md-auto" *ngIf="isEdit">
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
+      </div>
+    </form>
+  
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-dark title fs-5">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let category of categories">
+            <td>{{ category.categoryId }}</td>
+            <td>{{ category.name }}</td>
+          
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="editCategory(category)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteCategory(category.categoryId)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
