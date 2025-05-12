@@ -6,20 +6,33 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class CartService {
+  [x: string]: any;
   private readonly _HttpClient = inject(HttpClient);
-  private readonly apiUrl = 'https://localhost:7273/api/Cart'; // لاحظ أضفت Cart هنا
+  private readonly apiUrl = 'https://localhost:7273/api/Cart';
 
-  // Get cart by user ID
+  // 🟢 متغير داخلي لتخزين الإجمالي
+  private totalAmount: number = 0;
+
+  // 🔹 Setter لحفظ القيمة
+  setTotalAmount(amount: number): void {
+    this.totalAmount = amount;
+  }
+
+  // 🔹 Getter لاسترجاع القيمة
+  getTotalAmount(): number {
+    return this.totalAmount;
+  }
+
+  // 🟢 API Calls
+
   getCartByUser(userId: number): Observable<any> {
     return this._HttpClient.get(`${this.apiUrl}/getCartByUser/${userId}`);
   }
 
-  // Get all carts
   getAllCarts(): Observable<any> {
     return this._HttpClient.get(`${this.apiUrl}/getAllCarts`);
   }
 
-  // Get specific cart by ID
   getCartById(id: number): Observable<any> {
     return this._HttpClient.get(`${this.apiUrl}/${id}`);
   }

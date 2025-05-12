@@ -1,1 +1,46 @@
-<p>payment works!</p>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 border p-4 shadow rounded">
+      <h2 class="text-center mb-4">Pay with card</h2>
+      <h4 class="text-center mb-3">Total: <strong>EGP {{ totalAmount }}</strong></h4>
+
+      <form [formGroup]="paymentForm" (ngSubmit)="pay()">
+        <div class="form-group mb-2">
+          <input formControlName="email" class="form-control" placeholder="Email" type="email" />
+        </div>
+
+        <div class="form-group mb-2">
+          <input formControlName="cardNumber" class="form-control" placeholder="Card Number" />
+        </div>
+
+        <div class="form-row d-flex justify-content-between mb-2">
+          <input formControlName="expiry" class="form-control me-2" placeholder="MM / YY" />
+          <input formControlName="cvc" class="form-control" placeholder="CVC" />
+        </div>
+
+        <div class="form-group mb-2">
+          <input formControlName="nameOnCard" class="form-control" placeholder="Name on Card" />
+        </div>
+
+        <div class="form-group mb-2">
+          <select formControlName="country" class="form-select">
+            <option value="Egypt">Egypt</option>
+            <option value="USA">USA</option>
+            <option value="UK">UK</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label>Choose Payment Method:</label>
+          <select formControlName="methodId" class="form-select">
+            <option *ngFor="let method of paymentMethods" [value]="method.id">
+              {{ method.name }}
+            </option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [disabled]="paymentForm.invalid">Pay</button>
+      </form>
+    </div>
+  </div>
+</div>

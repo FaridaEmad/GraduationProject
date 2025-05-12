@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CartService } from '../../core/services/cart.service';
 import { OffersService } from '../../core/services/offers.service';
 import { BookingService } from '../../core/services/booking.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
   selector: 'app-cart',
   standalone: true,
   imports: [
-    CommonModule,
+    CommonModule
   ],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
@@ -29,7 +29,7 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private offersService: OffersService,
     private bookingService: BookingService,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +60,9 @@ export class CartComponent implements OnInit {
     });
   }
 
+
+  
+
   calculateTotalAmount(): void {
     this.totalAmount = 0;
     this.noOfItems = 0;
@@ -78,6 +81,8 @@ export class CartComponent implements OnInit {
             this.totalAmount += offer.price * this.bookings[index].quantity;
             this.noOfItems += this.bookings[index].quantity;
           });
+                  this.cartService.setTotalAmount(this.totalAmount);
+
         },
         error: (err) => {
           console.error('Error fetching offers:', err);
@@ -86,9 +91,10 @@ export class CartComponent implements OnInit {
     }
   }
 
-  confirmCart(): void {
-    console.log('Cart confirmed!');
+  confirmCart() {
+    this.router.navigate(['/user/payment']);
   }
+  
 
   deleteBooking(bookingId: number): void {
     Swal.fire({
