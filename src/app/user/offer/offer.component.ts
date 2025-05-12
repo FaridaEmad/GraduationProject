@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OffersService } from '../../core/services/offers.service';
 import { BookingService } from '../../core/services/booking.service';
+import { WishlistService } from '../../core/services/wishlist.service';
 import { IOffers } from '../../core/interfaces/ioffer';
 import Swal from 'sweetalert2';
 
@@ -18,11 +19,13 @@ export class OfferComponent implements OnInit {
   businessId: number = 0;
   quantities: { [offerId: number]: number } = {};
   addedOfferIds: Set<number> = new Set();
+  wishlistIds: Set<number> = new Set();
 
   constructor(
     private route: ActivatedRoute,
     private _OffersServices: OffersService,
-    private _BookingService: BookingService
+    private _BookingService: BookingService,
+    private _WishlistService: WishlistService
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +33,7 @@ export class OfferComponent implements OnInit {
       if (params['id']) {
         this.businessId = +params['id'];
         this.getOffers();
+        this.loadWishlist(); // جلب المفضلة عند التحميل
       } else {
         console.error('ID parameter is missing from URL');
       }
@@ -54,7 +58,6 @@ export class OfferComponent implements OnInit {
     this._OffersServices.getOfferByBesinessId(this.businessId).subscribe({
       next: (res) => {
         this.offersList = res;
-        console.log(this.offersList);
         this.offersList.forEach(offer => {
           this.quantities[offer.offerId] = 1;
         });
@@ -66,6 +69,24 @@ export class OfferComponent implements OnInit {
           title: 'Error',
           text: 'Failed to load offers. Please try again later.',
         });
+      }
+    });
+  }
+
+  // جلب المفضلة للمستخدم عند تحميل الصفحة
+  loadWishlist(): void {
+    const userId = this.extractUserIdFromToken();
+    if (!userId) return;
+
+    this._WishlistService.getWishlistByUserId(userId).subscribe({
+      next: (wishlistOffers) => {
+        // إضافة العروض المفضلة إلى الـ wishlistIds
+        wishlistOffers.forEach((offer: any) => {
+          this.wishlistIds.add(offer.offerId);
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching wishlist:', err);
       }
     });
   }
@@ -104,15 +125,13 @@ export class OfferComponent implements OnInit {
 
     const bookingData = {
       offerId: offer.offerId,
-      quantity: this.quantities[offer.offerId], 
+      quantity: this.quantities[offer.offerId],
       userId: userId
     };
 
     this._BookingService.addNewBooking(bookingData).subscribe({
       next: (res: string) => {
-        console.log('Booking response:', res);
-        
-        if (res === 'Booking added successfully') {  // إذا كانت الاستجابة هي النص "Booking added successfully"
+        if (res === 'Booking added successfully') {
           this.addedOfferIds.add(offer.offerId);
           Swal.fire({
             icon: 'success',
@@ -138,6 +157,47 @@ export class OfferComponent implements OnInit {
         });
       }
     });
+  }
+
+  toggleWishlist(offer: IOffers): void {
+    const userId = this.extractUserIdFromToken();
+    if (!userId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'User not logged in',
+        text: 'Please log in to manage your wishlist.',
+      });
+      return;
+    }
+
+    if (!this.wishlistIds.has(offer.offerId)) {
+      this._WishlistService.addToWishlist(offer.offerId, userId).subscribe({
+        next: () => {
+          this.wishlistIds.add(offer.offerId); // إضافة العرض إلى المفضلة
+          Swal.fire({
+            icon: 'success',
+            title: 'Added to Wishlist!',
+            text: 'Offer added to your wishlist successfully.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        },
+        error: (err) => {
+          console.error('Wishlist error:', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Could not add to wishlist!',
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: 'info',
+        title: 'Already in Wishlist',
+        text: 'This offer is already in your wishlist.',
+      });
+    }
   }
 
   trackByOfferId(index: number, offer: IOffers): number {
