@@ -1,0 +1,161 @@
+[33mcommit c8cb74ac37b4a4f5bee047598e43b529daf1be73[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mFrontend[m[33m, [m[1;31morigin/Frontend[m[33m)[m
+Merge: d91cebc 0ff6a69
+Author: SarahMamdouh21 <sarah25548@gmail.com>
+Date:   Mon May 12 21:26:38 2025 +0300
+
+    Merge pull request #16 from FaridaEmad/SarahM
+    
+    Add profile page feature
+
+[33mcommit 0ff6a69bf6154f8a622f3ddbfab6a79f0314b2ef[m[33m ([m[1;31morigin/SarahM[m[33m)[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Mon May 12 21:09:16 2025 +0300
+
+    Add profile page feature
+
+[33mcommit d91cebc13de71ca31192f849377d787c439fde7e[m
+Author: sarahhhhhh12 <saraabdelmoniaam@gmail.com>
+Date:   Mon May 12 21:02:40 2025 +0300
+
+    Add payment page
+
+[33mcommit f41a3bd5b426f97ed8611ee6999b684cf141f7b9[m
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Mon May 12 20:51:39 2025 +0300
+
+    wishlist
+
+[33mcommit 7a679ea5e0b559b26dbe7d1387933391217362c4[m
+Merge: d3ce768 cdba148
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Sun May 4 14:00:00 2025 +0300
+
+    Resolved merge conflict in admin-nav.component.html
+
+[33mcommit d3ce768aab576797d8806d63932bf7826c704e0d[m
+Merge: e53082a 1faf0f1
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Sun May 4 13:57:55 2025 +0300
+
+    Resolved merge conflict in home.component.html
+
+[33mcommit 1faf0f18e81560eaa0b09b4a74760ee6ae417dbf[m
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Sun May 4 13:54:39 2025 +0300
+
+    manage offers categories
+
+[33mcommit cdba1482080c3b640f38b8d2f04384723cad7f3d[m
+Merge: e53082a 045a227
+Author: SarahMamdouh21 <sarah25548@gmail.com>
+Date:   Sat May 3 22:50:23 2025 +0300
+
+    Merge pull request #15 from FaridaEmad/SarahM_Frontend
+    
+    Admin Pages
+
+[33mcommit 045a22761c12b6445fec291d0f2ceaa4c1994430[m[33m ([m[1;31morigin/SarahM_Frontend[m[33m)[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Sat May 3 22:49:10 2025 +0300
+
+    Admin Pages
+
+[33mcommit 196e84b72e00fb3399a37ce5d5207301d06c7867[m
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Tue Apr 29 17:17:19 2025 +0300
+
+    Save changes before switching branches
+
+[33mcommit e53082ab6db353ca14e76945896af4d07821cb79[m
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Tue Apr 29 17:02:11 2025 +0300
+
+    delete booking
+
+[33mcommit 5df0a071015f57cd50969623b45de7b7bf475825[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Tue Apr 29 16:41:46 2025 +0300
+
+    simple edits
+
+[33mcommit e1a61c32a770b2699309fb976a0b9b8939758b9a[m
+Merge: ef384bd 4feb470
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Tue Apr 29 15:29:30 2025 +0300
+
+    حل التعارضات في ملف icategory.ts
+
+[33mcommit ef384bd4e717d16666d834e5b3f9c9f63793f2be[m
+Author: Sara Ahmed <saaraa2333@gmail.com>
+Date:   Tue Apr 29 15:27:15 2025 +0300
+
+    cart home add to cart
+
+[33mcommit 4feb4708afa56faab0fb4aaa742b530c2d63276b[m
+Merge: 7e1bde9 1be6aee
+Author: SarahMamdouh21 <sarah25548@gmail.com>
+Date:   Sun Apr 27 20:20:41 2025 +0300
+
+    Merge pull request #13 from FaridaEmad/SarahM_Frontend
+    
+    apply filters
+
+[33mcommit 1be6aeead615d580f17d68a0ec4edea6e653d2b2[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Sun Apr 27 20:19:14 2025 +0300
+
+    apply filters
+
+[33mcommit 7e1bde96628c217d1567260a07bb9816405f74f4[m
+Merge: 460ef69 0f44e25
+Author: SarahMamdouh21 <sarah25548@gmail.com>
+Date:   Thu Apr 24 23:55:49 2025 +0200
+
+    Merge pull request #12 from FaridaEmad/SarahM_Frontend
+    
+    Admin_Dashboard
+
+[33mcommit 0f44e25dc2be4475ce428fde977cb0fccbd980bc[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Thu Apr 24 23:52:38 2025 +0200
+
+    Admin_Dashboard
+
+[33mcommit 460ef69518f272e2b2b3a28237b2ff175c334e8f[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Thu Apr 24 00:22:34 2025 +0200
+
+    Finish frontend routing structure
+
+[33mcommit 493782f177af6f1e9cb709e530b594dce1191fbd[m[33m ([m[1;31morigin/Frontend-SarahBackup[m[33m)[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Wed Apr 23 18:26:01 2025 +0200
+
+    Update
+
+[33mcommit fa4f8bc6fa5b94bef2812cfd42b09f26ce88c70f[m
+Author: SarahMamdouh65 <sarahmamdouh656@gmail.com>
+Date:   Wed Apr 16 23:31:34 2025 +0200
+
+    business and categry
+
+[33mcommit 41792865167d0eb928994819c26456d5ff83e226[m
+Merge: 306f282 99442e1
+Author: sarahhhhhh12 <137056497+sarahhhhhh12@users.noreply.github.com>
+Date:   Wed Apr 9 16:36:54 2025 +0200
+
+    Merge pull request #9 from FaridaEmad/Sarah-Frontend
+    
+    login,register,signout
+
+[33mcommit 99442e12a5fb7e03cdf4db0a6158cc0b117e247a[m[33m ([m[1;31morigin/Sarah-Frontend[m[33m)[m
+Author: sarahhhhhh12 <saraabdelmoniaam@gmail.com>
+Date:   Wed Apr 9 16:15:48 2025 +0200
+
+    login,register,signout
+
+[33mcommit 306f28235e015cdbd3af29cf11027ed5b535a766[m[33m ([m[1;31morigin/Database[m[33m)[m
+Author: FaridaEmad <101283196+FaridaEmad@users.noreply.github.com>
+Date:   Fri Feb 21 16:19:29 2025 +0200
+
+    Initial commit
