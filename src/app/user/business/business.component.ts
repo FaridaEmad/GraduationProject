@@ -59,7 +59,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
           this.selectedCategory = categoryId;
           this.applyFilters();
         } else {
-          console.error('Invalid categoryId:', categoryIdParam);
+         
           this.getAllBusiness();
         }
       } else {

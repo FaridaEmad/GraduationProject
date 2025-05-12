@@ -1,6 +1,111 @@
-<div class="container mt-5 text-center">
-    <img [src]="userPhoto" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover;" />
-    <h3>{{ userName }}</h3>
-    <p>{{ userEmail }}</p>
+<div class="container my-5">
+  <div class="card shadow-lg border-0 rounded-4 p-4">
+    <div class="row g-4">
+      <div class="col-lg-4 text-center border-end">
+        <img 
+          [src]="isEditing ? profileForm.get('profilePhoto')?.value || loggedUser?.profilePhoto : loggedUser?.profilePhoto" 
+          alt="Profile Photo" 
+          class="rounded-circle img-thumbnail mb-3" 
+          style="width: 180px; height: 180px; object-fit: cover;"
+        />
+
+        
+
+        <h5 class="fw-bold mt-2">{{ loggedUser?.name }}</h5>
+        <p class="text-muted mb-0">{{ loggedUser?.email }}</p>
+      </div>
+
+      <!-- Ensure formGroup is applied here -->
+      <div class="col-lg-8">
+        <form *ngIf="profileForm" [formGroup]="profileForm">
+          <!-- Profile Information -->
+          <h4 class="fw-semibold border-bottom pb-2 mb-4">Profile Information</h4>
+
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" formControlName="name" class="form-control" [readonly]="!isEditing" />
+            <div class="text-danger small mt-1" *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+              <div *ngIf="profileForm.get('name')?.errors?.['required']">Name is required.</div>
+              <div *ngIf="profileForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters.</div>
+            </div>
+          </div>
+         
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input [value]="loggedUser?.email" class="form-control" readonly />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Phone Numbers</label>
+            <ul class="list-group">
+              <li *ngFor="let phone of phones" class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <i class="bi bi-telephone-fill me-2 text-primary"></i>
+                  <span>{{ phone.phoneNumber }}</span>
+                </div>
+
+                <div *ngIf="isEditing">
+                  <ng-container *ngIf="isEditingPhone && editingPhoneId === phone.id; else showEditDelete">
+                    <form [formGroup]="phoneForm" class="d-flex gap-2">
+                      <input type="text" formControlName="phoneNumber" class="form-control form-control-sm" />
+                      <button class="btn btn-sm btn-success" (click)="addOrUpdatePhone()" type="button">Save</button>
+                      <button class="btn btn-sm btn-secondary" (click)="cancelEditPhone()" type="button">Cancel</button>
+                    </form>
+                    <div class="text-danger small mt-1" *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched">
+                      <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</div>
+                      <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be at least 11 digits.</div>
+                    </div>
+                  </ng-container>
+
+                  <ng-template #showEditDelete>
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editPhone(phone)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" (click)="removePhone(phone.id)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </ng-template>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+
+          <div class="mb-3" *ngIf="isEditing && !isEditingPhone">
+            <label class="form-label">Add New Phone</label>
+            <form [formGroup]="phoneForm" (ngSubmit)="addOrUpdatePhone()" class="d-flex gap-2">
+              <input type="text" formControlName="phoneNumber" class="form-control" placeholder="Enter new phone number" />
+              <button class="btn btn-primary" type="submit">Add</button>
+            </form>
+            <div class="text-danger small mt-1" *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched">
+              <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</div>
+              <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be at least 11 digits.</div>
+            </div>
+          </div>
+          <div class="mb-3" *ngIf="isEditing">
+            <label class="form-label">ProfilePhoto URL</label>
+            <input type="text" formControlName="profilePhoto" class="form-control " />
+            <div class="text-danger small mt-1" *ngIf="profileForm.get('profilePhoto')?.invalid && profileForm.get('profilePhoto')?.touched">
+              <div *ngIf="profileForm.get('profilePhoto')?.errors?.['pattern']">Please enter a valid photo URL.</div>
+            </div>
+          </div>
+          <div class="mb-3" *ngIf="isEditing">
+            <label class="form-label">New Password</label>
+            <input type="password" formControlName="password" class="form-control" placeholder="Enter new password" />
+            <div class="text-danger small mt-1" *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">
+              <div *ngIf="profileForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-end">
+            <button *ngIf="!isEditing" (click)="editProfile()" class="btn btn-main d-block ms-auto mt-3">Edit Profile</button>
+            <ng-container *ngIf="isEditing">
+              <button (click)="saveChanges()" class="btn btn-main rounded-pill px-4 me-2">Save</button>
+              <button (click)="cancelEdit()" class="btn btn-outline-secondary rounded-pill px-4">Cancel</button>
+            </ng-container>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-  
+</div>

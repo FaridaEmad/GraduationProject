@@ -1,5 +1,3 @@
-import { Iwishlist } from "./iwishlist";
-
 export interface IOffers {
     offerId: number;
     startDate: string;
@@ -11,5 +9,5 @@ export interface IOffers {
     businessId: number;
     business: any;
     bookings: any[];
-    wishlists: Iwishlist[];
+    wishlists: any[];
 }
