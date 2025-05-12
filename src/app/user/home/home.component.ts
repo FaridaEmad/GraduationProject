@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ICategory } from '../../core/interfaces/icategory';
 import { Subscription } from 'rxjs';
 import { CategoryService } from '../../core/services/category.service';
@@ -12,64 +12,50 @@ import { IBusiness } from '../../core/interfaces/ibusiness';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, FormsModule, TermtxtPipe, NgxPaginationModule,NgFor,NgIf],
+  imports: [RouterLink, TermtxtPipe,FormsModule, NgxPaginationModule,NgFor,NgIf],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-   private readonly __BusinessService = inject(BusinessService);
+  private readonly __BusinessService = inject(BusinessService);
   private readonly __CategoryService = inject(CategoryService);
   private readonly activatedRoute = inject(ActivatedRoute);
-  categorylist: ICategory[] = [];
-  // subcategory!:Icategory[];
-  getallcategories!: Subscription;
-  ///////////////////////////////////
-   wishlistUserDataId: string[] = [];
-    wishlistSubscription!: Subscription;
-  
-    Businesslist: IBusiness[] = [];
-    allBusiness: IBusiness[] = [];
-  
-    categories: ICategory[] = [];
-    allcategories: ICategory[] = [];
-  
-    currentPage: number = 1;
-    itemsPerPage: number = 15;
-    searchText: string = '';
-  
-    getallbusiness!: Subscription;
-   // getallcategories!: Subscription;
-    filterSubscription!: Subscription;
-  
-    cities: string[] = [];
-    areas: string[] = [];
-  
-    selectedCity: string = '';
-    selectedArea: string = '';
-    selectedCategory: number | null = null;
-    noDataMessage: string = '';
-  ngOnInit(): void {
-    // Assign the subscription to getallproducts
-    this.loadCategories();
-    this.getallcategories = this.__CategoryService.getallcategories().subscribe({
-      next: (res) => {
-        console.log(res);
-        this.categorylist = res;  
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    });
-    // this.getallcategories = this.__CategoryService.getallcategories().subscribe({
-    //   next: (res) => {
-    //     console.log(res.data);
-    //     this.categorylist = res.data;  
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   }
-    // });
+  typedText = '';  // دي هتكون الجملة اللى هنكتبها حرف حرف
+  fullText = 'Discover Top Places Around You';  // الجملة الكاملة
+  currentIndex = 0;  // هنا هنحدد أول حرف هنبدأ منه
+  typingSpeed = 150  
 
+  wishlistUserDataId: string[] = [];
+  wishlistSubscription!: Subscription;
+
+  Businesslist: IBusiness[] = [];
+  allBusiness: IBusiness[] = [];
+
+  categories: ICategory[] = [];
+  allcategories: ICategory[] = [];
+  categorylist: ICategory[] = [];
+
+  currentPage: number = 1;
+  itemsPerPage: number = 15;
+  searchText: string = '';
+
+  getallbusiness!: Subscription;
+  getallcategories!: Subscription;
+  filterSubscription!: Subscription;
+
+  cities: string[] = [];
+  areas: string[] = [];
+
+  selectedCity: string = '';
+  selectedArea: string = '';
+  selectedCategory: number | null = null;
+  noDataMessage: string = '';
+
+  ngOnInit(): void {
+    
+this.typeText();
+
+    this.loadCategories();
 
     this.activatedRoute.queryParams.subscribe(params => {
       const categoryIdParam = params['categoryId'];
@@ -79,7 +65,7 @@ export class HomeComponent implements OnInit {
           this.selectedCategory = categoryId;
           this.applyFilters();
         } else {
-          console.error('Invalid categoryId:', categoryIdParam);
+         
           this.getAllBusiness();
         }
       } else {
@@ -88,11 +74,25 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  typeText() {
+    // كل ما الوقت يمشي هنضيف حرف جديد للجملة
+    const interval = setInterval(() => {
+      if (this.currentIndex < this.fullText.length) {
+        this.typedText += this.fullText[this.currentIndex];
+        this.currentIndex++;
+      } else {
+        this.currentIndex = 1;  // إعادة البدء من الحرف الأول
+        this.typedText = 'D'; // لما نوصل لآخر حرف نبطل الكتابة
+      }
+    }, this.typingSpeed);
+  }
+
   loadCategories(): void {
     this.getallcategories = this.__CategoryService.getallcategories().subscribe({
       next: (res) => {
         this.allcategories = res;
         this.categories = res;
+        this.categorylist = res;
       },
       error: (err) => {
         console.error('Error fetching categories:', err);
@@ -222,19 +222,24 @@ export class HomeComponent implements OnInit {
     this.filterSubscription?.unsubscribe();
     this.wishlistSubscription?.unsubscribe();
   }
-  // getAllSubCategories(catgeoryId:string) {
-  //   this.__CategoryService.getaonecategory(catgeoryId).subscribe({
-  //     next: (res) => {
-  //       this.subcategory = res.data;
-  //       // console.log(this.categoryList);
-  //     },
-  //     error: (err) => {
-  //       console.log(err);      },
-  //   });
-  // }
-  // ngOnDestroy(): void {
-    
-  //   this.getallcategories?.unsubscribe();
-    
-  // }
+
+  @HostListener('window:scroll', [])
+onWindowScroll() {
+  const section = document.getElementById('business-section');
+  if (section) {
+    const position = section.getBoundingClientRect().top;
+    const windowHeight = window.innerHeight;
+    if (position < windowHeight - 100) {
+      section.classList.add('visible');
+    }
+  }
+}
+scrollToBusiness() {
+  const section = document.getElementById('business-section');
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+
 }
