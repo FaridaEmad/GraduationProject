@@ -36,13 +36,13 @@ export class ProfileComponent implements OnInit {
   ) {
     this.profileForm = this.fb.group({
       profilePhoto: ['', [Validators.pattern(/^https?:\/\/.+/)]],
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required,  Validators.minLength(3), Validators.maxLength(20)]],
       email: [{ value: this.loggedUser?.email, disabled: true }],
-      password: ['', [Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
     });
 
     this.phoneForm = this.fb.group({
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{11,}$/)]]
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]]
     });
   
     

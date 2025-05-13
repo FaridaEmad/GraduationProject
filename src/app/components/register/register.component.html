@@ -134,6 +134,7 @@
               formControlName="profilePhoto"
               placeholder="Enter the image URL"
             />
+            <div *ngIf="registerForm.get('profilePhoto')?.errors?.['pattern']">Please enter a valid photo URL.</div>
           </div>
           
 
