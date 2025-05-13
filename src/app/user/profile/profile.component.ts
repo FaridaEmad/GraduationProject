@@ -36,9 +36,9 @@ export class ProfileComponent implements OnInit {
   ) {
     this.profileForm = this.fb.group({
       profilePhoto: ['', [Validators.pattern(/^https?:\/\/.+/)]],
-      name: ['', [Validators.required,  Validators.minLength(3), Validators.maxLength(20)]],
+      name: ['', [  Validators.minLength(3), Validators.maxLength(20)]],
       email: [{ value: this.loggedUser?.email, disabled: true }],
-      password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
+      password: ['', [ Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
     });
 
     this.phoneForm = this.fb.group({
