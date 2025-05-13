@@ -1,0 +1,9 @@
+<div class="toast-container position-fixed top-0 end-0 p-3 z-3" style="margin-top: 70px;">
+  <div *ngFor="let toast of toastService.toasts" class="toast show bg-light text-dark border-start border-3 border-{{ toast.type }}" role="alert">
+    <div class="toast-body">
+      {{ toast.message }}
+      <br />
+      <small class="text-muted">{{ toast.createdAt | dateFormat }}</small>
+    </div>
+  </div>
+</div>

@@ -21,13 +21,13 @@
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/business">Business</a>
                 </li>
 
-          
+
 
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/favorite">Wishlist</a>
                 </li>
 
-                
+
 
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/profile">Profile</a>
@@ -37,16 +37,17 @@
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                      <img *ngIf="userPhoto" [src]="userPhoto" class="rounded-circle" width="35" height="35" alt="User Photo">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img *ngIf="userPhoto" [src]="userPhoto" class="rounded-circle" width="35" height="35"
+                            alt="User Photo">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" (click)="goToProfile()">Profile</a></li>
-                      <li><a class="dropdown-item" (click)="SignOut()">Logout</a></li>
+                        <li><a class="dropdown-item" (click)="goToProfile()">Profile</a></li>
+                        <li><a class="dropdown-item" (click)="SignOut()">Logout</a></li>
                     </ul>
-                  </li>
-                  
+                </li>
+
                 <li class="nav-item position-relative">
                     <a class="nav-link " routerLink="user/cart">
                         <i class="fa-solid fa-cart-shopping fs-3"></i>
@@ -57,6 +58,31 @@
                 </li>
                 <li class="nav-item ">
                     <a class="nav-link cursor-pointer" (click)="SignOut()">log out</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" data-bs-toggle="dropdown" role="button">
+                        🔔
+                        <span *ngIf="unreadCount"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ unreadCount }}
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">الإشعارات</li>
+                        <li *ngFor="let notif of notifications">
+                            <a class="dropdown-item" [class.fw-bold]="!notif.isRead">
+                                {{ notif.message }}<br />
+                                <small class="text-muted">{{ notif.createdAt | dateFormat }}</small>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li><button class="dropdown-item text-center" (click)="markAllAsRead()">تحديد كمقروء</button>
+                        </li>
+                    </ul>
                 </li>
             </ul>
         </div>
