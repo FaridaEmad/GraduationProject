@@ -63,11 +63,9 @@ namespace DealsHub.Controllers
         [HttpPost("addNewWishlist")]
         public async Task<ActionResult> addWishlist(WishlistDto newWishlist)
         {
-            var user = await _userRepository.GetByIdAsync(newWishlist.UserId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == newWishlist.UserId);
+            if (exists == false)
+                return NotFound("Wrong user id");
 
             var offer = await _offerRepository.GetByIdAsync(newWishlist.OfferId);
             if (offer == null)
@@ -105,11 +103,9 @@ namespace DealsHub.Controllers
         [HttpGet("getWishlistByUser/{id}")]
         public async Task<IActionResult> GetByUser(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
+                return NotFound("Wrong user id");
 
             var wishlists = await _wishlistRepository.GetAllAsyncInclude(
                 w => w.UserId == id

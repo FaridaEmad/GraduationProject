@@ -13,9 +13,9 @@ namespace DealsHub.Controllers
     {
         private readonly IDataRepository<Review> _reviewRepository;
         private readonly IDataRepository<User> _userRepository;
-        private readonly IDataRepository<User> _businessRepository;
+        private readonly IDataRepository<Business> _businessRepository;
 
-        public ReviewController(IDataRepository<Review> reviewRepository, IDataRepository<User> userRepository, IDataRepository<User> businessRepository)
+        public ReviewController(IDataRepository<Review> reviewRepository, IDataRepository<User> userRepository, IDataRepository<Business> businessRepository)
         {
             _reviewRepository = reviewRepository;
             _userRepository = userRepository;
@@ -43,17 +43,13 @@ namespace DealsHub.Controllers
         [HttpPost("addNewReview")]
         public async Task<ActionResult> addReview(ReviewDto newReview)
         {
-            var user = await _userRepository.GetByIdAsync(newReview.UserId);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == newReview.UserId);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
-            var business = await _businessRepository.GetByIdAsync(newReview.BusinessId);
-            if (business == null)
-            {
+            bool businessExists = await _businessRepository.ExistsAsync(b => b.BusinessId == newReview.BusinessId);
+            if (businessExists == false)
                 return NotFound("Wrong business id");
-            }
 
             var review = new Review
             {
@@ -107,11 +103,9 @@ namespace DealsHub.Controllers
         [HttpGet("getReviewsByBusiness{id}")]
         public async Task<IActionResult> GetByBusiness(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound("Wrong user id");
-            }
+            bool businessExists = await _businessRepository.ExistsAsync(b => b.BusinessId == id);
+            if (businessExists == false)
+                return NotFound("Wrong business id");
 
             var reviews = await _reviewRepository.GetAllAsyncInclude(
                 r => r.BusinessId == id
@@ -126,11 +120,9 @@ namespace DealsHub.Controllers
         [HttpGet("getReviewsByUser{id}")]
         public async Task<IActionResult> GetByUser(int id)
         {
-            var business = await _businessRepository.GetByIdAsync(id);
-            if (business == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var reviews = await _reviewRepository.GetAllAsyncInclude(
                 r => r.UserId == id

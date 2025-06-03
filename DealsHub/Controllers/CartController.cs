@@ -43,8 +43,8 @@ namespace DealsHub.Controllers
         [HttpGet("getCartActiveByUser{userId}")]
         public async Task<IActionResult> GetActiveByUser(int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == userId);
+            if (exists == false)
                 return NotFound("Wrong user id");
 
             var cart = await _cartRepository.GetByIdAsyncInclude(
@@ -57,8 +57,8 @@ namespace DealsHub.Controllers
         [HttpGet("getCartsByUser{userId}")]
         public async Task<IActionResult> GetByUser(int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == userId);
+            if (exists == false)
                 return NotFound("Wrong user id");
 
             var carts = await _cartRepository.GetAllAsyncInclude(

@@ -94,6 +94,11 @@ namespace DealsHub.Data
             return await query.FirstOrDefaultAsync(predicate);
         }
 
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await table.AnyAsync(predicate);
+        }
+
     }
     
 }

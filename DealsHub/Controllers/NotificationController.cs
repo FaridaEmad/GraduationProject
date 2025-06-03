@@ -42,11 +42,9 @@ namespace DealsHub.Controllers
         [HttpGet("ByUserNotRead{id}")]
         public async Task<IActionResult> GetNotificationByUser(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var notification = await _notificationRepository.GetAllAsyncInclude(
                 n => n.UserId == id && n.IsRead == false);
@@ -81,11 +79,9 @@ namespace DealsHub.Controllers
         [HttpPost("addNewNotification")]
         public async Task<ActionResult> addNotification(NotificationDto newNotification)
         {
-            var user = await _userRepository.GetByIdAsync(newNotification.UserId);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == newNotification.UserId);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var notification = new Notification
             {

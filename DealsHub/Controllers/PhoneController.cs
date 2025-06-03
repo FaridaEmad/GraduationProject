@@ -44,11 +44,9 @@ namespace DealsHub.Controllers
         [HttpGet("ByUser{id}")]
         public async Task<IActionResult> GetPhoneByUser(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var phone = await _phoneRepository.GetAllAsyncInclude(
                 p => p.UserId == id);
@@ -80,6 +78,10 @@ namespace DealsHub.Controllers
         [HttpPost("addNewPhone")]
         public async Task<ActionResult> addPhoneNumber(PhoneDto newPhone)
         {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == newPhone.UserId);
+            if (exists == false)
+                return NotFound("Wrong user id");
+
             var phone = new Phone
             {
                 UserId = newPhone.UserId,

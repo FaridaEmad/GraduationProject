@@ -167,9 +167,9 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategory{id}")]
         public async Task<IActionResult> GetByCategory(int id)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
-                return NotFound("Wrong category id");
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
+                return NotFound("Wrong categoey id");
 
             var businesses = await _businessRepository.GetAllAsyncInclude(
                 b => b.CategoryId == id,
@@ -279,8 +279,8 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategoryAndCity")]
         public async Task<IActionResult> GetByCategoryAndCity(int id, String city)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
                 return NotFound("Wrong category id");
 
             var businesses = await _businessRepository.GetAllAsyncInclude(
@@ -319,8 +319,8 @@ namespace DealsHub.Controllers
         [HttpGet("getBusinessByCategoryAndArea")]
         public async Task<IActionResult> GetByCategoryAndArea(int id, String area)
         {
-            var category = await _categoryRepository.GetByIdAsync(id);
-            if (category == null)
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
                 return NotFound("Wrong category id");
 
             var businesses = await _businessRepository.GetAllAsyncInclude(

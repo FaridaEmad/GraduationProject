@@ -91,27 +91,41 @@ namespace DealsHub.Controllers
         [HttpPost("addNewBooking")]
         public async Task<ActionResult> addBooking(BookingDto newBooking)
         {
-            var user = await _userRepository.GetByIdAsync(newBooking.UserId);
-            if (user == null)
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == newBooking.UserId);
+            if (exists == false)
                 return NotFound("Wrong user id");
 
-            var cart = await _cartRepository.GetByIdAsyncInclude(
-                c => c.UserId == newBooking.UserId && c.IsActive == true
-             );
-
-            var offer = await _offerRepository.GetByIdAsync(newBooking.OfferId);
-            if (offer == null)
+            bool offerExists = await _offerRepository.ExistsAsync(o => o.OfferId == newBooking.OfferId);
+            if (offerExists == false)
                 return NotFound("Wrong offer id");
 
-            var booking = new Booking
-            {
-                UserId = newBooking.UserId,
-                OfferId = newBooking.OfferId,
-                Quantity = newBooking.Quantity,
-                CartId = cart.CartId
-            };
+            var cart = await _cartRepository.GetByIdAsyncInclude(
+                c => c.UserId == newBooking.UserId && c.IsActive == true,
+                c => c.Bookings
+             );
+            if (cart == null)
+                return NotFound("Wrong cart id");
 
-            await _bookingRepository.AddAsync(booking);
+            var existingBookings = cart.Bookings.FirstOrDefault(b => b.OfferId == newBooking.OfferId);
+
+            if (existingBookings == null)
+            {
+                var booking = new Booking
+                {
+                    UserId = newBooking.UserId,
+                    OfferId = newBooking.OfferId,
+                    Quantity = newBooking.Quantity,
+                    CartId = cart.CartId
+                };
+
+                await _bookingRepository.AddAsync(booking);
+            }
+            else
+            {
+                existingBookings.Quantity += newBooking.Quantity;
+                await _bookingRepository.UpdateAsync(existingBookings);
+            }
+            
             await _bookingRepository.Save();
 
             await updateCart(cart.CartId);
@@ -140,8 +154,8 @@ namespace DealsHub.Controllers
         [HttpGet("getByCart{cartID}")]
         public async Task<IActionResult> GetByCart(int cartID)
         {
-            var cart = await _cartRepository.GetByIdAsync(cartID);
-            if (cart == null)
+            bool exists = await _cartRepository.ExistsAsync(c => c.CartId == cartID);
+            if (exists == false)
                 return NotFound("Wrong cart id");
 
             var bookings = await _bookingRepository.GetAllAsyncInclude(
@@ -158,8 +172,8 @@ namespace DealsHub.Controllers
         [HttpGet("getByUser{userId}")]
         public async Task<IActionResult> GetByUser(int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == userId);
+            if (exists == false)
                 return NotFound("Wrong user id");
 
             var bookings = await _bookingRepository.GetAllAsyncInclude(

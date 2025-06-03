@@ -48,11 +48,9 @@ namespace DealsHub.Controllers
         [HttpPost("addNewOffer")]
         public async Task<ActionResult> addOffer(OfferDto newOffer)
         {
-            var business = await _businessRepository.GetByIdAsync(newOffer.BusinessId);
-            if (business == null)
-            {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == newOffer.BusinessId);
+            if (exists == false)
                 return NotFound("Wrong business id");
-            }
 
             var offer = new Offer
             {
@@ -139,11 +137,9 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusiness/{id}")]
         public async Task<IActionResult> GetByBusiness(int id)
         {
-            var business = await _businessRepository.GetByIdAsync(id);
-            if (business == null)
-            {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == id);
+            if (exists == false)
                 return NotFound("Wrong business id");
-            }
 
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id
@@ -158,11 +154,9 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusinessActive/{id}")]
         public async Task<IActionResult> GetByBusinessAndActive(int id)
         {
-            var business = await _businessRepository.GetByIdAsync(id);
-            if (business == null)
-            {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == id);
+            if (exists == false)
                 return NotFound("Wrong business id");
-            }
 
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id && o.StartDate <= DateTime.UtcNow && o.EndDate > DateTime.UtcNow
@@ -177,11 +171,9 @@ namespace DealsHub.Controllers
         [HttpGet("getOfferByBusinessInactive/{id}")]
         public async Task<IActionResult> GetByBusinessAndInactive(int id)
         {
-            var business = await _businessRepository.GetByIdAsync(id);
-            if (business == null)
-            {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == id);
+            if (exists == false)
                 return NotFound("Wrong business id");
-            }
 
             var offers = await _offerRepository.GetAllAsyncInclude(
                 o => o.BusinessId == id && (o.EndDate < DateTime.UtcNow || o.StartDate > DateTime.UtcNow)

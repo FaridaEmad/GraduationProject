@@ -176,11 +176,9 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentByUser{id}")]
         public async Task<IActionResult> GetByUser(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id
@@ -229,11 +227,9 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserConfirmed")]
         public async Task<IActionResult> GetByUserConfirmed(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Confirmed"
@@ -262,11 +258,9 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserPending")]
         public async Task<IActionResult> GetByUserPending(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Pending"
@@ -295,11 +289,9 @@ namespace DealsHub.Controllers
         [HttpGet("getPaymentsByUserFailed")]
         public async Task<IActionResult> GetByUserFailed(int id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
-            if (user == null)
-            {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == id);
+            if (exists == false)
                 return NotFound("Wrong user id");
-            }
 
             var payments = await _paymentRepository.GetAllAsyncInclude(
                 p => p.UserId == id && p.Status == "Failed"
