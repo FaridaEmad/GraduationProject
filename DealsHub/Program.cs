@@ -70,6 +70,8 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
+builder.Services.AddHttpClient();
+
 // Add Controllers
 builder.Services.AddControllers();
 
