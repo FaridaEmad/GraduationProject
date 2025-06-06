@@ -160,8 +160,11 @@ def content_recommend(businessID: int, top_n: int = 5):
 
     if businessID not in businesses_df["BusinessId"].values:
         return []
-    
+
     idx = businesses_df.index[businesses_df["BusinessId"] == businessID][0]
+
+    business_name = businesses_df.loc[idx, "BusinessName"]
+
     sims = list(enumerate(similarity_matrix[idx]))
 
     sims_sorted = sorted(
@@ -170,12 +173,18 @@ def content_recommend(businessID: int, top_n: int = 5):
         reverse=True
     )
 
-    recs = [i for i, score in sims_sorted if i != idx]
-    recs = recs[: top_n * 2]
+    sim_scores = sims_sorted[:top_n + 1]
+    rec_indices = [i for i, score in sim_scores]
 
-    rec_df = businesses_df.iloc[recs][["BusinessId", "BusinessName", "Area", "Avg_Rating"]].copy()
+    recommended_businesses = businesses_df.iloc[rec_indices][["BusinessId", "BusinessName", "Area", "Avg_Rating"]].copy()
 
-    return rec_df.head(top_n)["BusinessId"].tolist()
+    recommended_businesses = recommended_businesses[recommended_businesses["BusinessName"] != business_name]
+
+    recommended_businesses = recommended_businesses.drop_duplicates(subset=["BusinessName"], keep="first")
+
+    recommended_businesses = recommended_businesses.reset_index(drop=True)
+
+    return recommended_businesses.head(top_n)["BusinessId"].tolist()
 
 @app.get("/userRecommendWithArea")
 async def userRecommendWithArea(userId: int, area: str, numOfRecommends: int = 6):
