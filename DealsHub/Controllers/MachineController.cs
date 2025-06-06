@@ -17,17 +17,23 @@ namespace DealsHub.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDataRepository<Business> _businessRepository;
         private readonly IDataRepository<Review> _reviewRepository;
+        private readonly IDataRepository<User> _userRepository;
 
-        public MachineController(IHttpClientFactory httpClientFactory, IDataRepository<Business> businessRepository, IDataRepository<Review> reviewRepository)
+        public MachineController(IHttpClientFactory httpClientFactory, IDataRepository<Business> businessRepository, IDataRepository<Review> reviewRepository, IDataRepository<User> userRepository)
         {
             _httpClientFactory = httpClientFactory;
             _businessRepository = businessRepository;
             _reviewRepository = reviewRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet("userRecommend")]
         public async Task<IActionResult> GetUserRecommendations(int userId, int numOfRecommends = 5)
         {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == userId);
+            if (exists == false)
+                return NotFound("Wrong user id");
+
             string apiUrl = $"http://127.0.0.1:8000/userRecommend?userId={userId}&numOfRecommends={numOfRecommends}";
             var httpClient = _httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -48,6 +54,10 @@ namespace DealsHub.Controllers
         [HttpGet("userRecommendWithArea")]
         public async Task<IActionResult> GetUserRecommendationsWithArea(int userId, string area, int numOfRecommends = 5)
         {
+            bool exists = await _userRepository.ExistsAsync(u => u.UserId == userId);
+            if (exists == false)
+                return NotFound("Wrong user id");
+
             string apiUrl = $"http://127.0.0.1:8000/userRecommendWithArea?userId={userId}&area={area}&numOfRecommends={numOfRecommends}";
             var httpClient = _httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync(apiUrl);
@@ -68,6 +78,10 @@ namespace DealsHub.Controllers
         [HttpGet("businessRecommend")]
         public async Task<IActionResult> GetBusinessRecommendations(int businessID, int numOfRecommends = 5)
         {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == businessID);
+            if (exists == false)
+                return NotFound("Wrong business id");
+
             string apiUrl = $"http://127.0.0.1:8000/contentRecommend?businessId={businessID}&topN={numOfRecommends}";
             var httpClient = _httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync(apiUrl);

@@ -124,7 +124,24 @@ def recommendRestaurantsToUserInArea(userId: int, area: str, numOfRecommends: in
     retrain_user_model()
     
     if userId not in user_item_matrix.index:
-        return "User Not Found"
+        print("User not found. Returning top-rated businesses.")
+
+        reviews = fetch_reviews()
+        businesses = fetch_Businesses()
+        if reviews is None or businesses is None:
+            return []
+
+        merged = reviews.merge(businesses, on="BusinessId")
+        filtered = merged[merged["Area"] == area]
+
+        top_businesses = (
+            filtered.groupby("BusinessId")
+            .agg(Avg_Rating=("Rating", "mean"), Review_Count=("Rating", "count"))
+            .sort_values(by=["Avg_Rating", "Review_Count"], ascending=[False, False])
+            .head(numOfRecommends)
+            .index.tolist()
+        )
+        return top_businesses
 
     user_idx = user_item_matrix.index.get_loc(userId)
     distances, indices = knn.kneighbors([user_item_matrix.iloc[user_idx]], n_neighbors=6)
@@ -145,7 +162,20 @@ def recommendRestaurantsToUser(userId: int, numOfRecommends: int = 6):
     retrain_user_model()
 
     if userId not in user_item_matrix.index:
-        return "User Not Found"
+        print("User not found. Returning top-rated businesses.")
+
+        reviews = fetch_reviews()
+        if reviews is None or reviews.empty:
+            return []
+
+        top_businesses = (
+            reviews.groupby("BusinessId")
+            .agg(Avg_Rating=("Rating", "mean"), Review_Count=("Rating", "count"))
+            .sort_values(by=["Avg_Rating", "Review_Count"], ascending=[False, False])
+            .head(numOfRecommends)
+            .index.tolist()
+        )
+        return top_businesses
 
     user_idx = user_item_matrix.index.get_loc(userId)
     distances, indecies = knn.kneighbors([user_item_matrix.iloc[user_idx]], n_neighbors=6)
@@ -202,7 +232,7 @@ async def businessRecommend(businessId: int, topN: int = 5):
 
 #uvicorn UserRecommender:app --reload
 
-recommendations = recommendRestaurantsToUserInArea(500, "Zamalek", 6)
+recommendations = recommendRestaurantsToUserInArea(10002, "Zamalek", 6)
 print(f"user recommender: {recommendations}")
 
 contentRecommendations = content_recommend(500)
