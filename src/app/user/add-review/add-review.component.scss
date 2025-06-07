@@ -1,0 +1,54 @@
+.review-container {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+button {
+  padding: 10px 18px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #7baaf7;
+  cursor: not-allowed;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+}

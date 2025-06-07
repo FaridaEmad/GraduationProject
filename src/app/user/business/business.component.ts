@@ -4,17 +4,20 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 import { TermtxtPipe } from '../../pipes/termtxt.pipe';
 import { BusinessService } from '../../core/services/business.service';
 import { CategoryService } from '../../core/services/category.service';
+
 import { IBusiness } from '../../core/interfaces/ibusiness';
 import { ICategory } from '../../core/interfaces/icategory';
+import { IReview } from '../../core/interfaces/ireview';
 
 @Component({
   selector: 'app-business',
   standalone: true,
-  imports: [RouterLink, FormsModule, TermtxtPipe, NgxPaginationModule,NgFor,NgIf],
+  imports: [RouterLink, FormsModule, TermtxtPipe, NgxPaginationModule, NgFor, NgIf],
   templateUrl: './business.component.html',
   styleUrls: ['./business.component.scss']
 })
@@ -36,9 +39,9 @@ export class BusinessComponent implements OnInit, OnDestroy {
   itemsPerPage: number = 15;
   searchText: string = '';
 
-  getallbusiness!: Subscription;
-  getallcategories!: Subscription;
-  filterSubscription!: Subscription;
+  getallbusiness: Subscription | undefined;
+  getallcategories: Subscription | undefined;
+  filterSubscription: Subscription | undefined;
 
   cities: string[] = [];
   areas: string[] = [];
@@ -48,7 +51,39 @@ export class BusinessComponent implements OnInit, OnDestroy {
   selectedCategory: number | null = null;
   noDataMessage: string = '';
 
+  reviewsByBusiness: { [businessId: number]: IReview[] } = {};
+  showReviewForm: { [businessId: number]: boolean } = {};
+  newReviewText: string = '';
+  newReviewRating: number = 0;
+
+  loadCategories(): void {
+    this.getallcategories = this.__CategoryService.getallcategories().subscribe(
+      (response: ICategory[]) => {
+        this.categories = response;
+        this.allcategories = response;
+      },
+      (error) => {
+        console.error('Error loading categories:', error);
+      }
+    );
+  }
+
   ngOnInit(): void {
+    if (this.isUserLoggedIn()) {
+      console.log('User is logged in');
+      this.saveUserData();
+    } else {
+      console.log('User is not logged in');
+    }
+
+     this.__BusinessService.getallbusiness().subscribe(
+    (data) => {
+      this.Businesslist = data;
+    },
+    (error) => {
+      console.error('Error fetching businesses:', error);
+    }
+  );
     this.loadCategories();
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -59,7 +94,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
           this.selectedCategory = categoryId;
           this.applyFilters();
         } else {
-         
           this.getAllBusiness();
         }
       } else {
@@ -68,16 +102,32 @@ export class BusinessComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadCategories(): void {
-    this.getallcategories = this.__CategoryService.getallcategories().subscribe({
-      next: (res) => {
-        this.allcategories = res;
-        this.categories = res;
-      },
-      error: (err) => {
-        console.error('Error fetching categories:', err);
+  isUserLoggedIn(): boolean {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const decodedToken: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp > currentTime;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return false;
+    }
+  }
+
+  saveUserData(): void {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      try {
+        const decodedToken: any = jwtDecode(token);
+        localStorage.setItem('userData', JSON.stringify(decodedToken));
+      } catch (error) {
+        console.error('Error decoding token:', error);
       }
-    });
+    }
   }
 
   getAllBusiness(): void {
@@ -97,6 +147,8 @@ export class BusinessComponent implements OnInit, OnDestroy {
     });
   }
 
+  
+
   extractFilterData(): void {
     if (!this.Businesslist || this.Businesslist.length === 0) return;
 
@@ -113,63 +165,40 @@ export class BusinessComponent implements OnInit, OnDestroy {
     const hasCity = city && city !== 'undefined' && city !== '';
     const hasArea = area && area !== 'undefined' && area !== '';
 
-    // التأكد من أنه عندما يتم إزالة تصنيف أو مدينة أو منطقة, الفلاتر الأخرى تُعاد لحالتها الافتراضية
     if (hasCategory && hasCity) {
       this.filterSubscription = this.__BusinessService.getBusinessByCategoryAndCity(category!, city!).subscribe(res => {
-        if (res.length === 0) {
-          this.Businesslist = [];
-          this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
-        } else {
-          this.Businesslist = res;
-          this.noDataMessage = '';
-        }
+        this.handleFilterResponse(res);
       });
     } else if (hasCategory && hasArea) {
       this.filterSubscription = this.__BusinessService.getBusinessByCategoryAndArea(category!, area!).subscribe(res => {
-        if (res.length === 0) {
-          this.Businesslist = [];
-          this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
-        } else {
-          this.Businesslist = res;
-          this.noDataMessage = '';
-        }
+        this.handleFilterResponse(res);
       });
     } else if (hasCategory) {
       this.filterSubscription = this.__BusinessService.getBusinessByCategory(category!).subscribe(res => {
-        if (res.length === 0) {
-          this.Businesslist = [];
-          this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
-        } else {
-          this.Businesslist = res;
-          this.noDataMessage = '';
-        }
+        this.handleFilterResponse(res);
       });
     } else if (hasCity) {
       this.filterSubscription = this.__BusinessService.getBusinessByCity(city!).subscribe(res => {
-        if (res.length === 0) {
-          this.Businesslist = [];
-          this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
-        } else {
-          this.Businesslist = res;
-          this.noDataMessage = '';
-        }
+        this.handleFilterResponse(res);
       });
     } else if (hasArea) {
       this.filterSubscription = this.__BusinessService.getBusinessByArea(area!).subscribe(res => {
-        if (res.length === 0) {
-          this.Businesslist = [];
-          this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
-        } else {
-          this.Businesslist = res;
-          this.noDataMessage = '';
-        }
+        this.handleFilterResponse(res);
       });
     } else {
       this.getAllBusiness();
     }
-}
+  }
 
-  
+  handleFilterResponse(res: IBusiness[]): void {
+    if (res.length === 0) {
+      this.Businesslist = [];
+      this.noDataMessage = 'لا توجد أعمال تتطابق مع هذه الفلاتر';
+    } else {
+      this.Businesslist = res;
+      this.noDataMessage = '';
+    }
+  }
 
   filterBusinessByCategory(categoryId: number): void {
     if (categoryId !== null) {
@@ -192,9 +221,14 @@ export class BusinessComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   trackById(index: number, product: IBusiness): string {
     return product.id?.toString() ?? index.toString();
   }
+
+
+
 
   ngOnDestroy(): void {
     this.getallcategories?.unsubscribe();

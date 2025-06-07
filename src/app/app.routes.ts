@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { HomeComponent as UserHome } from './user/home/home.component';
 import { ProfileComponent as UserProfile } from './user/profile/profile.component';
 import { BusinessComponent } from './user/business/business.component';
-import { SearchByCategoryComponent } from './user/search-by-category/search-by-category.component';
+//import { SearchByCategoryComponent } from './user/search-by-category/search-by-category.component';
 import { FavoriteComponent } from './user/favorite/favorite.component';
 import { BookingComponent } from './user/booking/booking.component';
 import { PaymentComponent } from './user/payment/payment.component';
@@ -31,6 +31,7 @@ import { OfferComponent } from './user/offer/offer.component';
 import { adminGuard } from './core/guards/admin.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { CartComponent } from './user/cart/cart.component';
+import { AddReviewComponent } from './user/add-review/add-review.component';
 
 export const routes: Routes = [
   //Auth Layout Routes (for login and register)
@@ -58,6 +59,8 @@ export const routes: Routes = [
       { path: 'user/offer/:id', component: OfferComponent },
       // { path: 'user/search', component: SearchByCategoryComponent },
       { path: 'user/favorite', component: FavoriteComponent },
+      { path: 'user/add-review/:id', component: AddReviewComponent },
+
       { path: 'user/booking', component: BookingComponent },
       { path: 'user/payment', component: PaymentComponent },
       {path:'user/cart',component:CartComponent}
