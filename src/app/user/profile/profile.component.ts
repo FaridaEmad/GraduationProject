@@ -4,7 +4,7 @@ import { UserService } from '../../core/services/user.service';
 import { IUserProfile } from '../../core/interfaces/iuser';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, RouterModule, ReactiveFormsModule]
+  imports: [NgIf, NgFor, RouterModule, ReactiveFormsModule, DatePipe]
 })
 export class ProfileComponent implements OnInit {
   userPhoto = '';
@@ -35,7 +35,7 @@ export class ProfileComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.profileForm = this.fb.group({
-      profilePhoto: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+      profilePhoto: ['', [Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]],
       name: ['', [  Validators.minLength(3), Validators.maxLength(20)]],
       email: [{ value: this.loggedUser?.email, disabled: true }],
       password: ['', [ Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]

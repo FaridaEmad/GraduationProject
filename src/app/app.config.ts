@@ -1,3 +1,4 @@
+import { ToastComponent } from './shared/toast/toast.component';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter, withInMemoryScrolling, withViewTransitions } from '@angular/router';
 import { routes } from './app.routes'; 

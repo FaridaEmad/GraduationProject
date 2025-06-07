@@ -1,43 +1,66 @@
 <div class="container my-5">
   <div class="card shadow-lg border-0 rounded-4 p-4">
     <div class="row g-4">
+      <!-- Profile Photo Section -->
       <div class="col-lg-4 text-center border-end">
-        <img 
-          [src]="isEditing ? profileForm.get('profilePhoto')?.value || loggedUser?.profilePhoto : loggedUser?.profilePhoto" 
-          alt="Profile Photo" 
-          class="rounded-circle img-thumbnail mb-3" 
-          style="width: 180px; height: 180px; object-fit: cover;"
-        />
+        <div class="profile-photo-container mb-4">
+          <img 
+            [src]="isEditing ? profileForm.get('profilePhoto')?.value || loggedUser?.profilePhoto : loggedUser?.profilePhoto" 
+            alt="Profile Photo" 
+            class="rounded-circle img-thumbnail profile-photo" 
+            [class.editing]="isEditing"
+          />
+          <div class="profile-photo-overlay" *ngIf="isEditing">
+            <i class="bi bi-camera-fill"></i>
+            <span>Change Photo</span>
+          </div>
+        </div>
 
-        
-
-        <h5 class="fw-bold mt-2">{{ loggedUser?.name }}</h5>
-        <p class="text-muted mb-0">{{ loggedUser?.email }}</p>
+        <div class="user-info">
+          <h5 class="fw-bold">{{ loggedUser?.name }}</h5>
+          <p class="text-muted mb-3">{{ loggedUser?.email }}</p>
+          <div class="member-since" *ngIf="loggedUser?.createdAt">
+            <i class="bi bi-calendar-check"></i>
+            Member since {{ loggedUser?.createdAt | date:'MMMM yyyy' }}
+          </div>
+        </div>
       </div>
 
-      <!-- Ensure formGroup is applied here -->
+      <!-- Profile Information Section -->
       <div class="col-lg-8">
         <form *ngIf="profileForm" [formGroup]="profileForm">
-          <!-- Profile Information -->
-          <h4 class="fw-semibold border-bottom pb-2 mb-4">Profile Information</h4>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-semibold mb-0">Profile Information</h4>
+            <button *ngIf="!isEditing" (click)="editProfile()" class="btn btn-main">
+              <i class="bi bi-pencil-fill me-2"></i>Edit Profile
+            </button>
+          </div>
 
-          <div class="mb-3">
+          <!-- Name Field -->
+          <div class="mb-4">
             <label class="form-label">Full Name</label>
-            <input type="text" formControlName="name" class="form-control" [readonly]="!isEditing" />
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+              <input type="text" formControlName="name" class="form-control" [readonly]="!isEditing" />
+            </div>
             <div class="text-danger small mt-1" *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
               <div *ngIf="profileForm.get('name')?.errors?.['required']">Name is required.</div>
               <div *ngIf="profileForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters.</div>
               <div *ngIf="profileForm.get('name')?.errors?.['maxlength']">Name must be at most 20 characters.</div>
-
             </div>
           </div>
          
-          <div class="mb-3">
+          <!-- Email Field -->
+          <div class="mb-4">
             <label class="form-label">Email</label>
-            <input [value]="loggedUser?.email" class="form-control" readonly />
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
+              <input [value]="loggedUser?.email" class="form-control" readonly />
+            </div>
           </div>
 
-          <div class="mb-3">
+          <!-- Phone Numbers Section -->
+          <div class="mb-4">
             <label class="form-label">Phone Numbers</label>
             <ul class="list-group">
               <li *ngFor="let phone of phones" class="list-group-item d-flex justify-content-between align-items-center">
@@ -50,20 +73,24 @@
                   <ng-container *ngIf="isEditingPhone && editingPhoneId === phone.id; else showEditDelete">
                     <form [formGroup]="phoneForm" class="d-flex gap-2">
                       <input type="text" formControlName="phoneNumber" class="form-control form-control-sm" />
-                      <button class="btn btn-sm btn-success" (click)="addOrUpdatePhone()" type="button">Save</button>
-                      <button class="btn btn-sm btn-secondary" (click)="cancelEditPhone()" type="button">Cancel</button>
+                      <button class="btn btn-sm btn-success" (click)="addOrUpdatePhone()" type="button">
+                        <i class="bi bi-check-lg"></i>
+                      </button>
+                      <button class="btn btn-sm btn-secondary" (click)="cancelEditPhone()" type="button">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
                     </form>
                     <div class="text-danger small mt-1" *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched">
                       <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</div>
-                      <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be at least 11 digits.</div>
+                      <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid Egyptian phone number.</div>
                     </div>
                   </ng-container>
 
                   <ng-template #showEditDelete>
-                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editPhone(phone)">
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editPhone(phone)" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-danger" (click)="removePhone(phone.id)">
+                    <button class="btn btn-sm btn-outline-danger" (click)="removePhone(phone.id)" title="Delete">
                       <i class="bi bi-trash"></i>
                     </button>
                   </ng-template>
@@ -72,43 +99,68 @@
             </ul>
           </div>
 
-
-          <div class="mb-3" *ngIf="isEditing && !isEditingPhone">
+          <!-- Add New Phone Section -->
+          <div class="mb-4" *ngIf="isEditing && !isEditingPhone">
             <label class="form-label">Add New Phone</label>
             <form [formGroup]="phoneForm" (ngSubmit)="addOrUpdatePhone()" class="d-flex gap-2">
-              <input type="text" formControlName="phoneNumber" class="form-control" placeholder="Enter new phone number" />
-              <button class="btn btn-primary" type="submit">Add</button>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone-plus-fill"></i></span>
+                <input type="text" formControlName="phoneNumber" class="form-control" placeholder="Enter new phone number" />
+                <button class="btn btn-primary" type="submit">
+                  <i class="bi bi-plus-lg me-1"></i>Add
+                </button>
+              </div>
             </form>
             <div class="text-danger small mt-1" *ngIf="phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched">
               <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['required']">Phone number is required.</div>
-              <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be at least 11 digits.</div>
-            </div>
-          </div>
-          <div class="mb-3" *ngIf="isEditing">
-            <label class="form-label">ProfilePhoto URL</label>
-            <input type="text" formControlName="profilePhoto" class="form-control " />
-            <div class="text-danger small mt-1" *ngIf="profileForm.get('profilePhoto')?.invalid && profileForm.get('profilePhoto')?.touched">
-              <div *ngIf="profileForm.get('profilePhoto')?.errors?.['pattern']">Please enter a valid photo URL.</div>
-            </div>
-          </div>
-          <div class="mb-3" *ngIf="isEditing">
-            <label class="form-label">New Password</label>
-            <input type="password" formControlName="password" class="form-control" placeholder="Enter new password" />
-            <div class="text-danger small mt-1" *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">
-              <div *ngIf="profileForm.get('password')?.errors?.['pattern']">Please Enter Strong Valid Password : <br>
-                            Password Must Be At least 6 Characters Long And At least Contains (one uppercase letter, one lowercase letter, one digit, and one special character(!&#64;#$%^&*) ).</div>
+              <div *ngIf="phoneForm.get('phoneNumber')?.errors?.['pattern']">Please enter a valid Egyptian phone number.</div>
             </div>
           </div>
 
-          <div class="mt-4 text-end">
-            <button *ngIf="!isEditing" (click)="editProfile()" class="btn btn-main d-block ms-auto mt-3">Edit Profile</button>
-            <ng-container *ngIf="isEditing">
-              <button (click)="saveChanges()" class="btn btn-main rounded-pill px-4 me-2">Save</button>
-              <button (click)="cancelEdit()" class="btn btn-outline-secondary rounded-pill px-4">Cancel</button>
-            </ng-container>
+          <!-- Profile Photo URL Section -->
+          <div class="mb-4" *ngIf="isEditing">
+            <label class="form-label">Profile Photo URL</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-image-fill"></i></span>
+              <input type="text" formControlName="profilePhoto" class="form-control" placeholder="Enter photo URL" />
+            </div>
+            <div class="text-danger small mt-1" *ngIf="profileForm.get('profilePhoto')?.invalid && profileForm.get('profilePhoto')?.touched">
+              <div *ngIf="profileForm.get('profilePhoto')?.errors?.['pattern']">Please enter a valid image URL ending with .jpg, .jpeg, .png, or .gif</div>
+            </div>
+          </div>
+
+          <!-- Password Section -->
+          <div class="mb-4" *ngIf="isEditing">
+            <label class="form-label">New Password</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+              <input type="password" formControlName="password" class="form-control" placeholder="Enter new password" />
+            </div>
+            <div class="text-danger small mt-1" *ngIf="profileForm.get('password')?.invalid && profileForm.get('password')?.touched">
+              <div *ngIf="profileForm.get('password')?.errors?.['pattern']">
+                Password must be at least 6 characters long and contain:
+                <ul class="mb-0">
+                  <li>One uppercase letter</li>
+                  <li>One lowercase letter</li>
+                  <li>One digit</li>
+                  <li>One special character (&#64;#$%^&*)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-4 text-end" *ngIf="isEditing">
+            <button (click)="saveChanges()" class="btn btn-main rounded-pill px-4 me-2">
+              <i class="bi bi-check-lg me-1"></i>Save Changes
+            </button>
+            <button (click)="cancelEdit()" class="btn btn-outline-secondary rounded-pill px-4">
+              <i class="bi bi-x-lg me-1"></i>Cancel
+            </button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+

@@ -1,0 +1,535 @@
+// Variables
+
+$primary-color: #1c5694;
+$secondary-color: #3f37c9;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$light-color: #f8f9fa;
+$dark-color: #343a40;
+$border-radius: 8px;
+$transition: all 0.3s ease;
+$transition-speed: 0.3s;
+$box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+
+// Page Header Styles
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 1.5rem;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  
+  .header-content {
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .title-icon {
+        font-size: 2.5rem;
+        color: $primary-color;
+        background: rgba($primary-color, 0.1);
+        padding: 0.75rem;
+        border-radius: 12px;
+        transition: transform $transition-speed ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      .title-text {
+        .page-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: $dark-color;
+          margin-bottom: 0.5rem;
+          letter-spacing: -0.5px;
+          background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 15%) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        
+        .page-subtitle {
+          color: #6c757d;
+          font-size: 1.1rem;
+          margin: 0;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+  
+  .add-business-btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border-radius: $border-radius;
+    transition: all $transition-speed ease;
+    white-space: nowrap;
+    background: $primary-color;
+    border: none;
+    box-shadow: 0 2px 4px rgba($primary-color, 0.2);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba($primary-color, 0.3);
+      background: darken($primary-color, 5%);
+    }
+
+    i {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+// Container styles
+.container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Card styles
+.card {
+  background: white;
+  border: none;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: $transition;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card-header {
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
+
+  h5 {
+    margin: 0;
+    font-weight: 600;
+    color: $dark-color;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      color: $primary-color;
+    }
+  }
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+// Form styles
+.form-label {
+  font-weight: 500;
+  color: $dark-color;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.form-control, .form-select {
+  border-radius: $border-radius;
+  border: 1px solid #e0e0e0;
+  padding: 0.75rem;
+  transition: $transition;
+  font-size: 1rem;
+  background-color: #f8f9fa;
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.15);
+    background-color: white;
+  }
+
+  &.is-invalid {
+    border-color: $danger-color;
+  }
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+// Button styles
+.btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: $border-radius;
+  font-weight: 500;
+  transition: $transition;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0.3px;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &.btn-primary {
+    background: linear-gradient(45deg, $primary-color, $secondary-color);
+    border: none;
+    color: white;
+
+    &:hover {
+      background: linear-gradient(45deg, darken($primary-color, 5%), darken($secondary-color, 5%));
+    }
+  }
+
+  &.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    border: none;
+    color: #000;
+
+    &:hover {
+      background: linear-gradient(45deg, darken(#ffc107, 5%), darken(#ff9800, 5%));
+    }
+  }
+
+  &.btn-danger {
+    background: linear-gradient(45deg, $danger-color, darken($danger-color, 10%));
+    border: none;
+    color: white;
+
+    &:hover {
+      background: linear-gradient(45deg, darken($danger-color, 5%), darken($danger-color, 15%));
+    }
+  }
+
+  &.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+// Table styles
+.table {
+  margin-bottom: 0;
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    color: $dark-color;
+    border-bottom: 2px solid #e0e0e0;
+    padding: 1rem;
+    white-space: nowrap;
+    background-color: #f8f9fa;
+    font-size: 0.95rem;
+  }
+
+  td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+  }
+
+  .message-cell {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Badge styles
+.badge {
+  padding: 0.5em 0.75em;
+  font-weight: 500;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+// Search input styles
+.input-group {
+  .form-control {
+    border-radius: $border-radius;
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem 1rem;
+    transition: $transition;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 0.2rem rgba($primary-color, 0.15);
+      background-color: white;
+    }
+  }
+
+  .input-group-text {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    color: #6c757d;
+  }
+}
+
+// Pagination Styles
+.pagination-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  margin-top: 1rem;
+  border-top: 1px solid rgba($primary-color, 0.1);
+
+  .pagination {
+    margin: 0;
+    gap: 0.25rem;
+
+    .page-item {
+      .page-link {
+        border: none;
+        padding: 0.5rem 0.75rem;
+        color: $dark-color;
+        background: transparent;
+        border-radius: $border-radius;
+        transition: $transition;
+        cursor: pointer;
+        font-weight: 500;
+        min-width: 2.5rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: rgba($primary-color, 0.1);
+          color: $primary-color;
+        }
+
+        i {
+          font-size: 0.875rem;
+        }
+      }
+
+      &.active {
+        .page-link {
+          background: linear-gradient(45deg, $primary-color, $secondary-color);
+          color: white;
+          box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+        }
+      }
+
+      &.disabled {
+        .page-link {
+          color: rgba($dark-color, 0.3);
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  .pagination-info {
+    color: rgba($dark-color, 0.7);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+// Mobile Responsive Styles
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem;
+
+    h5 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .form-control, .form-select {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .table {
+    font-size: 0.9rem;
+
+    th, td {
+      padding: 0.75rem 0.5rem;
+    }
+
+    .message-cell {
+      max-width: 150px;
+    }
+  }
+
+  .input-group {
+    width: 100% !important;
+  }
+
+  .btn-group {
+    .btn {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  .pagination {
+    .page-link {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    margin-bottom: 0.75rem;
+  }
+
+  .card-header {
+    padding: 0.75rem;
+
+    h5 {
+      font-size: 1rem;
+    }
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  .form-control, .form-select {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .table {
+    font-size: 0.85rem;
+
+    th, td {
+      padding: 0.5rem 0.25rem;
+    }
+
+    .message-cell {
+      max-width: 120px;
+    }
+  }
+
+  .btn-group {
+    .btn {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  .pagination {
+    .page-link {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Mobile Card View for Notifications
+@media (max-width: 576px) {
+  .table-responsive {
+    display: block;
+  }
+
+  .table {
+    display: block;
+    width: 100%;
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: block;
+      width: 100%;
+    }
+
+    tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: $border-radius;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+      display: block;
+      text-align: left;
+      padding: 0.75rem;
+      border: none;
+      position: relative;
+      padding-left: 1rem;
+
+      &:before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 0.5rem;
+        color: $dark-color;
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid #e0e0e0;
+      }
+    }
+
+    .message-cell {
+      max-width: none;
+      white-space: normal;
+    }
+  }
+}

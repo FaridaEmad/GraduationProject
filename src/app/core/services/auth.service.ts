@@ -26,6 +26,7 @@ export class AuthService {
       tap((res: any) => {
         if (res && res.token) {
           localStorage.setItem('userToken', res.token);  // تخزين التوكن في localStorage
+          
           const decoded: any = jwtDecode(res.token);
           const user = {
             userId: decoded.userId,  // التأكد من وجود userId في الـ token
@@ -35,6 +36,7 @@ export class AuthService {
             profilePhoto: decoded.profilePhoto || '',
             isAdmin: decoded.role === 'Admin'
           };
+       
           localStorage.setItem('userData', JSON.stringify(user)); // تخزين بيانات المستخدم في localStorage
           this.userData = user;  // تخزين البيانات في الكلاس المحلي
           if (user.isAdmin) {
