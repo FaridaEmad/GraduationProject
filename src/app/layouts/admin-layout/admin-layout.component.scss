@@ -1,17 +1,29 @@
-.admin-container {
-    height: 100vh;
+// Variables
+$nav-width: 260px;
+$transition-speed: 0.3s;
+
+// Admin Layout
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
   
-    .sidebar {
-      width: 220px;
-      min-height: 100vh;
-      background-color: #1e1e2f;
-      a.nav-link:hover {
-        background-color: #163758;
-      }
-    }
-  
-    main {
-      background-color: #f8f9fa;
+  // Main Content
+  .main-content {
+    flex: 1;
+    margin-left: $nav-width;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    transition: margin-left $transition-speed ease;
+  }
+}
+
+// Responsive Styles
+@media (max-width: 768px) {
+  .admin-layout {
+    .main-content {
+      margin-left: 0;
+      padding: 1rem;
     }
   }
-  
+}

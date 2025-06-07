@@ -31,6 +31,7 @@ import { OfferComponent } from './user/offer/offer.component';
 import { adminGuard } from './core/guards/admin.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { CartComponent } from './user/cart/cart.component';
+import { NotificationManagementComponent } from './admin/notification-management/notification-management.component';
 
 export const routes: Routes = [
   //Auth Layout Routes (for login and register)
@@ -76,6 +77,7 @@ export const routes: Routes = [
       { path: 'admin/business-management', component: BusinessManagementComponent },
       { path: 'admin/category-management', component: CategoryManagementComponent },
       { path: 'admin/offers-management', component: OffersManagementComponent },
+       { path: 'admin/notification-management', component: NotificationManagementComponent },
       { path: 'admin/booking', component: AdminBooking },
       { path: 'admin/payment', component: AdminPayment },
       { path: 'register/home', component: UserHome },

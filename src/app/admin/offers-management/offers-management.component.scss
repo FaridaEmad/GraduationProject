@@ -1,6 +1,378 @@
-.title {
-   
-    font-family: 'Kaushan Script', cursive;
-    font-size: 2rem; 
+@import '../shared/admin-layout.scss';
+
+// Variables
+$primary-color: #1c5694;
+$success-color: #28a745;
+$danger-color: #dc3545;
+$warning-color: #ffc107;
+$info-color: #17a2b8;
+$light-color: #f8f9fa;
+$dark-color: #343a40;
+$border-radius: 12px;
+$transition-speed: 0.2s;
+$card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+// Container
+.offers-management-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+// Page Header
+.page-header {
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $light-color;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+
+  .header-content {
+    .title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+
+      .title-icon {
+        font-size: 2.5rem;
+        color: $primary-color;
+        background: rgba($primary-color, 0.1);
+        padding: 0.75rem;
+        border-radius: 12px;
+        transition: transform $transition-speed ease;
+
+        &:hover {
+          transform: scale(1.05);
+        }
+      }
+
+      .title-text {
+        .page-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: $dark-color;
+          margin: 0 0 0.5rem 0;
+        }
+
+        .page-subtitle {
+          font-size: 1.1rem;
+          color: #6c757d;
+          margin: 0;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+}
+
+// Form Card
+.offer-form-card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+  padding: 2rem;
+  margin-bottom: 2rem;
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+
+    .form-group {
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: $dark-color;
+        margin-bottom: 0.5rem;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all $transition-speed ease;
+
+        &:focus {
+          outline: none;
+          border-color: $primary-color;
+          box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+      }
+    }
   }
 
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-width: 140px;
+      transition: all $transition-speed ease;
+      border: none;
+      cursor: pointer;
+
+      i {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+
+      &.btn-primary {
+        background: $primary-color;
+        color: white;
+        box-shadow: 0 4px 15px rgba($primary-color, 0.2);
+
+        &:hover {
+          background: darken($primary-color, 10%);
+        }
+      }
+
+      &.btn-secondary {
+        background: $light-color;
+        color: $dark-color;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+          background: darken($light-color, 5%);
+        }
+      }
+    }
+  }
+}
+
+// Table Card
+.table-card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $card-shadow;
+  overflow: hidden;
+
+  .table-responsive {
+    overflow-x: auto;
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0;
+
+      th, td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+
+      th {
+        background-color: $light-color;
+        font-weight: 600;
+        color: $dark-color;
+        white-space: nowrap;
+      }
+
+      td {
+        color: #444;
+        vertical-align: middle;
+      }
+
+      .actions-column {
+        text-align: right;
+      }
+
+      .actions-cell {
+        .action-buttons {
+          display: flex;
+          gap: 0.5rem;
+          justify-content: flex-end;
+
+          .btn {
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all $transition-speed ease;
+
+            &:hover {
+              transform: translateY(-2px);
+            }
+
+            i {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .no-data-message {
+    text-align: center;
+    padding: 3rem 1rem;
+
+    .no-data-icon {
+      font-size: 3rem;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .no-data-text {
+      color: #666;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+  }
+}
+
+// Responsive Styles
+@media (max-width: 1200px) {
+  .offers-management-container {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .offers-management-container {
+    padding: 1.5rem 0;
+  }
+
+  .page-header {
+    padding: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+
+    .header-content {
+      .title-wrapper {
+        .title-text {
+          .page-title {
+            font-size: 1.5rem;
+          }
+
+          .page-subtitle {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+
+  .offer-form-card {
+    padding: 1.5rem;
+
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .form-actions {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+
+  .table-card {
+    .table-responsive {
+      .table {
+        th, td {
+          padding: 0.75rem;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tbody {
+          tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 0.5rem;
+          }
+
+          td {
+            display: block;
+            text-align: right;
+            padding: 0.5rem;
+            border: none;
+            position: relative;
+            padding-left: 50%;
+
+            &::before {
+              content: attr(data-label);
+              position: absolute;
+              left: 0.5rem;
+              width: 45%;
+              text-align: left;
+              font-weight: 600;
+              color: $dark-color;
+            }
+
+            &.actions-cell {
+              padding-left: 0.5rem;
+              text-align: center;
+
+              &::before {
+                display: none;
+              }
+
+              .action-buttons {
+                justify-content: center;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .offers-management-container {
+    padding: 1.25rem 0;
+  }
+
+  .page-header {
+    padding: 1rem;
+
+    .header-content {
+      .title-wrapper {
+        .title-text {
+          .page-title {
+            font-size: 1.35rem;
+          }
+
+          .page-subtitle {
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }
+
+  .offer-form-card {
+    padding: 1rem;
+  }
+}

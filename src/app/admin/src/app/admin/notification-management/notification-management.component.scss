@@ -1,0 +1,383 @@
+// Variables
+$primary: #007bff;
+$secondary: #6c757d;
+$success: #28a745;
+$warning: #ffc107;
+$danger: #dc3545;
+$light: #f8f9fa;
+$dark: #343a40;
+$border-radius: 0.25rem;
+$transition: all 0.3s ease;
+
+// Page Layout
+.page-container {
+  padding: 1rem;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+
+  .content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+// Header
+.header {
+  margin-bottom: 2rem;
+  
+  h1 {
+    color: $dark;
+    font-size: 2rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: $primary;
+    }
+  }
+}
+
+// Cards
+.card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  transition: $transition;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: $dark;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Form Styles
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: $dark;
+    font-weight: 500;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: $border-radius;
+    transition: $transition;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+      outline: none;
+    }
+
+    &.is-invalid {
+      border-color: $danger;
+    }
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+  }
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.875rem;
+  color: $secondary;
+  margin-top: 0.25rem;
+}
+
+.error-message {
+  color: $danger;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+// Buttons
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: $border-radius;
+  border: none;
+  cursor: pointer;
+  transition: $transition;
+  font-weight: 500;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: linear-gradient(45deg, $primary, darken($primary, 10%));
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(45deg, darken($primary, 5%), darken($primary, 15%));
+    }
+  }
+
+  &.btn-secondary {
+    background: $secondary;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: darken($secondary, 10%);
+    }
+  }
+
+  &.btn-edit {
+    background: $warning;
+    color: $dark;
+
+    &:hover {
+      background: darken($warning, 10%);
+    }
+  }
+
+  &.btn-delete {
+    background: $danger;
+    color: white;
+
+    &:hover {
+      background: darken($danger, 10%);
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+// Table Styles
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: $dark;
+  }
+
+  tr:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+// Badge Styles
+.badge {
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 600;
+  border-radius: 50rem;
+  text-transform: uppercase;
+
+  &.bg-success {
+    background-color: $success;
+    color: white;
+  }
+
+  &.bg-warning {
+    background-color: $warning;
+    color: $dark;
+  }
+}
+
+// Search Box
+.search-box {
+  position: relative;
+  width: 300px;
+
+  i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $secondary;
+  }
+
+  input {
+    padding-left: 2.5rem;
+    border-radius: 50rem;
+    border: 1px solid #ddd;
+    transition: $transition;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 0.2rem rgba($primary, 0.25);
+    }
+  }
+}
+
+// Mobile Cards
+.mobile-cards {
+  .notification-card {
+    background: white;
+    border-radius: $border-radius;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    overflow: hidden;
+
+    .card-header {
+      padding: 1rem;
+      background-color: #f8f9fa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h3 {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+    }
+
+    .card-body {
+      padding: 1rem;
+
+      .message {
+        margin: 0 0 0.5rem;
+        color: $dark;
+      }
+
+      .date {
+        margin: 0;
+        font-size: 0.875rem;
+        color: $secondary;
+      }
+    }
+
+    .card-footer {
+      padding: 1rem;
+      background-color: #f8f9fa;
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: $secondary;
+
+  i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+}
+
+// Pagination
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+
+  .btn-page {
+    background: none;
+    border: 1px solid #ddd;
+    color: $dark;
+    padding: 0.5rem;
+    border-radius: $border-radius;
+    transition: $transition;
+
+    &:hover:not(:disabled) {
+      background-color: #f8f9fa;
+      border-color: $primary;
+      color: $primary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .page-info {
+    color: $secondary;
+  }
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .page-container {
+    padding: 0.5rem;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
+    }
+  }
+
+  .table {
+    display: none;
+  }
+
+  .mobile-cards {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-cards {
+    display: none;
+  }
+} 

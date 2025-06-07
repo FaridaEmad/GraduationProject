@@ -1,42 +1,147 @@
-<div class="container my-4">
-    <h2 class="mb-4 text-center title">Manage Categories</h2>
-  
-    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="mb-4 row g-2">
-      <div class="col-md-6">
-        <input type="text" class="form-control" formControlName="name" placeholder="Category Name" required />
+<div class="category-management-container">
+  <div class="page-header">
+      <div class="header-content">
+            <div class="title-wrapper">
+                <i class="bi bi-tags-fill title-icon"></i>
+                <div class="title-text">
+                    <h1 class="page-title">Category Management</h1>
+                    <p class="page-subtitle">Manage Business Categories and SubCategories</p>
+                </div>
+            </div>
+        </div>
+  </div>
+
+  <div class="category-form-card">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="category-form">
+      <div class="form-group">
+        <label for="categoryName" class="form-label">Category Name</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-tag"></i>
+          </span>
+          <input 
+            type="text" 
+            id="categoryName"
+            class="form-control" 
+            formControlName="name" 
+            placeholder="Enter category name" 
+            required 
+            [class.is-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched"
+          />
+          <div class="invalid-feedback" *ngIf="categoryForm.get('name')?.errors?.['required'] && categoryForm.get('name')?.touched">
+            Category name is required
+          </div>
+          <div class="invalid-feedback" *ngIf="categoryForm.get('name')?.errors?.['minlength'] && categoryForm.get('name')?.touched">
+            Category name must be at least 2 characters
+          </div>
+          <div class="invalid-feedback" *ngIf="categoryForm.get('name')?.errors?.['maxlength'] && categoryForm.get('name')?.touched">
+            Category name cannot exceed 50 characters
+          </div>
+        </div>
       </div>
-      <div class="col-md-auto">
-        <button type="submit" class="btn btn-primary">
-          {{ isEdit ? 'Update' : 'Add' }}
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary add-category-btn" [disabled]="!categoryForm.valid">
+          <i class="bi bi-plus-lg"></i>
+          Add Category
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+          <i class="bi bi-x-lg"></i>
+          Cancel
         </button>
       </div>
-      <div class="col-md-auto" *ngIf="isEdit">
-        <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancel</button>
-      </div>
     </form>
-  
+  </div>
+
+  <div class="table-card">
     <div class="table-responsive">
-      <table class="table table-bordered table-striped text-center align-middle">
-        <thead class="table-dark title fs-5">
+      <table class="table">
+        <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
-            
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let category of categories">
-            <td>{{ category.categoryId }}</td>
+          <tr *ngFor="let category of paginatedCategories">
             <td>{{ category.name }}</td>
-          
             <td>
-              <button class="btn btn-sm btn-warning me-2" (click)="editCategory(category)">Edit</button>
-              <button class="btn btn-sm btn-danger" (click)="deleteCategory(category.categoryId)">Delete</button>
+              <div class="action-buttons">
+                <button class="btn btn-primary btn-sm" (click)="editCategory(category)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" (click)="deleteCategory(category.categoryId)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="paginatedCategories.length === 0">
+            <td colspan="2" class="text-center py-4">
+              <div class="no-data-message">
+                <i class="bi bi-folder-x no-data-icon"></i>
+                <p class="no-data-text">No categories found</p>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <!-- Pagination -->
+    <div class="pagination-wrapper" *ngIf="totalPages > 1">
+      <div class="pagination-info">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} entries
+      </div>
+      <div class="pagination-controls">
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(1)"
+          title="First Page"
+        >
+          <i class="bi bi-chevron-double-left"></i>
+        </button>
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)"
+          title="Previous Page"
+        >
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        
+        <div class="page-numbers">
+          <ng-container *ngFor="let page of getPageNumbers()">
+            <button 
+              *ngIf="page > 0"
+              class="btn btn-pagination"
+              [class.active]="page === currentPage"
+              (click)="onPageChange(page)"
+            >
+              {{ page }}
+            </button>
+            <span *ngIf="page < 0" class="pagination-ellipsis">...</span>
+          </ng-container>
+        </div>
+
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(currentPage + 1)"
+          title="Next Page"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
+        <button 
+          class="btn btn-pagination" 
+          [disabled]="currentPage === totalPages"
+          (click)="onPageChange(totalPages)"
+          title="Last Page"
+        >
+          <i class="bi bi-chevron-double-right"></i>
+        </button>
+      </div>
+    </div>
   </div>
+</div>
   
