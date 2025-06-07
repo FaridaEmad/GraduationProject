@@ -1,3 +1,5 @@
+import { IReview } from "./ireview";
+
 export interface IBusiness {
   id: number;
   name: string;
@@ -9,6 +11,7 @@ export interface IBusiness {
   averageRates: number;
   noOfReviews: number;
   imageUrls: string[];
+  reviews: IReview[];
 }
 
 export interface IBusinessCreate {
