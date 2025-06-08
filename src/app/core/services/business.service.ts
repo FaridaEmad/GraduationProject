@@ -12,7 +12,7 @@ export class BusinessService {
 
   // جلب كل الأعمال
   getallbusiness(): Observable<any[]> {
-    return this.__HttpClient.get<any[]>('https://localhost:7273/api/Business/getAllBusiness').pipe(
+    return this.__HttpClient.get<any[]>('https://localhost:7273/api/Business/stream-all-businesses').pipe(
       map((businesses) =>
         businesses.map((b) => ({
           ...b,

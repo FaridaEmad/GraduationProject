@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IUser, IUserCreate } from '../../core/interfaces/iuser';
 import { UserService } from '../../core/services/user.service';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
@@ -10,24 +10,15 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
-export class UserManagementComponent {
-
+export class UserManagementComponent implements OnInit {
   users: IUser[] = [];
   filteredUsers: IUser[] = [];
   userToEdit: IUser | null = null;
-  newAdmin = {
-    name: '',
-    email: '',
-    password: '',
-    gender: '',
-    phone: '',
-    profilePhoto: '' // تأكدي إنها string
-  };
-  
+  adminForm: FormGroup;
   
   searchTerm: string = '';
   genderFilter: string = '';
@@ -36,7 +27,19 @@ export class UserManagementComponent {
   sortDirection: 'asc' | 'desc' = 'asc';
   sortBy: 'name' | 'createdAt' = 'name';
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private fb: FormBuilder
+  ) {
+    this.adminForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]],
+      gender: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]],
+      profilePhoto: ['', [Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]]
+    });
+  }
   
   ngOnInit(): void {
     this.loadUsers();
@@ -181,36 +184,45 @@ export class UserManagementComponent {
   }
   
   // إضافة أدمن
-  // إضافة أدمن
   addAdmin(): void {
-    const adminData = {
-      name: this.newAdmin.name,
-      email: this.newAdmin.email,
-      password: this.newAdmin.password,
-      gender: this.newAdmin.gender,
-      phone: this.newAdmin.phone,
-      profilePhoto: this.newAdmin.profilePhoto // هذه الصورة ستكون URL
-    };
+    if (this.adminForm.valid) {
+      const adminData = this.adminForm.value;
   
-    console.log("Admin Data", adminData);
+      console.log("Admin Data", adminData);
   
-    // استخدام JSON بدلاً من FormData
-    this.userService.addAdmin(adminData).subscribe({
-      next: () => {
-        Swal.fire('Success', 'Admin added successfully', 'success');
-        this.loadUsers();
-        const modal = document.getElementById('addAdminModal');
-        if (modal) bootstrap.Modal.getInstance(modal)?.hide();
-      },
-      error: (err) => {
-        console.error('Error adding admin', err);
-        Swal.fire('Error', 'An error occurred while adding admin', 'error');
+      this.userService.addAdmin(adminData).subscribe({
+        next: () => {
+          Swal.fire('Success', 'Admin added successfully', 'success');
+          this.loadUsers();
+          this.adminForm.reset();
+          const modal = document.getElementById('addAdminModal');
+          if (modal) bootstrap.Modal.getInstance(modal)?.hide();
+        },
+        error: (err) => {
+          console.error('Error adding admin', err);
+          Swal.fire('Error', 'An error occurred while adding admin', 'error');
+        }
+      });
+    } else {
+      this.markFormGroupTouched(this.adminForm);
+    }
+  }
+  
+  // Helper method to mark all form controls as touched
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
       }
     });
   }
-  
-  
-  
-  
-  
+
+  // Getter methods for form controls
+  get name() { return this.adminForm.get('name'); }
+  get email() { return this.adminForm.get('email'); }
+  get password() { return this.adminForm.get('password'); }
+  get gender() { return this.adminForm.get('gender'); }
+  get phone() { return this.adminForm.get('phone'); }
+  get profilePhoto() { return this.adminForm.get('profilePhoto'); }
 }

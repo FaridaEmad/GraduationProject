@@ -1,0 +1,178 @@
+<div class="page-container">
+  <div class="content-wrapper">
+    <!-- Header -->
+    <div class="header">
+      <h1><i class="bi bi-bell"></i> Notification Management</h1>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card form-card">
+      <div class="card-header">
+        <h2>{{ isEditing ? 'Edit Notification' : 'Add New Notification' }}</h2>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="userId">Select User</label>
+            <select id="userId" 
+                    formControlName="userId" 
+                    class="form-control"
+                    [class.is-invalid]="notificationForm.get('userId')?.invalid && notificationForm.get('userId')?.touched">
+              <option value="">Select a user</option>
+              <option *ngFor="let user of users" [value]="user.userId">
+                {{ user.name }}
+              </option>
+            </select>
+            <div *ngIf="notificationForm.get('userId')?.invalid && notificationForm.get('userId')?.touched" 
+                 class="error-message">
+              Please select a user
+            </div>
+            <div *ngIf="users.length === 0" class="text-muted mt-2">
+              Loading users...
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" 
+                      formControlName="message" 
+                      class="form-control" 
+                      rows="3"
+                      placeholder="Enter notification message"></textarea>
+            <div class="char-counter">
+              {{ notificationForm.get('message')?.value?.length || 0 }}/200
+            </div>
+            <div *ngIf="notificationForm.get('message')?.invalid && notificationForm.get('message')?.touched" 
+                 class="error-message">
+              <div *ngIf="notificationForm.get('message')?.errors?.['required']">
+                Message is required
+              </div>
+              <div *ngIf="notificationForm.get('message')?.errors?.['minlength']">
+                Message must be at least 10 characters
+              </div>
+              <div *ngIf="notificationForm.get('message')?.errors?.['maxlength']">
+                Message cannot exceed 200 characters
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" 
+                    class="btn btn-primary" 
+                    [disabled]="notificationForm.invalid">
+              {{ isEditing ? 'Update' : 'Send' }} Notification
+            </button>
+            <button type="button" 
+                    class="btn btn-secondary" 
+                    *ngIf="isEditing"
+                    (click)="cancelEdit()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="card notifications-card">
+      <div class="card-header">
+        <div class="header-content">
+          <h2>Notifications List</h2>
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" 
+                   class="form-control" 
+                   placeholder="Search notifications..." 
+                   [(ngModel)]="searchTerm"
+                   (input)="onSearch()">
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Desktop View -->
+        <div class="table-responsive d-none d-md-block">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let notification of paginatedNotifications">
+                <td>{{ getUserName(notification.userId) }}</td>
+                <td>{{ notification.message }}</td>
+                <td>{{ notification.createdAt | date:'medium' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="notification.isRead ? 'bg-success' : 'bg-warning'">
+                    {{ notification.isRead ? 'Read' : 'Unread' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group">
+                    <button class="btn btn-edit" (click)="editNotification(notification)" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-delete" (click)="deleteNotification(notification.notificationId)" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="mobile-cards d-md-none">
+          <div class="notification-card" *ngFor="let notification of paginatedNotifications">
+            <div class="card-header">
+              <h3>{{ getUserName(notification.userId) }}</h3>
+              <span class="badge" [ngClass]="notification.isRead ? 'bg-success' : 'bg-warning'">
+                {{ notification.isRead ? 'Read' : 'Unread' }}
+              </span>
+            </div>
+            <div class="card-body">
+              <p class="message">{{ notification.message }}</p>
+              <p class="date">{{ notification.createdAt | date:'medium' }}</p>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-edit" (click)="editNotification(notification)" title="Edit">
+                <i class="bi bi-pencil"></i> Edit
+              </button>
+              <button class="btn btn-delete" (click)="deleteNotification(notification.notificationId)" title="Delete">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="filteredNotifications.length === 0">
+          <i class="bi bi-bell-slash"></i>
+          <p>No notifications found</p>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="filteredNotifications.length > 0">
+          <button class="btn btn-page" 
+                  [disabled]="currentPage === 1"
+                  (click)="changePage(currentPage - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <span class="page-info">
+            Page {{ currentPage }} of {{ totalPages }}
+          </span>
+          <button class="btn btn-page" 
+                  [disabled]="currentPage === totalPages"
+                  (click)="changePage(currentPage + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

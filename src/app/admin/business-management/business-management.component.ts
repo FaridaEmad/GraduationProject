@@ -3,7 +3,9 @@ import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/co
 import Swal from 'sweetalert2';
 import { IBusiness, IBusinessCreate, IBusinessUpdate } from '../../core/interfaces/ibusiness';
 import { ICategory } from '../../core/interfaces/icategory';
+import { IUser } from '../../core/interfaces/iuser';
 import { BusinessService } from '../../core/services/business.service';
+import { UserService } from '../../core/services/user.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -24,6 +26,7 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
 
   categories: ICategory[] = [];
   allcategories: ICategory[] = [];
+  adminUsers: IUser[] = [];
 
   cities: string[] = [];
   areas: string[] = [];
@@ -35,7 +38,7 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
   noDataMessage: string = '';
 
   currentPage = 1;
-  itemsPerPage = 5;
+  itemsPerPage = 30;
 
   form!: FormGroup;
   isEditMode = false;
@@ -43,6 +46,7 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
 
   getallbusiness!: Subscription;
   getallcategories!: Subscription;
+  getallusers!: Subscription;
   filterSubscription!: Subscription;
 
   @ViewChild('businessModal') businessModal!: ElementRef<HTMLDialogElement>;
@@ -50,6 +54,7 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
   constructor(
     private businessService: BusinessService,
     private categoryService: CategoryService,
+    private userService: UserService,
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute
   ) {}
@@ -57,6 +62,7 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initForm();
     this.loadCategories();
+    this.loadAdminUsers();
 
     this.activatedRoute.queryParams.subscribe(params => {
       const categoryIdParam = params['categoryId'];
@@ -70,20 +76,30 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.getallcategories?.unsubscribe();
     this.getallbusiness?.unsubscribe();
+    this.getallusers?.unsubscribe();
     this.filterSubscription?.unsubscribe();
   }
 
   initForm() {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      city: ['', Validators.required],
-      area: ['', Validators.required],
-      logo: ['', Validators.required],
-      categoryId: [0, Validators.required],
-      userId: [0, Validators.required],
-      imageUrls: ['']
+      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      city: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      area: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+      logo: ['', [Validators.required, Validators.pattern('https?://.+\.(jpg|jpeg|png|gif|webp|svg)$')]],
+      categoryId: [null, [Validators.required]],
+      userId: [null, [Validators.required]],
+      imageUrls: ['', [Validators.pattern('^(https?://.+\.(jpg|jpeg|png|gif|webp|svg)$)(,\s*https?://.+\.(jpg|jpeg|png|gif|webp|svg)$)*$')]]
     });
   }
+
+  // Add getter methods for form controls
+  get name() { return this.form.get('name'); }
+  get city() { return this.form.get('city'); }
+  get area() { return this.form.get('area'); }
+  get logo() { return this.form.get('logo'); }
+  get categoryId() { return this.form.get('categoryId'); }
+  get userId() { return this.form.get('userId'); }
+  get imageUrls() { return this.form.get('imageUrls'); }
 
   loadCategories(): void {
     this.getallcategories = this.categoryService.getallcategories().subscribe({
@@ -93,6 +109,17 @@ export class BusinessManagementComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error fetching categories:', err);
+      }
+    });
+  }
+
+  loadAdminUsers(): void {
+    this.getallusers = this.userService.getallUsers().subscribe({
+      next: (res) => {
+        this.adminUsers = res.filter(user => user.isAdmin);
+      },
+      error: (err) => {
+        console.error('Error fetching admin users:', err);
       }
     });
   }

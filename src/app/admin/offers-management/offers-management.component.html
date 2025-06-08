@@ -1,74 +1,175 @@
-<div class="container">
-    <h2 class="title">Manage Offers</h2>
-  
-    <!-- Form for adding or updating an offer -->
-    <form [formGroup]="offerForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="name">Offer Name</label>
-        <input type="text" formControlName="description" id="name" class="form-control" placeholder="Enter offer description" required />
+<div class="offers-management-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-wrapper">
+        <div class="title-icon">
+          <i class="bi bi-gift-fill"></i>
+        </div>
+        <div class="title-text">
+          <h1 class="page-title">Manage Offers</h1>
+          <p class="page-subtitle">Add, edit, or remove business offers</p>
+        </div>
       </div>
-  
-      <div class="form-group">
-        <label for="startDate">Start Date</label>
-        <input type="datetime-local" formControlName="startDate" id="startDate" class="form-control" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="endDate">End Date</label>
-        <input type="datetime-local" formControlName="endDate" id="endDate" class="form-control" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="discountPercentage">Discount Percentage</label>
-        <input type="number" formControlName="discountPercentage" id="discountPercentage" class="form-control" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="image">Image URL</label>
-        <input type="text" formControlName="image" id="image" class="form-control" placeholder="Enter offer image URL" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="price">Price</label>
-        <input type="number" formControlName="price" id="price" class="form-control" placeholder="Enter offer price" required />
-      </div>
-  
-      <div class="form-group">
-        <label for="businessId">Business ID</label>
-        <input type="number" formControlName="businessId" id="businessId" class="form-control" required />
-      </div>
-  
-      <button type="submit" class="btn btn-primary mt-3 mx-3">{{ isEdit ? 'Update Offer' : 'Add Offer' }}</button>
-      <button type="button" class="btn btn-secondary mt-3" (click)="resetForm()" *ngIf="isEdit">Cancel</button>
-    </form>
-  
-    <hr />
-  
-    <!-- Table to display offers -->
-    <table class="table table-bordered">
-      <thead>
-        <tr class="title fs-5 ">
-          <th>ID</th>
-          <th>Description</th>
-          <th>Price</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let offer of offers">
-          <td>{{ offer.offerId }}</td>
-          <td>{{ offer.description }}</td>
-          <td>{{ offer.price }}</td>
-          <td>{{ offer.startDate | date }}</td>
-          <td>{{ offer.endDate | date }}</td>
-          <td>
-            <button class="btn btn-warning mx-2" (click)="editOffer(offer)">Edit</button>
-            <button class="btn btn-danger" (click)="deleteOffer(offer.offerId)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    </div>
+    <div class="header-actions">
+      <!-- Add any header actions here if needed -->
+    </div>
   </div>
+
+  <div class="content-wrapper">
+    <div class="offer-form-card">
+      <form [formGroup]="offerForm" (ngSubmit)="onSubmit()" class="offer-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name" class="form-label">Offer Name</label>
+            <input 
+              type="text" 
+              formControlName="description" 
+              id="name" 
+              class="form-control" 
+              placeholder="Enter offer description" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="price" class="form-label">Price</label>
+            <input 
+              type="number" 
+              formControlName="price" 
+              id="price" 
+              class="form-control" 
+              placeholder="Enter offer price" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input 
+              type="datetime-local" 
+              formControlName="startDate" 
+              id="startDate" 
+              class="form-control" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="endDate" class="form-label">End Date</label>
+            <input 
+              type="datetime-local" 
+              formControlName="endDate" 
+              id="endDate" 
+              class="form-control" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="discountPercentage" class="form-label">Discount Percentage</label>
+            <input 
+              type="number" 
+              formControlName="discountPercentage" 
+              id="discountPercentage" 
+              class="form-control" 
+              required 
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="businessId" class="form-label">Business ID</label>
+            <input 
+              type="number" 
+              formControlName="businessId" 
+              id="businessId" 
+              class="form-control" 
+              required 
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="image" class="form-label">Image URL</label>
+            <input 
+              type="text" 
+              formControlName="image" 
+              id="image" 
+              class="form-control" 
+              placeholder="Enter offer image URL" 
+              required 
+            />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas" [ngClass]="isEdit ? 'fa-save' : 'fa-plus'"></i>
+            {{ isEdit ? 'Update Offer' : 'Add Offer' }}
+          </button>
+          <button 
+            *ngIf="isEdit" 
+            type="button" 
+            class="btn btn-secondary" 
+            (click)="resetForm()"
+          >
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let offer of offers">
+              <td data-label="ID">{{ offer.offerId }}</td>
+              <td data-label="Description">{{ offer.description }}</td>
+              <td data-label="Price">{{ offer.price }}</td>
+              <td data-label="Start Date">{{ offer.startDate | date }}</td>
+              <td data-label="End Date">{{ offer.endDate | date }}</td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button 
+                    class="btn btn-warning" 
+                    (click)="editOffer(offer)"
+                    title="Edit Offer"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button 
+                    class="btn btn-danger" 
+                    (click)="deleteOffer(offer.offerId)"
+                    title="Delete Offer"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="offers.length === 0">
+              <td colspan="6" class="text-center py-4">
+                <div class="no-data-message">
+                  <i class="fas fa-tag no-data-icon"></i>
+                  <p class="no-data-text">No offers found</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
   
