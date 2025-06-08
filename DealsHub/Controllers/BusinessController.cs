@@ -399,5 +399,39 @@ namespace DealsHub.Controllers
 
             return Ok(result);
         }
+        [HttpGet("stream-all-businesses")]
+        public async IAsyncEnumerable<BusinessWithRatingDto> StreamAllBusinesses()
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(null, b => b.Images);
+            var allReviews = await _reviewRepository.GetAllAsync();
+
+            foreach (var business in businesses)
+            {
+                var businessReviews = allReviews.Where(r => r.BusinessId == business.BusinessId).ToList();
+
+                var rating = businessReviews.Any()
+                    ? businessReviews.Average(r => r.Rating)
+                    : 0;
+
+                var noOfReviews = businessReviews.Count;
+
+                yield return new BusinessWithRatingDto
+                {
+                    Id = business.BusinessId,
+                    Name = business.Name,
+                    UserId = business.UserId,
+                    CategoryId = business.CategoryId,
+                    City = business.City,
+                    Area = business.Area,
+                    Logo = business.Logo,
+                    ImageUrls = business.Images.Select(img => img.URL).ToList(),
+                    averageRates = rating,
+                    noOfReviews = noOfReviews
+                };
+            }
+        }
+
     }
-} 
+
+}
+
