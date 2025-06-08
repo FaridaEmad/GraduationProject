@@ -99,6 +99,11 @@ namespace DealsHub.Data
             return await table.AnyAsync(predicate);
         }
 
+        public IAsyncEnumerable<T> StreamAllAsync()
+        {
+            return table.AsAsyncEnumerable();
+        }
+
     }
-    
+
 }

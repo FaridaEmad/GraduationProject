@@ -16,5 +16,6 @@ namespace DealsHub.Data
         Task<bool> Save();
         Task<T> GetWithIncludeAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IIncludableQueryable<T, object>> include);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+        IAsyncEnumerable<T> StreamAllAsync();
     }
 }

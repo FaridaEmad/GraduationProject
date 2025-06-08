@@ -83,5 +83,11 @@ namespace DealsHub.Controllers
             return Ok("deleted successfuly");
         }
 
+        [HttpGet("stream-all-users")]
+        public IAsyncEnumerable<User> StreamAllUsers()
+        {
+            return _userRepository.StreamAllAsync();
+        }
+
     }
 }
