@@ -431,6 +431,17 @@ namespace DealsHub.Controllers
             }
         }
 
+        [HttpGet("fastAllBusiness")]
+        public async Task<IActionResult> fastAllBusiness()
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+            criteria: null,
+            includes: b => b.Images
+            );
+
+            return Ok(businesses);
+        }
+
     }
 
 }
