@@ -12,7 +12,7 @@ export class BusinessService {
 
   // جلب كل الأعمال
   getallbusiness(): Observable<any[]> {
-    return this.__HttpClient.get<any[]>('https://localhost:7273/api/Business/getAllBusiness').pipe(
+    return this.__HttpClient.get<any[]>('https://localhost:7273/api/Business/stream-all-businesses').pipe(
       map((businesses) =>
         businesses.map((b) => ({
           ...b,
@@ -27,7 +27,7 @@ export class BusinessService {
   }
 
   // جلب عمل واحد بناءً على الـ ID
-  getoneBusiness(id: string): Observable<any> {
+  getoneBusiness(id: number): Observable<any> {
     return this.__HttpClient.get(`http://localhost:7273/api/Business/${id}`).pipe(
       catchError((error) => {
         console.error(`Error fetching business with id: ${id}`, error);

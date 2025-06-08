@@ -8,10 +8,13 @@ export const adminGuard: CanActivateFn = (route, state) => {
   // ✅ تأكيد إننا في المتصفح قبل استخدام localStorage
   if (typeof window !== 'undefined' && localStorage.getItem('userToken')) {
     const token = localStorage.getItem('userToken');
+    
     const decoded: any = jwtDecode(token!);
     
     if (decoded.role === 'Admin') {
+      
       return true;
+    
     } else {
       _Router.navigate(['/user/home']);
       return false;

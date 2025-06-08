@@ -1,85 +1,182 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ICategory } from '../../core/interfaces/icategory';
 import { CategoryService } from '../../core/services/category.service';
 import Swal from 'sweetalert2';
 
+interface ICategory {
+  categoryId: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-category-management',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './category-management.component.html',
-  styleUrls: ['./category-management.component.scss']
+  styleUrls: ['./category-management.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class CategoryManagementComponent implements OnInit {
 
   categories: ICategory[] = [];
-  categoryForm!: FormGroup;
-  isEdit: boolean = false;
-  selectedCategoryId: number | null = null;
+  paginatedCategories: ICategory[] = [];
+  categoryForm: FormGroup;
+  isEdit = false;
+  editingCategoryId: number | null = null;
 
-  constructor(private categoryService: CategoryService, private fb: FormBuilder) {}
+  // Pagination properties
+  currentPage = 1;
+  itemsPerPage = 5;
+  totalItems = 0;
+  totalPages = 0;
+  Math = Math; // Make Math available in template
+
+  constructor(private categoryService: CategoryService, private fb: FormBuilder) {
+    this.categoryForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadCategories();
-    this.categoryForm = this.fb.group({
-      name: ['']
+  }
+
+  loadCategories(): void {
+    this.categoryService.getallcategories().subscribe({
+      next: (data) => {
+        this.categories = data;
+        this.totalItems = data.length;
+        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+        this.updatePaginatedCategories();
+      },
+      error: (error) => {
+        console.error('Error loading categories:', error);
+        Swal.fire('Error', 'Failed to load categories', 'error');
+      }
     });
   }
 
-  loadCategories() {
-    this.categoryService.getallcategories().subscribe(data => {
-      this.categories = data;
-    });
+  updatePaginatedCategories(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedCategories = this.categories.slice(startIndex, endIndex);
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      // Show all pages if total pages is less than max visible
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Calculate start and end of visible pages
+      let start = Math.max(2, this.currentPage - 1);
+      let end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      
+      // Adjust if at the start
+      if (this.currentPage <= 2) {
+        end = 4;
+      }
+      
+      // Adjust if at the end
+      if (this.currentPage >= this.totalPages - 1) {
+        start = this.totalPages - 3;
+      }
+      
+      // Add ellipsis if needed
+      if (start > 2) {
+        pages.push(-1); // -1 represents ellipsis
+      }
+      
+      // Add middle pages
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      // Add ellipsis if needed
+      if (end < this.totalPages - 1) {
+        pages.push(-2); // -2 represents ellipsis
+      }
+      
+      // Always show last page
+      pages.push(this.totalPages);
+    }
+    
+    return pages;
+  }
+
+  onPageChange(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedCategories();
+    }
   }
 
   onSubmit() {
+    if (this.categoryForm.invalid) {
+      return;
+    }
+
     const newName = this.categoryForm.value.name;
-    if (this.isEdit && this.selectedCategoryId !== null) {
-      this.categoryService.updateCategory(this.selectedCategoryId, newName).subscribe(() => {
-        this.loadCategories();
-        this.resetForm();
-        Swal.fire('Updated!', 'Category has been updated.', 'success');
+    if (this.isEdit && this.editingCategoryId !== null) {
+      this.categoryService.updateCategory(this.editingCategoryId, newName).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.resetForm();
+          Swal.fire('Success', 'Category updated successfully', 'success');
+        },
+        error: (error) => {
+          console.error('Error updating category:', error);
+          Swal.fire('Error', 'Failed to update category', 'error');
+        }
       });
     } else {
-      this.categoryService.createCategory({ name: newName }).subscribe(() => {
-        this.loadCategories();
-        this.resetForm();
-        Swal.fire('Added!', 'Category has been added.', 'success');
+      this.categoryService.createCategory({ name: newName }).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.resetForm();
+          Swal.fire('Success', 'Category created successfully', 'success');
+        },
+        error: (error) => {
+          console.error('Error creating category:', error);
+          Swal.fire('Error', 'Failed to create category', 'error');
+        }
       });
     }
   }
 
   editCategory(category: ICategory) {
     this.isEdit = true;
-    this.selectedCategoryId = category.categoryId;
+    this.editingCategoryId = category.categoryId;
     this.categoryForm.patchValue({ name: category.name });
   }
 
-  deleteCategory(id: number) {
+  deleteCategory(categoryId: number) {
     Swal.fire({
       title: 'Are you sure?',
-      text: "This will delete the category permanently.",
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#dc3545',
+      confirmButtonColor: '#1c5694',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.categoryService.deleteCategory(id).subscribe({
+        this.categoryService.deleteCategory(categoryId).subscribe({
           next: () => {
             this.loadCategories();
             Swal.fire('Deleted!', 'Category has been deleted.', 'success');
           },
-          error: (err) => {
-            if (err.status === 500) {
-              Swal.fire('Error!', 'You cannot delete this category because it is in use by businesses.', 'error');
-            } else {
-              Swal.fire('Error!', 'Something went wrong. Please try again later.', 'error');
-            }
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            Swal.fire('Error', 'Failed to delete category', 'error');
           }
         });
       }
@@ -88,7 +185,17 @@ export class CategoryManagementComponent implements OnInit {
 
   resetForm() {
     this.isEdit = false;
-    this.selectedCategoryId = null;
+    this.editingCategoryId = null;
+    this.categoryForm.reset();
+  }
+
+  showAddCategoryForm() {
+    this.isEdit = false;
+    this.categoryForm.reset();
+  }
+
+  cancelEdit() {
+    this.isEdit = false;
     this.categoryForm.reset();
   }
 }

@@ -50,3 +50,28 @@
     text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
 }
 
+.dropdown-item {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-item {
+  transition: background-color 0.3s ease-in-out;
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  i.fa-trash-alt {
+    transition: color 0.2s ease;
+    &:hover {
+      color: red;
+    }
+  }
+}
+

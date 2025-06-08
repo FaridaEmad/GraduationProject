@@ -26,6 +26,7 @@ export class AuthService {
       tap((res: any) => {
         if (res && res.token) {
           localStorage.setItem('userToken', res.token);  // تخزين التوكن في localStorage
+          
           const decoded: any = jwtDecode(res.token);
           const user = {
             userId: decoded.userId,  // التأكد من وجود userId في الـ token
@@ -35,6 +36,7 @@ export class AuthService {
             profilePhoto: decoded.profilePhoto || '',
             isAdmin: decoded.role === 'Admin'
           };
+       
           localStorage.setItem('userData', JSON.stringify(user)); // تخزين بيانات المستخدم في localStorage
           this.userData = user;  // تخزين البيانات في الكلاس المحلي
           if (user.isAdmin) {
@@ -46,7 +48,21 @@ export class AuthService {
       })
     );
   }
-  
+
+  // دالة للحصول على الـ userId من التوكن
+  getUserId(): number | null {
+    const token = localStorage.getItem('userToken');
+    if (!token) return null;
+
+    try {
+      const decoded: any = jwtDecode(token);  // فك التوكن
+      return decoded.userId;  // إرجاع الـ userId
+    } catch (e) {
+      console.error('Failed to decode token:', e);
+      return null;
+    }
+  }
+
   // دالة لحفظ بيانات المستخدم عند تسجيل الدخول أو التحديث
   saveUserData(): void {
     const rawUserData = localStorage.getItem('userData');
@@ -82,5 +98,26 @@ export class AuthService {
     localStorage.removeItem('userData');
     this.userData = null;
     this._Router.navigate(['/login']);
+  }
+
+  // دالة للتحقق إذا كان المستخدم مسجل الدخول
+  isUserLoggedIn(): boolean {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      return false;
+    }
+
+    // التحقق من صلاحية التوكن (على سبيل المثال، يمكن التحقق من تاريخ انتهاء التوكن)
+    try {
+      const decoded: any = jwtDecode(token);
+      const currentTime = Date.now() / 1000; // الوقت الحالي بالثواني
+      if (decoded.exp && decoded.exp < currentTime) {
+        // التوكن منتهي الصلاحية
+        return false;
+      }
+      return true; // التوكن صالح
+    } catch (e) {
+      return false; // إذا كان التوكن غير صالح أو مفقود
+    }
   }
 }

@@ -1,4 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
+
     <div class="container-fluid">
         <a class="navbar-brand" routerLink="/user/home">
             <i class="fa-solid fa-location-dot fa-lg" style="color: #d01111;"></i>
@@ -21,37 +22,88 @@
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/business">Business</a>
                 </li>
 
-          
+
 
                 <li class="nav-item">
                     <a class="nav-link" routerLinkActive="active-link" routerLink="/user/favorite">Wishlist</a>
                 </li>
 
-                
 
-               
+
+
             </ul>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                       <img *ngIf="userPhoto" [src]="userPhoto" class="rounded-circle" width="50" height="50" alt="User Photo">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown"
+                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img *ngIf="userPhoto" [src]="userPhoto" class="rounded-circle" width="50" height="50"
+                            alt="User Photo">
 
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" (click)="goToProfile()">Profile</a></li>
-                      <li><a class="dropdown-item" (click)="SignOut()">Logout</a></li>
+                        <li><a class="dropdown-item" (click)="goToProfile()">Profile</a></li>
+                        <li><a class="dropdown-item" (click)="SignOut()">Logout</a></li>
                     </ul>
-                  </li>
-                  
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notifDropdown" data-bs-toggle="dropdown"
+                        role="button">
+                        <i class="fa-solid fa-bell fa-xl"></i>
+                        <span *ngIf="unreadCount"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger animate__animated animate__bounceIn">
+                            {{ unreadCount }}
+                        </span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end p-0 border-0 shadow-lg animate__animated animate__fadeInUp"
+                        aria-labelledby="notifDropdown"
+                        style="width: 360px; max-height: 450px; overflow-y: auto; border-radius: 12px;">
+
+                        <li class="bg-danger text-white px-4 py-3 fw-bold border-bottom rounded-top">
+                            <i class="fa-solid fa-bell me-2 "></i> Notifications
+                        </li>
+
+                        <ng-container *ngIf="notifications.length > 0; else noNotifications">
+                            <li *ngFor="let notif of notifications" class="border-bottom px-3 py-2 notification-item"
+                                [ngClass]="{'bg-light': !notif.isRead}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div [class.fw-bold]="!notif.isRead">{{ notif.message }}</div>
+                                        <small class="text-muted">{{ notif.createdAt | dateFormat }}</small>
+                                    </div>
+                                    <button (click)="deleteNotification(notif.notificationId)"
+                                        class="btn btn-sm btn-outline-danger rounded-circle ms-2" title="Delete">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </li>
+
+                            <li class="text-center py-2">
+                                <button class="btn btn-sm btn-outline-primary fw-bold" (click)="markAllAsRead()">
+                                    <i class="fa-solid fa-check-double me-1"></i> Mark all as read
+                                </button>
+                            </li>
+                        </ng-container>
+
+                        <ng-template #noNotifications>
+                            <li class="text-center p-4 text-muted">
+                                <i class="fa-regular fa-bell-slash fa-2x mb-2"></i><br>
+                                No notifications yet.
+                            </li>
+                        </ng-template>
+                    </ul>
+                </li>
+
+
+
                 <li class="nav-item position-relative">
                     <a class="nav-link " routerLink="user/cart">
                         <i class="fa-solid fa-cart-shopping fs-3"></i>
-                       
+
                     </a>
                 </li>
-              
+
             </ul>
         </div>
     </div>

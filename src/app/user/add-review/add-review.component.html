@@ -1,0 +1,152 @@
+<!-- Main Container -->
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <!-- Review Form Card -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h2 class="card-title mb-4 text-primary">
+            {{ isEdit ? 'Edit Your Review' : 'Add a Review' }}
+          </h2>
+
+          <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" novalidate>
+            <!-- Rating -->
+            <div class="mb-4">
+              <label for="rating" class="form-label fw-bold">
+                Rating <span class="text-danger">*</span>
+              </label>
+              <div class="rating-input">
+                <div class="btn-group w-100" role="group">
+                  <button 
+                    *ngFor="let star of [1,2,3,4,5]" 
+                    type="button"
+                    class="btn btn-outline-primary"
+                    [class.active]="reviewForm.get('rating')?.value === star"
+                    (click)="reviewForm.patchValue({rating: star})"
+                  >
+                    <i class="bi bi-star-fill"></i>
+                  </button>
+                </div>
+              </div>
+              <div
+                *ngIf="
+                  reviewForm.controls['rating'].invalid &&
+                  (reviewForm.controls['rating'].dirty ||
+                    reviewForm.controls['rating'].touched)
+                "
+                class="text-danger mt-2 small"
+              >
+                Please select a rating between 1 and 5.
+              </div>
+            </div>
+
+            <!-- Review Text -->
+            <div class="mb-4">
+              <label for="text" class="form-label fw-bold">
+                Your Review <span class="text-danger">*</span>
+              </label>
+              <textarea
+                id="text"
+                rows="4"
+                class="form-control"
+                formControlName="text"
+                placeholder="Share your experience with this business..."
+              ></textarea>
+              <div
+                *ngIf="
+                  reviewForm.controls['text'].invalid &&
+                  (reviewForm.controls['text'].dirty ||
+                    reviewForm.controls['text'].touched)
+                "
+                class="text-danger mt-2 small"
+              >
+                <span *ngIf="reviewForm.controls['text'].errors?.['required']">
+                  Review text is required.
+                </span>
+                <span *ngIf="reviewForm.controls['text'].errors?.['minlength']">
+                  Review must be at least 5 characters.
+                </span>
+                <span *ngIf="reviewForm.controls['text'].errors?.['maxlength']">
+                  Review cannot exceed 500 characters.
+                </span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2">
+              <button
+                type="submit"
+                class="btn btn-primary flex-grow-1"
+                [disabled]="loading || reviewForm.invalid"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                {{ isEdit ? 'Update Review' : 'Add Review' }}
+              </button>
+
+              <button
+                *ngIf="isEdit && selectedReviewId"
+                type="button"
+                class="btn btn-outline-danger"
+                [disabled]="loading"
+                (click)="deleteReview()"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Reviews List Card -->
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="card-title mb-4">All Reviews</h3>
+          
+          <div *ngIf="reviews.length > 0" class="reviews-list">
+            <div *ngFor="let rev of reviews" class="review-item mb-4 pb-4 border-bottom">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex align-items-center">
+                  <div class="rating-stars me-2">
+                    <i *ngFor="let star of [1,2,3,4,5]" 
+                       class="bi"
+                       [class.bi-star-fill]="star <= rev.rating"
+                       [class.bi-star]="star > rev.rating"
+                       [class.text-warning]="star <= rev.rating">
+                    </i>
+                  </div>
+                  <span class="text-muted small">User #{{ rev.userId }}</span>
+                </div>
+                <small class="text-muted">{{ rev.createdAt | date: 'medium' }}</small>
+              </div>
+              <div class="position-relative">
+                <p class="mb-0">{{ rev.text }}</p>
+                <!-- Action buttons for user's own reviews -->
+                <div *ngIf="rev.userId === userId" class="review-actions position-absolute" style="right: 0; top: 0;">
+                  <button 
+                    class="btn btn-sm btn-outline-primary me-2"
+                    (click)="editReview(rev)"
+                    [disabled]="loading"
+                  >
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button 
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="deleteReview(rev.reviewId)"
+                    [disabled]="loading"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="reviews.length === 0" class="text-center text-muted py-4">
+            <i class="bi bi-chat-square-text display-4"></i>
+            <p class="mt-3">No reviews yet for this business.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

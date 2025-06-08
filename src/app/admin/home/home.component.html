@@ -1,109 +1,182 @@
-<div class="row mb-4">
-    <!-- Users Card -->
-    <div class="col-12 col-md-4 mb-3">
-      <div class="card text-white bg-primary h-100 rounded-4 shadow-sm"
-           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'users' }"
-           style="cursor: pointer; transition: 0.3s;"
-           (click)="selectedSection = 'users'">
-        <div class="card-body d-flex justify-content-around align-items-center">
-          <i class="fa-solid fa-users fa-2xl text-white"></i>
-          <div class="text-center">
-            <p class="mb-0 title">Users</p>
-            <h3 class="title">{{ usersCount }}</h3>
-          </div>
-        </div>
-      </div>
+<!-- Admin Dashboard Header -->
+<div class="admin-header mb-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <p class="dashboard-subtitle">Monitor and manage your platform's performance</p>
     </div>
-  
-    <!-- Businesses Card -->
-    <div class="col-12 col-md-4 mb-3">
-      <div class="card text-white bg-success h-100 rounded-4 shadow-sm"
-           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'business' }"
-           style="cursor: pointer; transition: 0.3s;"
-           (click)="selectedSection = 'business'">
-        <div class="card-body d-flex justify-content-around align-items-center">
-          <i class="fa-solid fa-briefcase fa-2xl text-white"></i>
-          <div class="text-center">
-            <p class="mb-0 title">Businesses</p>
-            <h3 class="title">{{ businessCount }}</h3>
-          </div>
+    <button class="btn btn-primary" (click)="refreshData()">
+      <i class="fa-solid fa-rotate"></i> Refresh Data
+    </button>
+  </div>
+</div>
+
+<!-- Stats Overview -->
+<div class="row g-4 mb-4">
+  <!-- Users Stats -->
+  <div class="col-12 col-md-4">
+    <div class="stat-card bg-primary-gradient h-100 rounded-4 shadow-sm"
+         [ngClass]="{ 'stat-card-active': selectedSection === 'users' }"
+         (click)="selectedSection = 'users'">
+      <div class="stat-card-body">
+        <div class="stat-icon">
+          <i class="fa-solid fa-users fa-2xl"></i>
         </div>
-      </div>
-    </div>
-  
-    <!-- Categories Card -->
-    <div class="col-12 col-md-4 mb-3">
-      <div class="card text-white bg-warning h-100 rounded-4 shadow-sm"
-           [ngClass]="{ 'border border-4 border-white shadow-lg': selectedSection === 'categories' }"
-           style="cursor: pointer; transition: 0.3s;"
-           (click)="selectedSection = 'categories'">
-        <div class="card-body d-flex justify-content-around align-items-center">
-          <i class="fa-solid fa-folder-open fa-2xl text-white"></i>
-          <div class="text-center">
-            <p class="mb-0 title">Categories</p>
-            <h3 class="title">{{ categoriesCount }}</h3>
-          </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ usersCount }}</h3>
+          <p class="stat-label">Total Users</p>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- Row for Chart and Table -->
-  <div class="row fade-in">
-    <div class="col-12 col-lg-6 mb-3">
-      <div class="card p-3 h-100">
-        <h5 class="mb-3 text-capitalize">{{ selectedSection }} Chart</h5>
-        <div *ngIf="isLoading" class="text-center p-3">
+
+  <!-- Businesses Stats -->
+  <div class="col-12 col-md-4">
+    <div class="stat-card bg-success-gradient h-100 rounded-4 shadow-sm"
+         [ngClass]="{ 'stat-card-active': selectedSection === 'business' }"
+         (click)="selectedSection = 'business'">
+      <div class="stat-card-body">
+        <div class="stat-icon">
+          <i class="fa-solid fa-briefcase fa-2xl"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ businessCount }}</h3>
+          <p class="stat-label">Total Businesses</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories Stats -->
+  <div class="col-12 col-md-4">
+    <div class="stat-card bg-warning-gradient h-100 rounded-4 shadow-sm"
+         [ngClass]="{ 'stat-card-active': selectedSection === 'categories' }"
+         (click)="selectedSection = 'categories'">
+      <div class="stat-card-body">
+        <div class="stat-icon">
+          <i class="fa-solid fa-folder-open fa-2xl"></i>
+        </div>
+        <div class="stat-content">
+          <h3 class="stat-value">{{ categoriesCount }}</h3>
+          <p class="stat-label">Total Categories</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="row g-4">
+  <!-- Analytics Chart -->
+  <div class="col-12 col-lg-6">
+    <div class="analytics-card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">{{ selectedSection | titlecase }} Analytics</h5>
+        <div class="chart-controls">
+          <div class="btn-group">
+            <button class="btn btn-sm" [class.btn-primary]="selectedSection === 'users'" (click)="selectedSection = 'users'">Users</button>
+            <button class="btn btn-sm" [class.btn-primary]="selectedSection === 'business'" (click)="selectedSection = 'business'">Businesses</button>
+            <button class="btn btn-sm" [class.btn-primary]="selectedSection === 'categories'" (click)="selectedSection = 'categories'">Categories</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="loading-spinner">
           <div class="spinner-border text-primary"></div>
         </div>
-  
-        <canvas *ngIf="!isLoading && selectedSection === 'business'" baseChart
-                [data]="barChartData" [type]="barChartType">
-        </canvas>
-  
-        <canvas *ngIf="!isLoading && selectedSection === 'users'" baseChart
-                [data]="userChartData" [type]="barChartType">
-        </canvas>
-  
-        <canvas *ngIf="!isLoading && selectedSection === 'categories'" baseChart
-                [data]="categoryChartData" [type]="barChartType">
-        </canvas>
-      </div>
-    </div>
-  
-    <div class="col-12 col-lg-6 mb-3">
-      <div class="card p-3 h-100">
-        <h5 class="mb-3 text-capitalize">Latest {{ selectedSection }}</h5>
-  
-        <table *ngIf="selectedSection === 'business'" class="table fade-in">
-          <thead><tr><th>Name</th><th>Area</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let b of latestBusiness">
-              <td>{{ b.name }}</td>
-              <td>{{ b.area }}</td>
-            </tr>
-          </tbody>
-        </table>
-  
-        <table *ngIf="selectedSection === 'users'" class="table fade-in">
-          <thead><tr><th>Name</th><th>Email</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let u of latestUsers">
-              <td>{{ u.name }}</td>
-              <td>{{ u.email }}</td>
-            </tr>
-          </tbody>
-        </table>
-  
-        <table *ngIf="selectedSection === 'categories'" class="table fade-in">
-          <thead><tr><th>Name</th></tr></thead>
-          <tbody>
-            <tr *ngFor="let c of latestCategories">
-              <td>{{ c.name }}</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <div class="chart-container" *ngIf="!isLoading">
+          <!-- Bar Charts -->
+          <canvas *ngIf="selectedSection === 'business'" baseChart
+                  [data]="barChartData" [options]="chartOptions" [type]="barChartType">
+          </canvas>
+
+          <canvas *ngIf="selectedSection === 'users'" baseChart
+                  [data]="userChartData" [options]="chartOptions" [type]="barChartType">
+          </canvas>
+
+          <canvas *ngIf="selectedSection === 'categories'" baseChart
+                  [data]="categoryChartData" [options]="chartOptions" [type]="barChartType">
+          </canvas>
+        </div>
       </div>
     </div>
   </div>
-  
+
+  <!-- Latest Data -->
+  <div class="col-12 col-lg-6">
+    <div class="analytics-card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">{{ showAll ? 'All' : 'Latest' }} {{ selectedSection | titlecase }}</h5>
+        <button class="btn btn-sm btn-outline-primary" (click)="viewAll()">
+          <i class="fa-solid" [class.fa-list]="!showAll" [class.fa-compress]="showAll"></i>
+          {{ showAll ? 'Show Latest' : 'View All' }}
+        </button>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table *ngIf="selectedSection === 'business'" class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Area</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let b of showAll ? allBusinesses : latestBusiness">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img [src]="b.logo" [alt]="b.name" class="rounded-circle me-2" width="32" height="32">
+                    <span>{{ b.name }}</span>
+                  </div>
+                </td>
+                <td>{{ b.area }}</td>
+                <td><span class="badge bg-success">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table *ngIf="selectedSection === 'users'" class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of showAll ? allUsers : latestUsers">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img [src]="u.profilePhoto" [alt]="u.name" class="rounded-circle me-2" width="32" height="32">
+                    <span>{{ u.name }}</span>
+                  </div>
+                </td>
+                <td>{{ u.email }}</td>
+                <td><span class="badge" [class.bg-primary]="u.isAdmin" [class.bg-info]="!u.isAdmin">{{ u.isAdmin ? 'Admin' : 'User' }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table *ngIf="selectedSection === 'categories'" class="table table-hover mb-0">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Businesses</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of showAll ? allCategories : latestCategories">
+                <td>{{ c.name }}</td>
+                <td>{{ c.businesses.length }}</td>
+                <td><span class="badge bg-primary">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,7 +4,7 @@ import { UserService } from '../../core/services/user.service';
 import { IUserProfile } from '../../core/interfaces/iuser';
 import Swal from 'sweetalert2';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, RouterModule, ReactiveFormsModule]
+  imports: [NgIf, NgFor, RouterModule, ReactiveFormsModule, DatePipe]
 })
 export class ProfileComponent implements OnInit {
   userPhoto = '';
@@ -35,14 +35,14 @@ export class ProfileComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.profileForm = this.fb.group({
-      profilePhoto: ['', [Validators.pattern(/^https?:\/\/.+/)]],
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      profilePhoto: ['', [Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]],
+      name: ['', [  Validators.minLength(3), Validators.maxLength(20)]],
       email: [{ value: this.loggedUser?.email, disabled: true }],
-      password: ['', [Validators.minLength(6)]]
+      password: ['', [ Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
     });
 
     this.phoneForm = this.fb.group({
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{11,}$/)]]
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]]
     });
   
     

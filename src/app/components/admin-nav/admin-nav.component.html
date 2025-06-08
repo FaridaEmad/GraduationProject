@@ -1,41 +1,75 @@
-<nav class="sidebar bg-dark text-white p-3 vh-100 d-flex flex-column">
-    <h4 class="text-center mb-4 fw-bold title">Admin Panel</h4>
-    <ul class="nav nav-pills flex-column gap-2">
-      <li class="nav-item">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="admin/home">
-          <span>🏠</span> Home
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="/admin/user-management">
-          <span>👤</span> Users
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="admin/business-management">
-          <span>🏢</span> Businesses
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="admin/category-management">
-          <span>📁</span> Categories
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="admin/offers-management">
-          <span>💼</span> Offers
-        </a>
-      </li>
-      <li class="nav-item">
-  <a class="nav-link text-white d-flex align-items-center gap-2 sub-title" routerLinkActive="active-link" routerLink="admin/booking">
-    <span>📅</span> Bookings
-  </a>
-</li>
+<!-- Mobile Navigation Toggle -->
+<button class="mobile-nav-toggle" (click)="toggleNav()">
+  <i class="bi" [class.bi-list]="!isNavOpen" [class.bi-x-lg]="isNavOpen"></i>
+</button>
 
-      
-      <li class="nav-item ">
-        <a class="nav-link text-white d-flex align-items-center gap-2 sub-title cursor-pointer" (click)="SignOut()">↩️ log out</a>
-    </li>
+<!-- Admin Navigation -->
+<nav class="admin-nav" [class.nav-open]="isNavOpen">
+  <!-- Nav Header -->
+  <div class="nav-header">
+    <div class="nav-brand">
+      <i class="bi bi-shield-lock-fill"></i>
+      <h1>Admin Panel</h1>
+    </div>
+  </div>
+
+  <!-- Nav Content -->
+  <div class="nav-content">
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/home" (click)="closeNav()">
+          <i class="bi bi-house-fill"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/user-management" (click)="closeNav()">
+          <i class="bi bi-people-fill"></i>
+          <span>Users</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/business-management" (click)="closeNav()">
+          <i class="bi bi-building-fill"></i>
+          <span>Businesses</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/category-management" (click)="closeNav()">
+          <i class="bi bi-grid-fill"></i>
+          <span>Categories</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/offers-management" (click)="closeNav()">
+          <i class="bi bi-gift-fill"></i>
+          <span>Offers</span>
+        </a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="admin/Booking-management" (click)="closeNav()">
+         <i class="bi bi-journal-bookmark-fill"></i>
+
+          <span>Booking</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLinkActive="active" routerLink="/admin/notification-management" (click)="closeNav()">
+          <i class="bi bi-bell-fill"></i>
+          <span>Notifications</span>
+        </a>
+      </li>
     </ul>
-  </nav>
-  
+
+    <!-- Nav Footer -->
+    <div class="nav-footer">
+      <button class="nav-link logout-btn" (click)="SignOut()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Overlay for mobile -->
+<div class="nav-overlay" [class.overlay-open]="isNavOpen" (click)="toggleNav()"></div>
