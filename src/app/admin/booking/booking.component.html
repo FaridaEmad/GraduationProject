@@ -1,1 +1,68 @@
-<p>booking works!</p>
+<div class="container mt-4">
+  <h2 class="mb-4">Booking Management</h2>
+
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by user or offer"
+        [(ngModel)]="searchTerm"
+        (input)="filterBookings()"
+      />
+    </div>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th (click)="sortBookings('userId')">User Id</th>
+        <th (click)="sortBookings('user')">User Name</th>
+        <th (click)="sortBookings('offer')">Offer</th>
+        <th (click)="sortBookings('quantity')">Quantity</th>
+        <th>Status</th>
+        <th (click)="sortBookings('bookingDate')">Booking Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let booking of paginatedBookings">
+        <td>{{ booking.userId }}</td>
+        <td>{{ booking.user?.name }}</td>
+        <td>{{ booking.offer?.description }}</td>
+        <td>{{ booking.quantity }}</td>
+        <td>
+          <span class="badge bg-secondary">N/A</span>
+        </td>
+        <td>{{ booking.bookingDate | date: 'mediumDate' }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" (click)="editBooking(booking)">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteBooking(booking.bookingId)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <nav *ngIf="totalPages > 1">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="goToPage(currentPage - 1)">Previous</a>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="currentPage === i + 1"
+      >
+        <a class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="goToPage(currentPage + 1)">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>

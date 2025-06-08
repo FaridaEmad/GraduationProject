@@ -1,5 +1,6 @@
 import { ICart } from "./icart";
 import { IOffers } from "./ioffer";
+import { IUser } from "./iuser";
 
 export interface IBooking {
     bookingId: number;
@@ -8,7 +9,7 @@ export interface IBooking {
     offerId: number;
     userId: number;
     cartId: number;
-    offer: IOffers;   // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل عرض
-    user: any;    // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل المستخدم
-    cart: ICart;    // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل الكارت
+    offer: IOffers|null;   // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل عرض
+    user: IUser|null;    // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل المستخدم
+    cart: ICart|null;    // تأكد تحط النوع الصحيح إذا كان فيه تفاصيل الكارت
 }

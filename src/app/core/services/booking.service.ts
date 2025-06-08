@@ -2,6 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { IBooking } from '../interfaces/ibooking';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class BookingService {
 
   // Get all bookings
   getAllBookings(): Observable<any> {
-    return this._HttpClient.get<any>(`${this.apiUrl}/getAllBookings`);
+    return this._HttpClient.get<any>(`${this.apiUrl}/getAllBookingss`);
   }
 
   // Add a new booking
@@ -39,5 +40,12 @@ export class BookingService {
 deleteBookingById(id: number): Observable<any> {
   return this._HttpClient.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
 }
+
+//Edit Booking
+// في booking.service.ts
+editBooking(booking: IBooking): Observable<any> {
+  return this._HttpClient.put(`${this.apiUrl}/${booking.bookingId}`,  { responseType: 'text' });
+}
+
 
 }
