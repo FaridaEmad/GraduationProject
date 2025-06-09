@@ -442,6 +442,110 @@ namespace DealsHub.Controllers
             return Ok(businesses);
         }
 
+        [HttpGet("fastGetBusinessByCategory{id}")]
+        public async Task<IActionResult> fastGetByCategory(int id)
+        {
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
+                return NotFound("Wrong categoey id");
+
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category.");
+
+            return Ok(businesses);
+        }
+
+        [HttpGet("fastGetBusinessByCity{city}")]
+        public async Task<IActionResult> fastGetByCity(String city)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.City == city,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this city.");
+            
+            return Ok(businesses);
+        }
+
+        [HttpGet("fastGetBusinessByArea{area}")]
+        public async Task<IActionResult> fastGetByArea(String area)
+        {
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.Area == area,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this area.");
+            
+            return Ok(businesses);
+        }
+
+        [HttpGet("fastGetBusinessByCategoryAndCity")]
+        public async Task<IActionResult> fastGetByCategoryAndCity(int id, String city)
+        {
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
+                return NotFound("Wrong category id");
+
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id && b.City == city,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category and city.");
+            
+            return Ok(businesses);
+        }
+
+        [HttpGet("fastGetBusinessByCategoryAndArea")]
+        public async Task<IActionResult> fastGetByCategoryAndArea(int id, String area)
+        {
+            bool exists = await _categoryRepository.ExistsAsync(c => c.CategoryId == id);
+            if (exists == false)
+                return NotFound("Wrong category id");
+
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.CategoryId == id && b.Area == area,
+                b => b.Images
+                );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No businesses found for this category and area.");
+
+            return Ok(businesses);
+        }
+
+        [HttpGet("fastSearch")]
+        public async Task<IActionResult> fastSearch(String keyword)
+        {
+            if (String.IsNullOrWhiteSpace(keyword))
+                return BadRequest("Search keyword can not be empty");
+
+            keyword = keyword.ToLower();
+
+            var businesses = await _businessRepository.GetAllAsyncInclude(
+                b => b.Name.ToLower().Contains(keyword) ||
+                     b.City.ToLower().Contains(keyword) ||
+                     b.Area.ToLower().Contains(keyword) ||
+                     (b.Category.Name != null && b.Category.Name.ToLower().Contains(keyword)),
+                b => b.Category
+            );
+
+            if (businesses == null || !businesses.Any())
+                return NotFound("No matching businesses found.");
+
+            return Ok(businesses);
+        }
+
     }
 
 }

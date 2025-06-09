@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using DealsHub.Models;
 using GraduationProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -102,6 +103,16 @@ namespace DealsHub.Data
         public IAsyncEnumerable<T> StreamAllAsync()
         {
             return table.AsAsyncEnumerable();
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await table.CountAsync();
+        }
+
+        public async Task<IEnumerable<T>> GetLeastAddedUsersAsync(int count)
+        {
+            return await table.OrderByDescending(e => EF.Property<int>(e, "UserId")).Take(count).ToListAsync();
         }
 
     }

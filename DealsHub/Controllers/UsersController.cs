@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DealsHub.Dtos;
 using Microsoft.AspNetCore.Http.HttpResults;
+using NuGet.Protocol.Core.Types;
 
 namespace DealsHub.Controllers
 {
@@ -87,6 +88,20 @@ namespace DealsHub.Controllers
         public IAsyncEnumerable<User> StreamAllUsers()
         {
             return _userRepository.StreamAllAsync();
+        }
+
+        [HttpGet("getUsersCount")]
+        public async Task<IActionResult> GetUsersCount()
+        {
+            var count = await _userRepository.CountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("getLeastAddedUsers{n}")]
+        public async Task<IActionResult> GetLeastAddedUser(int n)
+        {
+            var leastAddedBusinesses = await _userRepository.GetLeastAddedUsersAsync(n);
+            return Ok(leastAddedBusinesses);
         }
 
     }
