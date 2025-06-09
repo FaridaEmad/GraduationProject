@@ -11,6 +11,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { catchError, forkJoin, of, throwError } from 'rxjs';
 import { ToastComponent } from "../../shared/toast/toast.component";
+import { BookingService } from '../../core/services/booking.service';
 
 @Component({
   selector: 'app-nav-blank',
@@ -27,12 +28,16 @@ export class NavBlankComponent implements OnInit {
   notifications: INotification[] = [];
   unreadCount = 0;
   userId : number|null = null; 
+  cartCount = 0;
 
   constructor(private router: Router,
      private notificationService: NotificationService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private bookingService: BookingService
   ) {
-    
+    this.bookingService.cartCount$.subscribe(count => {
+      this.cartCount = count;
+    });
   }
 
   ngOnInit(): void {

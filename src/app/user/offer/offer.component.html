@@ -1,40 +1,207 @@
-<section>
-  <h2 class="text-white mb-4">All Offers</h2>
-  <div class="row g-4">
-    <div *ngFor="let offer of offersList; trackBy: trackByOfferId" class="col-md-3 mb-4">
-      <div class="card offer-card p-3 text-center shadow-sm border-0 h-100">
-        <div class="position-relative">
-          <img [src]="offer.image" class="w-100 rounded-top" [alt]="offer.description">
-          <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-            {{ offer.discountPercentage }}% OFF
-          </span>
+<!-- Offer Section -->
+<section class="p-4 bg-light">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+      <!-- Main Image & Thumbnails -->
+      <div class="col-lg-6 col-12 mb-4 mb-lg-0">
+        <div class="card shadow-sm border-0 mb-3 overflow-hidden">
+          <img [src]="offersList[0]?.image || 'assets/default-offer.jpg'" 
+               class="img-fluid w-100" 
+               style="height: 400px; object-fit: cover;"
+               alt="Main Offer Image">
         </div>
+        <div class="d-flex flex-wrap gap-2">
+          <div *ngFor="let offer of offersList; let i = index" 
+               class="card shadow-sm border-0 cursor-pointer"
+               style="width: 80px; height: 80px; overflow: hidden;">
+            <img [src]="offer.image" 
+                 class="w-100 h-100" 
+                 style="object-fit: cover;"
+                 [alt]="'Offer ' + (i+1)">
+          </div>
+        </div>
+      </div>
 
-        <div class="card-body d-flex flex-column justify-content-between">
-          <h4 class="text-success fw-bold my-2">${{ offer.price }}</h4>
-          <p class="text-muted small">{{ offer.description }}</p>
+      <!-- Offer Details Card -->
+      <div class="col-lg-6 col-12">
+        <div class="card shadow-sm border-0 p-4 mb-4">
+          <h2 class="gradient-text fw-bold mb-2">{{ offersList[0]?.description || 'Offer' }}</h2>
+          <p class="text-secondary mb-3">{{ offersList[0]?.description }}</p>
+          
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-warning text-dark me-2">Merchant</span>
+            <span class="fw-semibold text-accent">Business #{{ businessId }}</span>
+          </div>
 
-          <div class="d-flex justify-content-between align-items-center mt-auto">
-            <button 
-              class="btn flex-grow-1 me-2"
-              [ngClass]="addedOfferIds.has(offer.offerId) ? 'btn-success' : 'btn-primary'"
-              (click)="addToCart(offer)"
-              [disabled]="addedOfferIds.has(offer.offerId)">
-              <span *ngIf="!addedOfferIds.has(offer.offerId)">Add to Cart</span>
-              <span *ngIf="addedOfferIds.has(offer.offerId)">✔ Added</span>
+          <!-- Coupon List -->
+          <div class="mb-4">
+            <div *ngFor="let offer of offersList; trackBy: trackByOfferId" 
+                 class="card shadow-sm border-0 mb-3 p-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  <span class="fw-semibold">{{ offer.description }}</span>
+                  <span *ngIf="offer.discountPercentage" 
+                        class="badge bg-danger ms-2">{{ offer.discountPercentage }}% OFF</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="fw-bold text-accent fs-6">{{ offer.price | currency:'USD':'symbol' }}</span>
+                  <div class="btn-group">
+                    <button class="btn btn-outline-accent btn-sm" 
+                            (click)="decreaseQuantity(offer.offerId)">-</button>
+                    <span class="btn btn-sm disabled">{{ quantities[offer.offerId] || 1 }}</span>
+                    <button class="btn btn-outline-accent btn-sm" 
+                            (click)="increaseQuantity(offer.offerId)">+</button>
+                  </div>
+                  <button class="btn btn-accent btn-sm ms-2 btn-wide" 
+                          (click)="addToCart(offer)">
+                    <span>
+                      <ng-container *ngIf="addedOfferIds.has(offer.offerId)">✔ </ng-container>
+                      Add to Cart
+                    </span>
+                  </button>
+                  <button type="button" 
+                          class="btn btn-outline-danger btn-sm" 
+                          (click)="toggleWishlist(offer)">
+                    <i class="fas" [ngClass]="wishlistIds.has(offer.offerId) ? 'fa-heart' : 'fa-heart-o'"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="d-flex gap-2 mb-3">
+            <button class="btn btn-accent flex-grow-1" 
+                    (click)="addMultipleOffersToCart(offersList)">
+              Add All to Cart
             </button>
-
-            <!-- زر القلب -->
-            <button 
-              type="button"
-              class="btn border-0 p-0"
-              (click)="toggleWishlist(offer)">
-              <i 
-                class="bi fs-4"
-                [ngClass]="wishlistIds.has(offer.offerId) ? 'bi-heart-fill text-danger' : 'bi-heart text-muted'">
-              </i>
+            <button class="btn btn-warning flex-grow-1" 
+                    (click)="addMultipleOffersToCart(offersList.slice(1, 6), true)">
+              Quick Buy
             </button>
           </div>
+
+          <!-- Social Share -->
+          <div class="d-flex align-items-center mt-3">
+            <span class="text-secondary me-2">Share:</span>
+            <div class="d-flex gap-2">
+              <a href="#" class="btn btn-outline-accent btn-sm">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="btn btn-outline-warning btn-sm">
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a href="#" class="btn btn-outline-danger btn-sm">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs for Terms & About -->
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white border-0">
+            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" 
+                        id="terms-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#terms" 
+                        type="button" 
+                        role="tab">
+                  Terms & Conditions
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" 
+                        id="about-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#about" 
+                        type="button" 
+                        role="tab">
+                  About Merchant
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div class="card-body">
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="terms" role="tabpanel">
+                <ul class="list-unstyled mb-0">
+                  <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Valid for dine-in, takeaway, and delivery orders.
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Offer valid until end of the month.
+                  </li>
+                  <li class="mb-2">
+                    <i class="fas fa-check text-success me-2"></i>
+                    Cannot be combined with other promotions.
+                  </li>
+                  <li>
+                    <i class="fas fa-check text-success me-2"></i>
+                    See merchant for more details.
+                  </li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="about" role="tabpanel">
+                <p class="text-secondary">Merchant info and description goes here. You can add more details as needed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Offers -->
+    <div class="mt-5">
+      <h4 class="gradient-text fw-bold mb-4">Related Offers</h4>
+      <div class="row g-4">
+        <div *ngFor="let offer of offersList.slice(1, 6); trackBy: trackByOfferId" 
+             class="col-lg-4 col-md-6 col-12">
+          <div class="card shadow-sm border-0 h-100">
+            <img [src]="offer.image" 
+                 class="card-img-top" 
+                 style="height: 200px; object-fit: cover;"
+                 [alt]="offer.description">
+            <div class="card-body">
+              <h5 class="card-title fw-bold mb-2">{{ offer.description }}</h5>
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="text-accent fw-bold">{{ offer.price | currency:'USD':'symbol' }}</span>
+                <span *ngIf="offer.discountPercentage" 
+                      class="badge bg-danger">{{ offer.discountPercentage }}% OFF</span>
+              </div>
+              <button class="btn btn-accent w-100 btn-wide" 
+                      (click)="addToCart(offer)">
+                <span>
+                  <ng-container *ngIf="addedOfferIds.has(offer.offerId)">✔ </ng-container>
+                  Add to Cart
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Section -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <app-add-review [businessId]="businessId"></app-add-review>
+      </div>
+    </div>
+
+    <!-- Wishlist Section -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <h4 class="gradient-text fw-bold mb-4">Wishlist</h4>
+        <div *ngIf="wishlist.length === 0">
+          No items in your wishlist.
+        </div>
+        <div *ngFor="let item of wishlist">
+          <!-- Render wishlist item -->
         </div>
       </div>
     </div>

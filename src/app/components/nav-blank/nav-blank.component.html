@@ -2,8 +2,8 @@
 
     <div class="container-fluid">
         <a class="navbar-brand" routerLink="/user/home">
-            <i class="fa-solid fa-location-dot fa-lg" style="color: #d01111;"></i>
-            Makank
+            <i class="fa-solid fa-fire fa-lg" style="color: #ff3d00;"></i>
+            <span>WaffarhaX</span>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -100,7 +100,9 @@
                 <li class="nav-item position-relative">
                     <a class="nav-link " routerLink="user/cart">
                         <i class="fa-solid fa-cart-shopping fs-3"></i>
-
+                        <span *ngIf="cartCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                          {{ cartCount }}
+                        </span>
                     </a>
                 </li>
 

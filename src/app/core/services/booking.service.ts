@@ -1,7 +1,7 @@
 // src/app/services/booking.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { IBooking } from '../interfaces/ibooking';
 
 @Injectable({
@@ -10,6 +10,8 @@ import { IBooking } from '../interfaces/ibooking';
 export class BookingService {
   private readonly _HttpClient = inject(HttpClient);
   private readonly apiUrl = 'https://localhost:7273/api/Booking';  // تأكد من المسار الصحيح للـ API
+  private cartCountSubject = new BehaviorSubject<number>(0);
+  cartCount$ = this.cartCountSubject.asObservable();
 
   // Get bookings by user ID
   getBookingsByUser(userId: number): Observable<any> {
@@ -47,5 +49,12 @@ editBooking(booking: IBooking): Observable<any> {
   return this._HttpClient.put(`${this.apiUrl}/${booking.bookingId}`,  { responseType: 'text' });
 }
 
+setCartCount(count: number) {
+  this.cartCountSubject.next(count);
+}
+
+incrementCartCount() {
+  this.cartCountSubject.next(this.cartCountSubject.value + 1);
+}
 
 }

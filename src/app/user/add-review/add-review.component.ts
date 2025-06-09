@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -31,13 +31,14 @@ interface CustomJwtPayload {
   styleUrls: ['./add-review.component.css']
 })
 export class AddReviewComponent implements OnInit {
+  @Input() businessId!: number;
   reviewForm: FormGroup;
   reviews: IReview[] = [];
   isEdit = false;
   selectedReviewId: number | null = null;
-  businessId!: number;
   userId!: number;
   loading = false;
+  visibleReviewsCount = 7;
 
   constructor(
     private fb: FormBuilder,
@@ -105,7 +106,11 @@ export class AddReviewComponent implements OnInit {
 
     this.reviewService.getReviewsByBusiness(this.businessId).subscribe({
       next: (allReviews: IReview[]) => {
-        this.reviews = allReviews;
+        // Sort by createdAt descending (newest first)
+        this.reviews = [...allReviews].sort((a, b) =>
+          (b.createdAt ? new Date(b.createdAt).getTime() : 0) -
+          (a.createdAt ? new Date(a.createdAt).getTime() : 0)
+        );
         this.isEdit = false;
         this.selectedReviewId = null;
       },
@@ -332,5 +337,37 @@ export class AddReviewComponent implements OnInit {
     this.loadAllReviews();
     // Scroll to top of the form
     document.querySelector('.card')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  get averageRating(): number {
+    if (!this.reviews.length) return 0;
+    return this.reviews.reduce((sum, r) => sum + r.rating, 0) / this.reviews.length;
+  }
+
+  get totalReviews(): number {
+    return this.reviews.length;
+  }
+
+  get starBreakdown(): { star: number, count: number, percent: number }[] {
+    const breakdown = [1, 2, 3, 4, 5].map(star => {
+      const count = this.reviews.filter(r => r.rating === star).length;
+      return { star, count, percent: this.totalReviews ? Math.round((count / this.totalReviews) * 100) : 0 };
+    });
+    return breakdown.reverse(); // 5 stars first
+  }
+
+  get topReviews(): IReview[] {
+    // Show top 3 reviews (highest rating, then most recent)
+    return [...this.reviews]
+      .sort((a, b) => b.rating - a.rating || (b.createdAt && a.createdAt ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime() : 0))
+      .slice(0, 3);
+  }
+
+  round(value: number): number {
+    return Math.round(value);
+  }
+
+  loadMoreReviews(): void {
+    this.visibleReviewsCount += 4;
   }
 }

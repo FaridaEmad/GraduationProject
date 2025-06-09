@@ -1,16 +1,46 @@
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<section class="hero-section d-flex align-items-center text-white text-center text-md-start">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-7 d-flex flex-column justify-content-center align-items-start">
-          <h1 class="typing-animation fw-bold">{{typedText}}</h1>
-          <p class="lead mb-4">Let Makank guide you to the best cafes, restaurants, and entertainment spots that match your vibe.</p>
-          <button class="btn btn-main btn-lg rounded-2" (click)="scrollToBusiness()">Explore Businesses🚀</button>
-
+<section class="hero-section d-flex align-items-center text-white text-md-start position-relative overflow-hidden">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7 d-flex flex-column justify-content-center align-items-start">
+        <div class="hero-content-wrapper w-100">
+          <h1 class="hero-gradient-text fw-bold mb-3 text-nowrap">{{typedText}}</h1>
+          <p class="hero-subtitle animate-fadein mb-3">Discover the perfect blend of <span class="highlight-text">culinary excellence</span> and <span class="highlight-text">entertainment</span> for your unique style.</p>
+          <div class="hero-search-bar mb-4 w-100">
+            <div class="search-wrapper">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="form-control form-control-lg rounded-pill shadow-sm" placeholder="Find your vibe: Search for cafes, restaurants, entertainment...">
+              <button class="search-btn rounded-pill">
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="hero-cta-wrapper d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 w-100">
+            <button class="btn btn-main btn-lg rounded-pill hero-cta-glow px-5 py-3 d-flex align-items-center gap-2" (click)="scrollToBusiness()">
+              <span>Explore Businesses</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <div class="hero-stats d-flex gap-4 mt-3 mt-md-0">
+              <div class="stat-item text-center">
+                <span class="stat-number">500+</span>
+                <span class="stat-label d-block">Businesses</span>
+              </div>
+              <div class="stat-item text-center">
+                <span class="stat-number">1000+</span>
+                <span class="stat-label d-block">Reviews</span>
+              </div>
+              <div class="stat-item text-center">
+                <span class="stat-number">50+</span>
+                <span class="stat-label d-block">Cities</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
   
   
   <!-- Categories Section -->

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
@@ -17,7 +17,7 @@ import { IReview } from '../../core/interfaces/ireview';
 @Component({
   selector: 'app-business',
   standalone: true,
-  imports: [RouterLink, FormsModule, TermtxtPipe, NgxPaginationModule, NgFor, NgIf],
+  imports: [RouterLink, FormsModule, NgxPaginationModule, NgFor, NgIf, CommonModule],
   templateUrl: './business.component.html',
   styleUrls: ['./business.component.scss']
 })

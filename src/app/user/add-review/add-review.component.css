@@ -22,18 +22,19 @@
 }
 
 .rating-input .btn:hover {
-  background-color: var(--bs-primary);
+  background-color: #ff9800;
   color: white;
 }
 
 .rating-input .btn.active {
-  background-color: var(--bs-primary);
+  background-color: #ff9800;
   color: white;
 }
 
 .rating-stars i {
   font-size: 1.2rem;
   margin-right: 0.2rem;
+  color: #ffc107 !important;
 }
 
 /* Review items */
@@ -42,20 +43,20 @@
 }
 
 .review-item:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(255, 152, 0, 0.06);
 }
 
 /* Form controls */
 .form-control {
   border-radius: 0.5rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ffc107;
   padding: 0.75rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-control:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  border-color: #ff9800;
+  box-shadow: 0 0 0 0.2rem rgba(255, 152, 0, 0.15);
 }
 
 textarea.form-control {
@@ -71,24 +72,36 @@ textarea.form-control {
   transition: all 0.2s ease;
 }
 
-.btn-primary {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
+.btn-accent {
+  background-color: #ff6600;
+  border-color: #ff6600;
+  color: white;
 }
 
-.btn-primary:hover {
-  background-color: var(--bs-primary-dark);
-  border-color: var(--bs-primary-dark);
+.btn-accent:hover {
+  background-color: #e65c00;
+  border-color: #e65c00;
   transform: translateY(-1px);
 }
 
 .btn-outline-danger {
-  border-color: var(--bs-danger);
-  color: var(--bs-danger);
+  border-color: #d01111;
+  color: #d01111;
 }
 
 .btn-outline-danger:hover {
-  background-color: var(--bs-danger);
+  background-color: #d01111;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ffc107;
   color: white;
   transform: translateY(-1px);
 }
@@ -146,19 +159,20 @@ textarea.form-control {
 }
 
 .review-item:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(255, 152, 0, 0.06);
 }
 
 /* Rating stars in review list */
 .rating-stars i {
   font-size: 1.1rem;
   margin-right: 0.15rem;
+  color: #ffc107 !important;
 }
 
 /* Form reset animation */
 .form-control:focus {
-  border-color: var(--bs-primary);
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+  border-color: #ff9800;
+  box-shadow: 0 0 0 0.2rem rgba(255, 152, 0, 0.15);
   transition: all 0.2s ease;
 }
 
@@ -181,4 +195,8 @@ textarea.form-control {
   .review-actions .btn {
     padding: 0.2rem 0.4rem;
   }
+}
+
+.text-warning {
+  color: #ffc107 !important;
 } 

@@ -1,46 +1,154 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 border p-4 shadow rounded">
-      <h2 class="text-center mb-4">Pay with card</h2>
-      <h4 class="text-center mb-3">Total: <strong>EGP {{ totalAmount }}</strong></h4>
+<!-- Payment Page Container -->
+<div class="payment-container">
+  <div class="particle particle1"></div>
+  <div class="particle particle2"></div>
+  <div class="particle particle3"></div>
+  <div class="particle particle4"></div>
+  <div class="particle particle5"></div>
+  <div class="brand-logo">
+    <img src="assets/logo.png" alt="Brand Logo" />
+  </div>
+  <div class="payment-card">
+    <div class="payment-header">
+      <h2>Pay with card</h2>
+      <div class="total-amount">
+        Total: <strong>EGP {{ totalAmount }}</strong>
+      </div>
+    </div>
 
-      <form [formGroup]="paymentForm" (ngSubmit)="pay()">
-        <div class="form-group mb-2">
-          <input formControlName="email" class="form-control" placeholder="Email" type="email" />
+    <form [formGroup]="paymentForm" (ngSubmit)="pay()" class="payment-form">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-group">
+          <i class="fas fa-envelope animated-icon"></i>
+          <input 
+            id="email"
+            formControlName="email" 
+            type="email" 
+            placeholder="Enter your email"
+            aria-label="Email Address"
+            [class.is-invalid]="paymentForm.get('email')?.invalid && paymentForm.get('email')?.touched"
+          />
+        </div>
+      </div>
+
+      <!-- Card Number Field -->
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <div class="input-group">
+          <i class="fas fa-credit-card animated-icon"></i>
+          <input 
+            id="cardNumber"
+            formControlName="cardNumber" 
+            placeholder="1234 5678 9012 3456"
+            aria-label="Card Number"
+            [class.is-invalid]="paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched"
+          />
+        </div>
+      </div>
+
+      <!-- Expiry and CVC Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiry">Expiry Date</label>
+          <div class="input-group">
+            <i class="fas fa-calendar animated-icon"></i>
+            <input 
+              id="expiry"
+              formControlName="expiry" 
+              placeholder="MM / YY"
+              aria-label="Expiry Date"
+              [class.is-invalid]="paymentForm.get('expiry')?.invalid && paymentForm.get('expiry')?.touched"
+            />
+          </div>
         </div>
 
-        <div class="form-group mb-2">
-          <input formControlName="cardNumber" class="form-control" placeholder="Card Number" />
+        <div class="form-group">
+          <label for="cvc">CVC</label>
+          <div class="input-group">
+            <i class="fas fa-lock animated-icon"></i>
+            <input 
+              id="cvc"
+              formControlName="cvc" 
+              placeholder="123"
+              aria-label="CVC"
+              [class.is-invalid]="paymentForm.get('cvc')?.invalid && paymentForm.get('cvc')?.touched"
+            />
+          </div>
         </div>
+      </div>
 
-        <div class="form-row d-flex justify-content-between mb-2">
-          <input formControlName="expiry" class="form-control me-2" placeholder="MM / YY" />
-          <input formControlName="cvc" class="form-control" placeholder="CVC" />
+      <!-- Name on Card Field -->
+      <div class="form-group">
+        <label for="nameOnCard">Name on Card</label>
+        <div class="input-group">
+          <i class="fas fa-user animated-icon"></i>
+          <input 
+            id="nameOnCard"
+            formControlName="nameOnCard" 
+            placeholder="John Doe"
+            aria-label="Name on Card"
+            [class.is-invalid]="paymentForm.get('nameOnCard')?.invalid && paymentForm.get('nameOnCard')?.touched"
+          />
         </div>
+      </div>
 
-        <div class="form-group mb-2">
-          <input formControlName="nameOnCard" class="form-control" placeholder="Name on Card" />
-        </div>
-
-        <div class="form-group mb-2">
-          <select formControlName="country" class="form-select">
+      <!-- Country Selection -->
+      <div class="form-group">
+        <label for="country">Country</label>
+        <div class="input-group">
+          <i class="fas fa-globe animated-icon"></i>
+          <select 
+            id="country"
+            formControlName="country" 
+            class="form-select"
+            aria-label="Country"
+          >
             <option value="Egypt">Egypt</option>
-            <option value="USA">USA</option>
-            <option value="UK">UK</option>
+            <option value="USA">United States</option>
+            <option value="UK">United Kingdom</option>
           </select>
         </div>
+      </div>
 
-        <div class="form-group mb-3">
-          <label>Choose Payment Method:</label>
-          <select formControlName="methodId" class="form-select">
+      <!-- Payment Method Selection -->
+      <div class="form-group">
+        <label for="methodId">Payment Method</label>
+        <div class="input-group">
+          <i class="fas fa-money-bill-wave animated-icon"></i>
+          <select 
+            id="methodId"
+            formControlName="methodId" 
+            class="form-select"
+            aria-label="Payment Method"
+            required
+          >
+            <option value="" >Select a payment method</option>
             <option *ngFor="let method of paymentMethods" [value]="method.id">
               {{ method.name }}
             </option>
           </select>
         </div>
+      </div>
 
-        <button type="submit" class="btn btn-primary w-100" [disabled]="paymentForm.invalid">Pay</button>
-      </form>
-    </div>
+      <!-- Submit Button -->
+      <button 
+        type="submit" 
+        class="submit-button" 
+        [disabled]="paymentForm.invalid || isProcessing"
+        [class.loading]="isProcessing"
+        aria-label="Pay Now"
+        #payBtn
+        (click)="triggerRipple(payBtn)"
+      >
+        <span *ngIf="!isProcessing">Pay Now</span>
+        <span *ngIf="isProcessing" class="spinner"></span>
+        <span class="ripple"></span>
+      </button>
+    </form>
+  </div>
+  <div class="toast-container" *ngIf="toastMessage">
+    <div class="toast" [ngClass]="toastType">{{ toastMessage }}</div>
   </div>
 </div>

@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OffersService } from '../../core/services/offers.service';
 import { BookingService } from '../../core/services/booking.service';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { IOffers } from '../../core/interfaces/ioffer';
 import Swal from 'sweetalert2';
+import { AddReviewComponent } from '../add-review/add-review.component';
 
 @Component({
   selector: 'app-offers',
-  imports: [CommonModule],
+  imports: [CommonModule, AddReviewComponent],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.scss']
 })
@@ -20,12 +21,14 @@ export class OfferComponent implements OnInit {
   quantities: { [offerId: number]: number } = {};
   addedOfferIds: Set<number> = new Set();
   wishlistIds: Set<number> = new Set();
+  wishlist: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private _OffersServices: OffersService,
     private _BookingService: BookingService,
-    private _WishlistService: WishlistService
+    private _WishlistService: WishlistService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -93,12 +96,48 @@ export class OfferComponent implements OnInit {
 
   increaseQuantity(offerId: number): void {
     this.quantities[offerId]++;
+    this.updateCartQuantity(offerId);
   }
 
   decreaseQuantity(offerId: number): void {
     if (this.quantities[offerId] > 1) {
       this.quantities[offerId]--;
+      this.updateCartQuantity(offerId);
     }
+  }
+
+  updateCartQuantity(offerId: number): void {
+    if (this.addedOfferIds.has(offerId)) {
+      const userId = this.extractUserIdFromToken();
+      if (!userId) return;
+      const bookingId = this.getBookingIdForOffer(offerId); // Placeholder, implement as needed
+      if (!bookingId) return;
+      const booking = {
+        bookingId: bookingId,
+        bookingDate: '', // Set appropriately if needed
+        quantity: this.quantities[offerId],
+        offerId: offerId,
+        userId: userId,
+        cartId: 0, // Set if needed
+        offer: null,
+        user: null,
+        cart: null
+      };
+      this._BookingService.editBooking(booking).subscribe({
+        next: () => {
+          // Optionally show a toast or update UI
+        },
+        error: (err) => {
+          // Optionally handle error
+        }
+      });
+    }
+  }
+
+  // Placeholder: implement this to return the bookingId for a given offerId in the cart
+  getBookingIdForOffer(offerId: number): number | null {
+    // TODO: Implement logic to find the bookingId for the offerId
+    return null;
   }
 
   addToCart(offer: IOffers): void {
@@ -202,5 +241,34 @@ export class OfferComponent implements OnInit {
 
   trackByOfferId(index: number, offer: IOffers): number {
     return offer.offerId;
+  }
+
+  addMultipleOffersToCart(offers: IOffers[], goToCart: boolean = false): void {
+    const userId = this.extractUserIdFromToken();
+    if (!userId) return;
+
+    offers.forEach(offer => {
+      if (!this.addedOfferIds.has(offer.offerId)) {
+        const bookingData = {
+          offerId: offer.offerId,
+          quantity: this.quantities[offer.offerId],
+          userId: userId
+        };
+        this._BookingService.addNewBooking(bookingData).subscribe({
+          next: (res: string) => {
+            if (res === 'Booking added successfully') {
+              this.addedOfferIds.add(offer.offerId);
+              this._BookingService.incrementCartCount();
+            }
+          }
+        });
+      }
+    });
+
+    if (goToCart) {
+      setTimeout(() => {
+        this.router.navigate(['/user/cart']);
+      }, 500);
+    }
   }
 }

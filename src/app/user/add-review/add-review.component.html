@@ -1,11 +1,102 @@
 <!-- Main Container -->
 <div class="container-fluid py-4">
   <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
+    <!-- Left: Review summary and list -->
+    <div class="col-12 col-lg-7 mb-4 mb-lg-0">
+      <!-- Review Summary Section -->
+      <div class="mb-4">
+        <div class="p-4">
+          <div class="row align-items-center">
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+              <div class="display-4 fw-bold text-warning">{{ averageRating | number:'1.1-1' }}</div>
+              <div>
+                <ng-container *ngFor="let star of [1,2,3,4,5]">
+                  <i class="bi" [class.bi-star-fill]="star <= round(averageRating)" [class.bi-star]="star > round(averageRating)" [class.text-warning]="star <= round(averageRating)"></i>
+                </ng-container>
+              </div>
+              <div class="text-muted mt-2">{{ totalReviews }} global ratings</div>
+            </div>
+            <div class="col-md-4">
+              <div *ngFor="let s of starBreakdown" class="d-flex align-items-center mb-1">
+                <span class="me-2">{{ s.star }} star</span>
+                <div class="flex-grow-1 bg-light rounded-pill overflow-hidden me-2" style="height: 10px;">
+                  <div class="bg-warning" [style.width.%]="s.percent" style="height: 100%;"></div>
+                </div>
+                <span class="text-muted small">{{ s.percent }}%</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="fw-semibold mb-2">Top reviews</div>
+              <div *ngFor="let rev of topReviews" class="mb-2 pb-2 border-bottom">
+                <div class="d-flex align-items-center mb-1">
+                  <ng-container *ngFor="let star of [1,2,3,4,5]">
+                    <i class="bi" [class.bi-star-fill]="star <= rev.rating" [class.bi-star]="star > rev.rating" [class.text-warning]="star <= rev.rating"></i>
+                  </ng-container>
+                  <span class="ms-2 text-muted small">User #{{ rev.userId }}</span>
+                </div>
+                <div class="small text-muted mb-1" *ngIf="rev.createdAt">{{ rev.createdAt | date: 'mediumDate' }}</div>
+                <div>{{ rev.text }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Reviews List Section (left-aligned, no card/border) -->
+      <div class="mb-4" style="max-width: 700px;">
+        <h3 class="mb-4">All Reviews</h3>
+        <div *ngIf="reviews.length > 0" class="reviews-list">
+          <div *ngFor="let rev of reviews | slice:0:visibleReviewsCount" class="review-item mb-4 pb-4 border-bottom">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <div class="d-flex align-items-center">
+                <div class="rating-stars me-2">
+                  <i *ngFor="let star of [1,2,3,4,5]" 
+                     class="bi"
+                     [class.bi-star-fill]="star <= rev.rating"
+                     [class.bi-star]="star > rev.rating"
+                     [class.text-warning]="star <= rev.rating">
+                  </i>
+                </div>
+                <span class="text-muted small">User #{{ rev.userId }}</span>
+              </div>
+              <small class="text-muted">{{ rev.createdAt | date: 'medium' }}</small>
+            </div>
+            <div class="position-relative">
+              <p class="mb-0">{{ rev.text }}</p>
+              <!-- Action buttons for user's own reviews -->
+              <div *ngIf="rev.userId === userId" class="review-actions position-absolute" style="right: 0; top: 0;">
+                <button 
+                  class="btn btn-outline-warning btn-sm me-2"
+                  (click)="editReview(rev)"
+                  [disabled]="loading"
+                >
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="deleteReview(rev.reviewId)"
+                  [disabled]="loading"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="text-center" *ngIf="visibleReviewsCount < reviews.length">
+            <button class="btn btn-outline-primary mt-2" (click)="loadMoreReviews()">Load more reviews</button>
+          </div>
+        </div>
+        <div *ngIf="reviews.length === 0" class="text-center text-muted py-4">
+          <i class="bi bi-chat-square-text display-4"></i>
+          <p class="mt-3">No reviews yet for this business.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Add review form -->
+    <div class="col-12 col-lg-5">
       <!-- Review Form Card -->
-      <div class="card shadow-sm mb-4">
+      <div class="shadow-sm mb-4">
         <div class="card-body p-4">
-          <h2 class="card-title mb-4 text-primary">
+          <h2 class="card-title mb-4 text-accent">
             {{ isEdit ? 'Edit Your Review' : 'Add a Review' }}
           </h2>
 
@@ -76,7 +167,7 @@
             <div class="d-flex gap-2">
               <button
                 type="submit"
-                class="btn btn-primary flex-grow-1"
+                class="btn btn-accent flex-grow-1"
                 [disabled]="loading || reviewForm.invalid"
               >
                 <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status"></span>
@@ -94,57 +185,6 @@
               </button>
             </div>
           </form>
-        </div>
-      </div>
-
-      <!-- Reviews List Card -->
-      <div class="card shadow-sm">
-        <div class="card-body p-4">
-          <h3 class="card-title mb-4">All Reviews</h3>
-          
-          <div *ngIf="reviews.length > 0" class="reviews-list">
-            <div *ngFor="let rev of reviews" class="review-item mb-4 pb-4 border-bottom">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <div class="d-flex align-items-center">
-                  <div class="rating-stars me-2">
-                    <i *ngFor="let star of [1,2,3,4,5]" 
-                       class="bi"
-                       [class.bi-star-fill]="star <= rev.rating"
-                       [class.bi-star]="star > rev.rating"
-                       [class.text-warning]="star <= rev.rating">
-                    </i>
-                  </div>
-                  <span class="text-muted small">User #{{ rev.userId }}</span>
-                </div>
-                <small class="text-muted">{{ rev.createdAt | date: 'medium' }}</small>
-              </div>
-              <div class="position-relative">
-                <p class="mb-0">{{ rev.text }}</p>
-                <!-- Action buttons for user's own reviews -->
-                <div *ngIf="rev.userId === userId" class="review-actions position-absolute" style="right: 0; top: 0;">
-                  <button 
-                    class="btn btn-sm btn-outline-primary me-2"
-                    (click)="editReview(rev)"
-                    [disabled]="loading"
-                  >
-                    <i class="bi bi-pencil"></i>
-                  </button>
-                  <button 
-                    class="btn btn-sm btn-outline-danger"
-                    (click)="deleteReview(rev.reviewId)"
-                    [disabled]="loading"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div *ngIf="reviews.length === 0" class="text-center text-muted py-4">
-            <i class="bi bi-chat-square-text display-4"></i>
-            <p class="mt-3">No reviews yet for this business.</p>
-          </div>
         </div>
       </div>
     </div>
