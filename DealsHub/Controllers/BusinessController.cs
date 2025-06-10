@@ -564,6 +564,21 @@ namespace DealsHub.Controllers
             return Ok(result);
         }
 
+        [HttpGet("fastGetById{id}")]
+        public async Task<IActionResult> fastGetBusinessById(int id)
+        {
+            var business = await _businessRepository.GetAllAsyncInclude(
+                b => b.BusinessId == id,
+                b => b.Images
+                );
+            if (business == null)
+            {
+                return NotFound("Business not found");
+            }
+
+            return Ok(business);
+        }
+
     }
 
 }

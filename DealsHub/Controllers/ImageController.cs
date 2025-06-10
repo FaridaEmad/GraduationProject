@@ -92,5 +92,22 @@ namespace DealsHub.Controllers
             await _imageRepository.Save();
             return Ok("deleted successfuly");
         }
+
+        [HttpGet("GetImagesByBusiness{id}")]
+        public async Task<IActionResult> GetByBusiness(int id)
+        {
+            bool exists = await _businessRepository.ExistsAsync(b => b.BusinessId == id);
+            if (exists == false)
+                return NotFound("Wrong Business id");
+
+            var images = await _imageRepository.GetAllAsyncInclude(
+                i => i.BusinessId == id
+                );
+
+            if (images == null || !images.Any())
+                return NotFound("No images found for this business.");
+
+            return Ok(images);
+        }
     }
 }
