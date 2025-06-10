@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using DealsHub.Models;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace DealsHub.Data
@@ -19,5 +20,6 @@ namespace DealsHub.Data
         IAsyncEnumerable<T> StreamAllAsync();
         Task<int> CountAsync();
         Task<IEnumerable<T>> GetLeastAddedUsersAsync(int count);
+        Task<Category?> FindCategoryByNameAsync(string name);
     }
 }

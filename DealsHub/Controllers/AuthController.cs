@@ -37,7 +37,7 @@ namespace DealsHub.Controllers
 
             if (userFromRepo == null)
             {
-                return Unauthorized();
+                return Unauthorized("wrong email or password!");
             }
 
             var claims = new[]

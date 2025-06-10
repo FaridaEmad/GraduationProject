@@ -525,7 +525,7 @@ namespace DealsHub.Controllers
         }
 
         [HttpGet("fastSearch")]
-        public async Task<IActionResult> fastSearch(String keyword)
+        public async Task<IActionResult> FastSearch(string keyword)
         {
             if (String.IsNullOrWhiteSpace(keyword))
                 return BadRequest("Search keyword can not be empty");
@@ -537,13 +537,31 @@ namespace DealsHub.Controllers
                      b.City.ToLower().Contains(keyword) ||
                      b.Area.ToLower().Contains(keyword) ||
                      (b.Category.Name != null && b.Category.Name.ToLower().Contains(keyword)),
-                b => b.Category
+                b => b.Images
             );
 
             if (businesses == null || !businesses.Any())
                 return NotFound("No matching businesses found.");
 
-            return Ok(businesses);
+            var result = businesses.Select(b => new BusinessSearchDto
+            {
+                BusinessId = b.BusinessId,
+                Name = b.Name,
+                City = b.City,
+                Area = b.Area,
+                Logo = b.Logo,
+                CategoryId = b.CategoryId,
+                UserId = b.UserId,
+                Images = b.Images.Select(img => new ImageForBusinessDto
+                {
+                    ImageURLId = img.ImageURLId,
+                    URL = img.URL,
+                    BusinessId = img.BusinessId,
+                    Business = null
+                }).ToList()
+            }).ToList();
+
+            return Ok(result);
         }
 
     }

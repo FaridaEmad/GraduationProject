@@ -114,6 +114,15 @@ namespace DealsHub.Data
         {
             return await table.OrderByDescending(e => EF.Property<int>(e, "UserId")).Take(count).ToListAsync();
         }
+        public async Task<Category?> FindCategoryByNameAsync(string name)
+        {
+            if (typeof(T) != typeof(Category))
+                throw new InvalidOperationException("This method can only be used with Category entity.");
+
+            return await _db.Categories
+                .FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+        }
+
 
     }
 

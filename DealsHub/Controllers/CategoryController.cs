@@ -38,8 +38,16 @@ namespace DealsHub.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPost("addNewCategory")]
-        public async Task<ActionResult> addCategory(CategoryDto newCategory)
+        public async Task<ActionResult> AddCategory(CategoryDto newCategory)
         {
+            var existingCategory = await _categoryRepository
+                .FindCategoryByNameAsync(newCategory.Name);
+
+            if (existingCategory != null)
+            {
+                return Conflict("A category with this name already exists.");
+            }
+
             var category = new Category
             {
                 Name = newCategory.Name
@@ -49,8 +57,8 @@ namespace DealsHub.Controllers
             await _categoryRepository.Save();
 
             return Ok("Category added successfully");
-
         }
+
 
         //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
@@ -60,6 +68,14 @@ namespace DealsHub.Controllers
             if (category == null)
             {
                 return NotFound("Category not found.");
+            }
+
+            var existingCategory = await _categoryRepository
+                .FindCategoryByNameAsync(category.Name);
+
+            if (existingCategory != null)
+            {
+                return Conflict("A category with this name already exists.");
             }
 
             category.Name = newName;
