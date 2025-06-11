@@ -76,7 +76,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
       console.log('User is not logged in');
     }
 
-     this.__BusinessService.getallbusiness().subscribe(
+     this.__BusinessService.getAllBusiness().subscribe(
     (data) => {
       this.Businesslist = data;
     },
@@ -131,7 +131,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
   }
 
   getAllBusiness(): void {
-    this.getallbusiness = this.__BusinessService.getallbusiness().subscribe({
+    this.getallbusiness = this.__BusinessService.getAllBusiness().subscribe({
       next: (res) => {
         if (res) {
           this.allBusiness = res;
@@ -224,7 +224,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
 
   trackById(index: number, product: IBusiness): string {
-    return product.id?.toString() ?? index.toString();
+    return product.businessId?.toString() ?? index.toString();
   }
 
 

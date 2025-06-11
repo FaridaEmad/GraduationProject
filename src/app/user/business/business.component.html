@@ -55,8 +55,8 @@
         <div class="card h-100 shadow-sm hover-card">
           <!-- Card Image -->
           <div class="position-relative">
-            <a [routerLink]="['/user/offer', product.id]" class="text-decoration-none">
-              <img [src]="product.imageUrls?.[0] || 'assets/default-business.jpg'" 
+            <a [routerLink]="['/user/offer', product.businessId]" class="text-decoration-none">
+              <img [src]="product.images[0].url" 
                    class="card-img-top object-fit-cover" 
                    alt="Business Image" 
                    style="height: 200px; object-fit: cover;" />
@@ -70,14 +70,9 @@
           <div class="card-body pt-4 text-center d-flex flex-column justify-content-between">
             <div>
               <h5 class="card-title fw-bold text-truncate mb-2">{{ product.name }}</h5>
-              <div class="mb-3">
-                <span *ngFor="let star of [1, 2, 3, 4, 5]">
-                  <i class="fas" [ngClass]="star <= (product.averageRates || 0) ? 'fa-star text-warning' : 'fa-star text-secondary'"></i>
-                </span>
-                <span class="ms-2 fw-semibold small text-secondary">({{ (product.averageRates || 0) | number:'1.1-1' }} / 5)</span>
-              </div>
+              <p>{{product.city}}/{{product.area}}</p>
             </div>
-            <a class="btn btn-primary w-100 rounded-pill" [routerLink]="['/user/offer', product.id]">
+            <a class="btn btn-primary w-100 rounded-pill" [routerLink]="['/user/offer', product.businessId]">
               Show Offers
             </a>
           </div>

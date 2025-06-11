@@ -58,88 +58,91 @@
   </section>
   
   <!-- Business Listing Section -->
-  <section id="business-section" class="business-section py-5 bg-light">
-    <div class="container px-0">
-      <!-- Filters -->
-      <div class="row g-3 justify-content-center">
-        <div class="col-md-3">
-            <label class="form-label">City</label>
-            <select class="form-select" [(ngModel)]="selectedCity">
-                <option value="">All Cities</option>
-                <option *ngFor="let city of cities; let i = index" [value]="city">{{ city }}</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Area</label>
-            <select class="form-select" [(ngModel)]="selectedArea">
-                <option value="">All Areas</option>
-                <option *ngFor="let area of areas; let i = index" [value]="area">{{ area }}</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label">Category</label>
-            <select class="form-select" [(ngModel)]="selectedCategory">
-                <option value="null">All Categories</option>
-                <option *ngFor="let cat of categories; let i = index" [value]="cat.categoryId">{{ cat.name }}</option>
-            </select>
-        </div>
-
-        <div class="col-md-2 d-grid align-items-end">
-            <button class="btn btn-main mt-3" (click)="applyFilters()">Apply Filter</button>
-        </div>
+ 
+  <section class="p-4 bg-light">
+  <div class="container">
+    <!-- Modern Gradient Text Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="text-primary mb-2">Find Your Next Favourite Place</h2>
+        <p class="text-secondary">Browse top-rated businesses and discover amazing offers near you.</p>
+      </div>
     </div>
 
-
-
-
-  
-      <!-- Search -->
-      <div class="row mb-4">
-        <div class="col-md-8 mx-auto">
-          <input [(ngModel)]="searchText" (input)="onSearchChange()" type="search" class="form-control  w-75 my-4 mx-auto" placeholder="Search...">
+    <!-- Filters & Search -->
+    <div class="card p-4 mb-4 shadow-sm">
+      <div class="row g-3 align-items-end">
+        <div class="col-lg-2 col-md-3 col-12">
+          <label class="form-label">City</label>
+          <select class="form-control" [(ngModel)]="selectedCity">
+            <option value="">All Cities</option>
+            <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+          </select>
+        </div>
+        <div class="col-lg-2 col-md-3 col-12">
+          <label class="form-label">Area</label>
+          <select class="form-control" [(ngModel)]="selectedArea">
+            <option value="">All Areas</option>
+            <option *ngFor="let area of areas" [value]="area">{{ area }}</option>
+          </select>
+        </div>
+        <div class="col-lg-2 col-md-3 col-12">
+          <label class="form-label">Category</label>
+          <select class="form-control" [(ngModel)]="selectedCategory">
+            <option value="">All Categories</option>
+            <option *ngFor="let cat of categories" [value]="cat.categoryId">{{ cat.name }}</option>
+          </select>
+        </div>
+        <div class="col-lg-3 col-md-6 col-12">
+          <label class="form-label">Search</label>
+          <input [(ngModel)]="searchText" (input)="onSearchChange()" placeholder="Search..." type="search" class="form-control" />
+        </div>
+        <div class="col-lg-2 col-md-3 col-12 d-grid">
+          <button class="btn btn-primary" (click)="applyFilters()">Apply Filter</button>
         </div>
       </div>
-  
-      <!-- Business Cards -->
-      <div class="row">
-        <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" class="col-md-3 col-sm-6 col-xs-12 my-3">
-            <div class="card h-100 shadow-sm position-relative product-card">
-                <img [src]="product.imageUrls[0]" class="card-img-top object-fit-cover" alt="Product Image" style="height: 180px;" />
+    </div>
 
-                <div class="bottom-widget position-relative">
-                    <div class="company-logo">
-                        <img [src]="product.logo" class="w-100">
-                    </div>
-                    <h3 class="slid_title">{{ product.name | termtxt:2}}</h3>
-                </div>
-                <div class="d-flex align-items-center justify-content-center">
-                   
-                    <span *ngFor="let star of [1, 2, 3, 4, 5].slice(0, product.averageRates); let i = index">
-                        <i class="fas fa-star rating-color"></i>
-                    </span>
-                    <span *ngIf="product.averageRates % 1 !== 0">
-                        <i class="fas fa-star-half-alt rating-color"></i>
-                    </span>
-                </div>
-                <div class="d-flex align-items-center justify-content-center text-center">
-                    <a class="w-75 btn-main my-2 border-0 rounded-3 fw-bold" [routerLink]="['/user/offer', product.id]">Show Offers</a>
-                    <i class="fa-solid fa-heart h3 mx-2 heart cursor-pointer"></i>
-                </div>
+    <!-- No Data Message -->
+    <div *ngIf="noDataMessage" class="alert alert-danger mx-auto w-50 text-center shadow-sm" role="alert">
+      No businesses match your selected filters!
+    </div>
+
+    <!-- Business Cards Grid -->
+    <div class="row g-4">
+      <div *ngFor="let product of Businesslist | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; trackBy: trackById" 
+           class="col-xl-4 col-md-6 col-12">
+        <div class="card h-100 shadow-sm hover-card">
+          <!-- Card Image -->
+          <div class="position-relative">
+            <a [routerLink]="['/user/offer', product.businessId]" class="text-decoration-none">
+              <img [src]="product.images[0].url" 
+                   class="card-img-top object-fit-cover" 
+                   alt="Business Image" 
+                   style="height: 200px; object-fit: cover;" />
+            </a>
+            <img [src]="product.logo || 'assets/default-logo.png'" 
+                 class="position-absolute top-100 start-50 translate-middle rounded-circle border border-3 bg-white shadow-sm" 
+                 style="width: 80px; height: 80px; margin-top: -40px;" 
+                 alt="Business Logo" />
+          </div>
+
+          <div class="card-body pt-4 text-center d-flex flex-column justify-content-between">
+           <div>
+              <h5 class="card-title fw-bold text-truncate mb-2">{{ product.name }}</h5>
+              <p>{{product.city}}/{{product.area}}</p>
             </div>
+            <a class="btn btn-primary w-100 rounded-pill" [routerLink]="['/user/offer', product.businessId]">
+              Show Offers
+            </a>
+          </div>
         </div>
-    </div>
-  
-      <!-- No Data Message -->
-      <div *ngIf="noDataMessage" class="alert alert-danger text-center mt-4">
-        No businesses match your selected filters!
-      </div>
-  
-      <!-- Pagination -->
-      <div class="d-flex justify-content-center mt-4">
-        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
       </div>
     </div>
-  </section>
-  
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4" *ngIf="Businesslist?.length">
+      <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+    </div>
+  </div>
+</section>

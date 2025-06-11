@@ -101,7 +101,7 @@ this.typeText();
   }
 
   getAllBusiness(): void {
-    this.getallbusiness = this.__BusinessService.getallbusiness().subscribe({
+    this.getallbusiness = this.__BusinessService.getAllBusiness().subscribe({
       next: (res) => {
         if (res) {
           this.allBusiness = res;
@@ -213,7 +213,7 @@ this.typeText();
   }
 
   trackById(index: number, product: IBusiness): string {
-    return product.id?.toString() ?? index.toString();
+    return product.businessId?.toString() ?? index.toString();
   }
 
   ngOnDestroy(): void {

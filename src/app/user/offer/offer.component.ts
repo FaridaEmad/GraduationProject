@@ -123,7 +123,7 @@ export class OfferComponent implements OnInit {
         user: null,
         cart: null
       };
-      this._BookingService.editBooking(booking).subscribe({
+      this._BookingService.editBooking(booking.bookingId, booking.quantity).subscribe({
         next: () => {
           // Optionally show a toast or update UI
         },

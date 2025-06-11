@@ -34,7 +34,7 @@ export class UserManagementComponent implements OnInit {
     this.adminForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]],
+      password: ['', [Validators.required, Validators.pattern(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&])[A-Za-z\d!@#$%^&]{6,}$/)]],
       gender: ['', Validators.required],
       phone: ['', [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]],
       profilePhoto: ['', [Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]]
@@ -167,7 +167,7 @@ export class UserManagementComponent implements OnInit {
           },
           error: (err) => {
             console.error('Error deleting user', err);
-            Swal.fire('Error', 'An error occurred while deleting user', 'error');
+            Swal.fire('Error', "Admin Can't Delete User", 'error');
           }
         });
       }
@@ -200,7 +200,7 @@ export class UserManagementComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error adding admin', err);
-          Swal.fire('Error', 'An error occurred while adding admin', 'error');
+          Swal.fire('Error', 'Admin Already Exixts', 'error');
         }
       });
     } else {
@@ -224,5 +224,5 @@ export class UserManagementComponent implements OnInit {
   get password() { return this.adminForm.get('password'); }
   get gender() { return this.adminForm.get('gender'); }
   get phone() { return this.adminForm.get('phone'); }
-  get profilePhoto() { return this.adminForm.get('profilePhoto'); }
+  get profilePhoto() { return this.adminForm.get('profilePhoto'); }
 }

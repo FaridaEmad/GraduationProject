@@ -145,7 +145,7 @@ export class HomeComponent {
       this.allCategories = cats;
       this.latestCategories = cats.slice(-5).reverse();
 
-      this.businessService.getallbusiness().subscribe((businesses: IBusiness[]) => {
+      this.businessService.getAllBusiness().subscribe((businesses: IBusiness[]) => {
         this.allBusinesses = businesses;
         const businessCountsPerCategory = cats.map(cat =>
           businesses.filter(b => b.categoryId === cat.categoryId).length
@@ -165,7 +165,7 @@ export class HomeComponent {
     });
 
     // 🔵 Load Businesses separately for display + bar chart by City
-    this.businessService.getallbusiness().subscribe((businesses: IBusiness[]) => {
+    this.businessService.getAllBusiness().subscribe((businesses: IBusiness[]) => {
       this.businessCount = businesses.length;
       this.latestBusiness = businesses.slice(-5).reverse();
 
