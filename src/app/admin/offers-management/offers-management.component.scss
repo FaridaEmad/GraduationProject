@@ -18,6 +18,7 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 1rem;
+  overflow-x: hidden;
 }
 
 // Page Header
@@ -109,6 +110,23 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
           border-color: $primary-color;
           box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
         }
+
+        &.ng-invalid.ng-touched {
+          border-color: $danger-color;
+
+          &:focus {
+            box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+          }
+        }
+      }
+
+      .error-message {
+        color: $danger-color;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
       }
     }
   }
@@ -171,17 +189,22 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   overflow: hidden;
 
   .table-responsive {
-    overflow-x: auto;
+    overflow-x: hidden;
+    width: 100%;
 
     .table {
       width: 100%;
       border-collapse: collapse;
       margin: 0;
+      table-layout: fixed;
 
-      th, td {
+
+      th,
+      td {
         padding: 1rem;
         text-align: left;
         border-bottom: 1px solid #eee;
+        word-wrap: break-word;
       }
 
       th {
@@ -198,6 +221,7 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 
       .actions-column {
         text-align: right;
+        width: 120px;
       }
 
       .actions-cell {
@@ -223,6 +247,80 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
     }
   }
+
+  // Pagination styles
+  .pagination-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--surface-card);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .pagination-info {
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .btn-pagination {
+        min-width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: var(--surface-hover);
+        color: var(--text-color);
+        border: 1px solid var(--surface-border);
+        transition: all 0.2s ease;
+
+        &.active {
+          background-color: #1c5694;
+          border-color: #1c5694;
+          color: #fff;
+
+          &:hover {
+            background-color: darken(#1c5694, 5%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+
+        i {
+          font-size: 1rem;
+        }
+      }
+
+      .page-numbers {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .pagination-ellipsis {
+        color: var(--text-color-secondary);
+        padding: 0 0.5rem;
+      }
+    }
+  }
+
 
   .no-data-message {
     text-align: center;
@@ -295,7 +393,9 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   .table-card {
     .table-responsive {
       .table {
-        th, td {
+
+        th,
+        td {
           padding: 0.75rem;
         }
 
@@ -347,6 +447,23 @@ $card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
     }
   }
+
+  .pagination-wrapper {
+    .pagination-controls {
+      gap: 0.25rem;
+
+      .btn-pagination {
+        min-width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+
+        i {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
 }
 
 @media (max-width: 480px) {

@@ -22,10 +22,15 @@ export class UserManagementComponent implements OnInit {
   
   searchTerm: string = '';
   genderFilter: string = '';
-  currentPage: number = 1;
-  itemsPerPage: number = 5;
+  
   sortDirection: 'asc' | 'desc' = 'asc';
   sortBy: 'name' | 'createdAt' = 'name';
+  currentPage: number = 1;
+  itemsPerPage: number = 30;
+  totalItems: number = 0;
+  totalPages: number = 0;
+ 
+  protected readonly Math = Math;
 
   constructor(
     private userService: UserService,
@@ -40,17 +45,18 @@ export class UserManagementComponent implements OnInit {
       profilePhoto: ['', [Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]]
     });
   }
-  
+
   ngOnInit(): void {
     this.loadUsers();
   }
-
-  // تحميل جميع المستخدمين
-  loadUsers(): void {
+loadUsers(): void {
     this.userService.getallUsers().subscribe({
       next: (data) => {
         this.users = data;
         this.filteredUsers = data;
+        this.totalItems = data.length;
+        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+        this.updatePaginatedUsers();
       },
       error: (err) => {
         console.error('Error loading users', err);
@@ -84,32 +90,121 @@ export class UserManagementComponent implements OnInit {
       return this.sortDirection === 'asc' ? comparison : -comparison;
     });
   }
-  
-  // إرجاع المستخدمين حسب الصفحة الحالية
-  paginatedUsers(): IUser[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredUsers.slice(start, start + this.itemsPerPage);
+
+  updatePaginatedUsers(): void {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.filteredUsers = this.users.slice(startIndex, endIndex);
   }
-  
-  // تغيير الصفحة
-  changePage(page: number): void {
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    if (this.totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      
+      let start = Math.max(2, this.currentPage - 1);
+      let end = Math.min(this.totalPages - 1, this.currentPage + 1);
+      
+      if (this.currentPage <= 2) {
+        end = 4;
+      }
+      
+      if (this.currentPage >= this.totalPages - 1) {
+        start = this.totalPages - 3;
+      }
+      
+      if (start > 2) {
+        pages.push(-1);
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < this.totalPages - 1) {
+        pages.push(-2);
+      }
+      
+      pages.push(this.totalPages);
+    }
+    
+    return pages;
+  }
+
+  onPageChange(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.updatePaginatedUsers();
     }
   }
+
   
-  // حساب العدد الكلي للصفحات
-  get totalPages(): number {
-    return Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+  
+
+  openAddAdminModal(): void {
+    const modalElement = document.getElementById('addAdminModal');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
   }
-  
-  // إرجاع مصفوفة الصفحات للمساعده في التكرار
-  totalPagesArray(): number[] {
-    return Array(this.totalPages).fill(0).map((_, i) => i + 1);
+
+  onSubmit(): void {
+    if (this.adminForm.valid) {
+      if (this.userToEdit) {
+        // Edit existing user - only update name
+        this.userService.changeUserName(this.userToEdit.userId, this.adminForm.value.name).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Success!',
+              text: 'User name updated successfully',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+            this.loadUsers();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAdminModal'));
+            modal?.hide();
+            this.userToEdit = null;
+          },
+          error: (err) => {
+            console.error('Error updating user name', err);
+            Swal.fire('Error', 'Failed to update user name', 'error');
+          }
+        });
+      } else {
+        // Add new admin
+        const newAdmin: IUserCreate = {
+          ...this.adminForm.value,
+          role: 'admin'
+        };
+
+        this.userService.addAdmin(newAdmin).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Success!',
+              text: 'Admin user created successfully',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            });
+            this.loadUsers();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAdminModal'));
+            modal?.hide();
+          },
+          error: (err) => {
+            console.error('Error creating admin', err);
+            Swal.fire('Error', 'Failed to create admin user', 'error');
+          }
+        });
+      }
+    }
   }
-  
-  // فتح مودال التعديل
-  editUser(user: IUser): void {
+editUser(user: IUser): void {
     this.userToEdit = { ...user };
     setTimeout(() => {
       const modalElement = document.getElementById('editModal');
@@ -122,7 +217,6 @@ export class UserManagementComponent implements OnInit {
     });
   }
   
-  // تحديث اسم المستخدم
   updateUserName(): void {
     if (this.userToEdit?.userId) {
       this.userService.changeUserName(this.userToEdit.userId, this.userToEdit.name).subscribe({
@@ -147,43 +241,40 @@ export class UserManagementComponent implements OnInit {
       });
     }
   }
-  
-  // حذف المستخدم
+
   deleteUser(userId: number): void {
     Swal.fire({
       title: 'Are you sure?',
-      text: 'This user will be deleted permanently!',
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it',
-      cancelButtonText: 'Cancel'
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
         this.userService.deleteUser(userId).subscribe({
           next: () => {
-            this.users = this.users.filter(u => u.userId !== userId);
-            this.filteredUsers = this.filteredUsers.filter(u => u.userId !== userId);
-            Swal.fire('Deleted', 'User has been deleted successfully', 'success');
+            Swal.fire('Deleted!', 'User has been deleted.', 'success');
+            this.loadUsers();
           },
-          error: (err) => {
-            console.error('Error deleting user', err);
-            Swal.fire('Error', "Admin Can't Delete User", 'error');
+          error: (err=500) => {
+            console.error('You Can Only Delete Admins', err);
+            Swal.fire('Error', 'You Can Only Delete Admins', 'error');
           }
         });
       }
     });
   }
-
-  // فتح مودال إضافة الأدمن
-  openAddAdminModal(): void {
-    const modalElement = document.getElementById('addAdminModal');
-    if (modalElement) {
-      const modal = new bootstrap.Modal(modalElement);
-      modal.show();
-    }
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
   }
-  
-  // إضافة أدمن
+
   addAdmin(): void {
     if (this.adminForm.valid) {
       const adminData = this.adminForm.value;
@@ -200,24 +291,13 @@ export class UserManagementComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error adding admin', err);
-          Swal.fire('Error', 'Admin Already Exixts', 'error');
+          Swal.fire('Error', 'An error occurred while adding admin', 'error');
         }
       });
     } else {
       this.markFormGroupTouched(this.adminForm);
     }
   }
-  
-  // Helper method to mark all form controls as touched
-  private markFormGroupTouched(formGroup: FormGroup) {
-    Object.values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
-    });
-  }
-
   // Getter methods for form controls
   get name() { return this.adminForm.get('name'); }
   get email() { return this.adminForm.get('email'); }
@@ -225,4 +305,5 @@ export class UserManagementComponent implements OnInit {
   get gender() { return this.adminForm.get('gender'); }
   get phone() { return this.adminForm.get('phone'); }
   get profilePhoto() { return this.adminForm.get('profilePhoto'); }
+
 }

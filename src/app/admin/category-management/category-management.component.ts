@@ -125,6 +125,18 @@ export class CategoryManagementComponent implements OnInit {
     }
 
     const newName = this.categoryForm.value.name;
+    
+    // Check for duplicate category name
+    const isDuplicate = this.categories.some(
+      category => category.name.toLowerCase() === newName.toLowerCase() && 
+      (!this.isEdit || category.categoryId !== this.editingCategoryId)
+    );
+
+    if (isDuplicate) {
+      Swal.fire('Error', 'A category with this name already exists', 'error');
+      return;
+    }
+
     if (this.isEdit && this.editingCategoryId !== null) {
       this.categoryService.updateCategory(this.editingCategoryId, newName).subscribe({
         next: () => {
@@ -134,8 +146,11 @@ export class CategoryManagementComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error updating category:', error);
-          Swal.fire('Error', 'Failed to update category', 'error');
-        }
+           if (error.status === 409) { // Conflict status code for duplicate
+            Swal.fire('Error', 'A category with this name already exists', 'error');
+          } else {
+            Swal.fire('Error', 'Failed to create category', 'error');
+          }}
       });
     } else {
       this.categoryService.createCategory({ name: newName }).subscribe({
@@ -146,7 +161,11 @@ export class CategoryManagementComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error creating category:', error);
-          Swal.fire('Error', 'Failed to create category', 'error');
+          if (error.status === 409) { // Conflict status code for duplicate
+            Swal.fire('Error', 'A category with this name already exists', 'error');
+          } else {
+            Swal.fire('Error', 'Failed to create category', 'error');
+          }
         }
       });
     }
@@ -176,7 +195,11 @@ export class CategoryManagementComponent implements OnInit {
           },
           error: (error) => {
             console.error('Error deleting category:', error);
-            Swal.fire('Error', 'Failed to delete category', 'error');
+            if (error.status === 500) { // Conflict status code for category in use
+              Swal.fire('Error', 'Cannot delete category that is associated with businesses', 'error');
+            } else {
+              Swal.fire('Error', 'Failed to delete category', 'error');
+            }
           }
         });
       }
@@ -197,5 +220,5 @@ export class CategoryManagementComponent implements OnInit {
   cancelEdit() {
     this.isEdit = false;
     this.categoryForm.reset();
-  }
+  }
 }
