@@ -71,7 +71,7 @@ namespace DealsHub.Controllers
             }
 
             var existingCategory = await _categoryRepository
-                .FindCategoryByNameAsync(category.Name);
+                .FindCategoryByNameAsync(newName);
 
             if (existingCategory != null)
             {
