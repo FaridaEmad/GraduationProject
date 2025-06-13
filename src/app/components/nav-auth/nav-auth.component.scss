@@ -1,100 +1,295 @@
-/* Existing navbar brand and icon styles */
-.navbar-brand {
+// Variables
+$primary-color: #FF6B6B;
+$primary-dark: #FF5252;
+$primary-light: #FF8E8E;
+$secondary-color: #4ECDC4;
+$accent-color: #FFE66D;
+$text-color: #2C3E50;
+$text-light: #7F8C8D;
+$light-gray: #F7F9FC;
+$border-color: #E0E6ED;
+$shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+$transition: all 0.3s ease;
+
+// Navigation Styles
+.auth-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: $shadow-sm;
+    border-bottom: 1px solid rgba($border-color, 0.5);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
     display: flex;
     align-items: center;
-    font-family: 'Kaushan Script', sans-serif; /* Apply Kaushan Script font */
-    font-weight: bold;
-    color: #d01111; /* Text color */
-    text-transform: uppercase; /* Make the text bold and capitalized */
-    font-size: 28px; /* Adjust the size to match your design */
-    letter-spacing: 2px; /* Space out the letters for a clean look */
-    transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+    justify-content: space-between;
 }
 
-/* 3D effect for the icon */
-.navbar-brand i {
-    color: #d01111; /* Icon color */
-    font-size: 32px; /* Icon size */
-    margin-right: 10px; /* Space between icon and text */
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4); /* Icon shadow for 3D effect */
-    transform: translateY(-6px) scale(1.1); /* Raised effect */
-    transition: transform 0.3s ease, text-shadow 0.3s ease;
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    transition: $transition;
+
+    &:hover {
+        transform: translateY(-1px);
+    }
+
+    .logo-icon {
+        font-size: 1.8rem;
+        color: $primary-color;
+        transition: $transition;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
-/* 3D effect for the text (Makank) */
-.navbar-brand span {
-    color: #d01111; /* Text color */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 0, 0, 0.3), 0 0 50px rgba(0, 0, 0, 0.3); /* Cool shadow for text */
-    transform: translateY(-2px) scale(1.05); /* Slight 3D effect for text */
-    transition: transform 0.3s ease, text-shadow 0.3s ease;
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $text-color;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        transition: $transition;
+
+        i {
+            font-size: 1.1rem;
+            color: $primary-color;
+        }
+
+        &:hover {
+            color: $primary-color;
+            background: rgba($primary-color, 0.1);
+        }
+
+        &.active {
+            color: $primary-color;
+            background: rgba($primary-color, 0.1);
+        }
+    }
 }
 
-/* Hover effects to make it even more dynamic */
-.navbar-brand:hover {
-    transform: translateY(-3px); /* Slight upward movement */
-    color: #d01111; /* Text color when hovered */
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    .btn-login,
+    .btn-register {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: $transition;
+
+        i {
+            font-size: 1rem;
+        }
+    }
+
+    .btn-login {
+        color: $primary-color;
+        background: rgba($primary-color, 0.1);
+
+        &:hover {
+            background: rgba($primary-color, 0.2);
+            transform: translateY(-1px);
+        }
+    }
+
+    .btn-register {
+        color: white;
+        background: $primary-color;
+
+        &:hover {
+            background: $primary-dark;
+            transform: translateY(-1px);
+        }
+    }
 }
 
-/* Hover effects for icon */
-.navbar-brand i:hover {
-    transform: translateY(-8px) scale(1.2); /* Icon grows slightly more on hover */
-    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.6); /* Stronger shadow on hover */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: $text-color;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: $transition;
+
+    &:hover {
+        color: $primary-color;
+    }
 }
 
-/* Hover effects for text (Makank) */
-.navbar-brand span:hover {
-    transform: translateY(-4px) scale(1.1); /* Text grows slightly */
-    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5); /* Stronger text shadow */
+.mobile-menu {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+
+    &.show {
+        transform: translateX(0);
+    }
+
+    .mobile-menu-content {
+        padding: 6rem 1.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        gap: 1.5rem;
+    }
+
+    .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        color: $text-color;
+        text-decoration: none;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        transition: $transition;
+
+        i {
+            font-size: 1.25rem;
+            color: $primary-color;
+        }
+
+        &:hover,
+        &.active {
+            color: $primary-color;
+            background: rgba($primary-color, 0.1);
+        }
+    }
+
+    .mobile-auth-buttons {
+        margin-top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 80%;
+        max-width: 250px;
+
+        .btn-login,
+        .btn-register {
+            width: 100%;
+            text-align: center;
+            padding: 0.9rem 1.25rem;
+            font-size: 1rem;
+        }
+
+        .btn-login {
+            color: $primary-color;
+            background: rgba($primary-color, 0.1);
+            border: 1px solid $primary-color;
+
+            &:hover {
+                background: rgba($primary-color, 0.2);
+            }
+        }
+
+        .btn-register {
+            color: white;
+            background: $primary-color;
+            border: 1px solid $primary-color;
+
+            &:hover {
+                background: $primary-dark;
+            }
+        }
+    }
 }
 
-
-/* Social icons styling */
-.social-icon {
-    font-size: 1.1rem; /* Adjust the size of icons */
-    color: #444; /* Default icon color */
-    transition: all 0.3s ease;
-    margin: 0 10px; /* Space between icons */
+// Responsive Design
+@media (max-width: 1024px) {
+    .nav-links {
+        gap: 1.5rem;
+    }
 }
 
-/* Normal colorful social icons */
-.social-icon.instagram { color: #e1306c; } /* Instagram */
-.social-icon.facebook { color: #3b5998; } /* Facebook */
-.social-icon.tiktok { color: #000000; } /* TikTok */
-.social-icon.twitter { color: #1da1f2; } /* Twitter */
-.social-icon.linkedin { color: #0077b5; } /* LinkedIn */
-.social-icon.youtube { color: #ff0000; } /* YouTube */
+@media (max-width: 768px) {
 
-/* Hover Effects */
-.social-icon:hover {
-    transform: scale(1.2);
-    filter: brightness(1.5);
+    .nav-links,
+    .auth-buttons {
+        display: none;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .mobile-menu-content {
+        padding-top: 0;
+        justify-content: center;
+    }
+
+    .mobile-auth-buttons {
+        width: 90%;
+    }
 }
 
-/* Hover Effects with Color Transitions */
-.social-icon.instagram:hover { color: #f56040; } /* Instagram Hover */
-.social-icon.facebook:hover { color: #8b9dc3; } /* Facebook Hover */
-.social-icon.tiktok:hover { color: #69a5ff; } /* TikTok Hover */
-.social-icon.twitter:hover { color: #1b95e0; } /* Twitter Hover */
-.social-icon.linkedin:hover { color: #0a66c2; } /* LinkedIn Hover */
-.social-icon.youtube:hover { color: #c4302b; } /* YouTube Hover */
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 0.75rem 1rem;
+    }
 
-/* Smaller Link Styling for Login and Register */
-.smaller-link {
-    font-size: 1rem; /* Make the text smaller */
-    color: #444; /* Default color */
-    transition: color 0.3s ease, transform 0.3s ease;
-}
+    .logo {
+        .logo-text {
+            font-size: 1.2rem;
+        }
 
-/* Hover Effects for Login and Register */
-.smaller-link:hover {
-    color: #d01111; /* Change color on hover */
-    transform: scale(1.1);
-}
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+    }
 
-/* Active Link Styling */
-.nav-link.active-link {
-    background-color: #d01111;
-    color: white !important;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    .mobile-menu-btn {
+        font-size: 1.25rem;
+    }
+
+    .mobile-menu-content {
+        padding: 0;
+    }
+
+    .mobile-auth-buttons {
+        width: 95%;
+    }
 }

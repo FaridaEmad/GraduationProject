@@ -1,20 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA, AfterViewInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { OffersService } from '../../core/services/offers.service';
 import { BookingService } from '../../core/services/booking.service';
 import { WishlistService } from '../../core/services/wishlist.service';
 import { IOffers } from '../../core/interfaces/ioffer';
+import { IBusiness } from '../../core/interfaces/ibusiness';  // تأكد من وجود هذا الملف/الواجهة
 import Swal from 'sweetalert2';
 import { AddReviewComponent } from '../add-review/add-review.component';
+import { MachineService } from '../../core/services/machine.service';  // استيراد سيرفس التوصيات
+import { BusinessService } from '../../core/services/business.service';  // سيرفس جلب بيانات البيزنس
+import { forkJoin, of } from 'rxjs';
+import { catchError, timeout, tap } from 'rxjs/operators';
+import { register } from 'swiper/element/bundle';
+import { IBooking } from '../../core/interfaces/ibooking';
+
+register();
 
 @Component({
   selector: 'app-offers',
-  imports: [CommonModule, AddReviewComponent],
+  standalone: true,
+  imports: [CommonModule, AddReviewComponent, RouterLink],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './offer.component.html',
   styleUrls: ['./offer.component.scss']
 })
-export class OfferComponent implements OnInit {
+export class OfferComponent implements OnInit, AfterViewInit {
 
   offersList: IOffers[] = [];
   businessId: number = 0;
@@ -22,25 +33,79 @@ export class OfferComponent implements OnInit {
   addedOfferIds: Set<number> = new Set();
   wishlistIds: Set<number> = new Set();
   wishlist: any[] = [];
+  
+  recommendedBusinesses: IBusiness[] = []; // مصفوفة التوصيات الجديدة
+  isLoadingRelatedBusinesses: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private _OffersServices: OffersService,
     private _BookingService: BookingService,
     private _WishlistService: WishlistService,
-    private router: Router
+    private _MachineService: MachineService,          // إضافة MachineService
+    private _BusinessService: BusinessService,        // إضافة BusinessService
+    private router: Router,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    console.log('Component initialized');
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.businessId = +params['id'];
+        console.log('Business ID:', this.businessId);
         this.getOffers();
-        this.loadWishlist(); // جلب المفضلة عند التحميل
+        this.loadWishlist();
+        this.loadRecommendedBusinesses();
       } else {
         console.error('ID parameter is missing from URL');
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.initializeSwiper();
+  }
+
+  private initializeSwiper() {
+    const swiperEl = document.querySelector('swiper-container');
+    if (swiperEl) {
+      const swiperParams = {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: {
+          delay: 2000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+          waitForTransition: true
+        },
+        pagination: {
+          clickable: true,
+          dynamicBullets: true,
+        },
+        breakpoints: {
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          },
+        },
+        effect: 'slide',
+        speed: 1000,
+        grabCursor: true
+      };
+
+      Object.assign(swiperEl, swiperParams);
+      swiperEl.initialize();
+    }
   }
 
   extractUserIdFromToken(): number | null {
@@ -76,20 +141,28 @@ export class OfferComponent implements OnInit {
     });
   }
 
-  // جلب المفضلة للمستخدم عند تحميل الصفحة
   loadWishlist(): void {
+    console.log('=== Loading Wishlist ===');
     const userId = this.extractUserIdFromToken();
-    if (!userId) return;
+    console.log('User ID:', userId);
+    
+    if (!userId) {
+      console.log('No user ID found, skipping wishlist load');
+      return;
+    }
 
     this._WishlistService.getWishlistByUserId(userId).subscribe({
       next: (wishlistOffers) => {
-        // إضافة العروض المفضلة إلى الـ wishlistIds
+        console.log('Wishlist offers from server:', wishlistOffers);
+        this.wishlistIds.clear();
         wishlistOffers.forEach((offer: any) => {
           this.wishlistIds.add(offer.offerId);
+          console.log('Added offer to wishlistIds:', offer.offerId);
         });
+        console.log('Final wishlistIds state:', Array.from(this.wishlistIds));
       },
       error: (err) => {
-        console.error('Error fetching wishlist:', err);
+        console.error('Error loading wishlist:', err);
       }
     });
   }
@@ -110,38 +183,36 @@ export class OfferComponent implements OnInit {
     if (this.addedOfferIds.has(offerId)) {
       const userId = this.extractUserIdFromToken();
       if (!userId) return;
-      const bookingId = this.getBookingIdForOffer(offerId); // Placeholder, implement as needed
+      const bookingId = this.getBookingIdForOffer(offerId);
       if (!bookingId) return;
       const booking = {
         bookingId: bookingId,
-        bookingDate: '', // Set appropriately if needed
+        bookingDate: '',
         quantity: this.quantities[offerId],
         offerId: offerId,
         userId: userId,
-        cartId: 0, // Set if needed
+        cartId: 0,
         offer: null,
         user: null,
         cart: null
       };
       this._BookingService.editBooking(booking.bookingId, booking.quantity).subscribe({
-        next: () => {
-          // Optionally show a toast or update UI
-        },
-        error: (err) => {
-          // Optionally handle error
-        }
+        next: () => {},
+        error: () => {}
       });
     }
   }
 
-  // Placeholder: implement this to return the bookingId for a given offerId in the cart
   getBookingIdForOffer(offerId: number): number | null {
-    // TODO: Implement logic to find the bookingId for the offerId
     return null;
   }
 
   addToCart(offer: IOffers): void {
+    console.log('=== addToCart Process Start ===');
+    console.log('Offer:', JSON.stringify(offer, null, 2));
+
     if (this.addedOfferIds.has(offer.offerId)) {
+      console.log('Offer already in cart, skipping...');
       Swal.fire({
         icon: 'info',
         title: 'Already in Cart!',
@@ -153,7 +224,10 @@ export class OfferComponent implements OnInit {
     }
 
     const userId = this.extractUserIdFromToken();
+    console.log('Extracted User ID:', userId);
+    
     if (!userId) {
+      console.log('No user ID found, user not logged in');
       Swal.fire({
         icon: 'error',
         title: 'User not logged in',
@@ -163,15 +237,24 @@ export class OfferComponent implements OnInit {
     }
 
     const bookingData = {
+      quantity: this.quantities[offer.offerId] || 1,
       offerId: offer.offerId,
-      quantity: this.quantities[offer.offerId],
       userId: userId
     };
 
+    console.log('=== Booking Data ===');
+    console.log(JSON.stringify(bookingData, null, 2));
+
+    console.log('Calling BookingService.addNewBooking...');
     this._BookingService.addNewBooking(bookingData).subscribe({
       next: (res: string) => {
+        console.log('=== Booking Response ===');
+        console.log('Response:', res);
+        
         if (res === 'Booking added successfully') {
+          console.log('Booking successful, updating UI...');
           this.addedOfferIds.add(offer.offerId);
+          this._BookingService.incrementCartCount();
           Swal.fire({
             icon: 'success',
             title: 'Added to Cart!',
@@ -180,6 +263,7 @@ export class OfferComponent implements OnInit {
             showConfirmButton: false
           });
         } else {
+          console.error('Unexpected response:', res);
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -188,7 +272,12 @@ export class OfferComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('Error adding booking:', err);
+        console.log('=== Booking Error ===');
+        console.log('Error Status:', err.status);
+        console.log('Error Status Text:', err.statusText);
+        console.log('Error Message:', err.message);
+        console.log('Full Error:', err);
+        
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -199,8 +288,15 @@ export class OfferComponent implements OnInit {
   }
 
   toggleWishlist(offer: IOffers): void {
+    console.log('=== Toggle Wishlist ===');
+    console.log('Offer ID:', offer.offerId);
+    console.log('Current wishlistIds:', Array.from(this.wishlistIds));
+    
     const userId = this.extractUserIdFromToken();
+    console.log('User ID:', userId);
+    
     if (!userId) {
+      console.log('No user ID found, showing login message');
       Swal.fire({
         icon: 'error',
         title: 'User not logged in',
@@ -210,9 +306,12 @@ export class OfferComponent implements OnInit {
     }
 
     if (!this.wishlistIds.has(offer.offerId)) {
+      console.log('Adding to wishlist...');
       this._WishlistService.addToWishlist(offer.offerId, userId).subscribe({
         next: () => {
-          this.wishlistIds.add(offer.offerId); // إضافة العرض إلى المفضلة
+          console.log('Successfully added to wishlist');
+          this.wishlistIds.add(offer.offerId);
+          console.log('Updated wishlistIds after adding:', Array.from(this.wishlistIds));
           Swal.fire({
             icon: 'success',
             title: 'Added to Wishlist!',
@@ -222,7 +321,7 @@ export class OfferComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.error('Wishlist error:', err);
+          console.error('Error adding to wishlist:', err);
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -231,10 +330,55 @@ export class OfferComponent implements OnInit {
         }
       });
     } else {
-      Swal.fire({
-        icon: 'info',
-        title: 'Already in Wishlist',
-        text: 'This offer is already in your wishlist.',
+      console.log('Removing from wishlist...');
+      this._WishlistService.getWishlistByUserId(userId).subscribe({
+        next: (wishlistItems) => {
+          console.log('Current wishlist items:', wishlistItems);
+          const wishlistItem = wishlistItems.find((item: any) => item.offerId === offer.offerId);
+          console.log('Found wishlist item:', wishlistItem);
+          
+          if (wishlistItem && wishlistItem.wishlistId) {
+            console.log('Removing wishlist item with ID:', wishlistItem.wishlistId);
+            this._WishlistService.removeFromWishlist(wishlistItem.wishlistId).subscribe({
+              next: () => {
+                console.log('Successfully removed from wishlist');
+                this.wishlistIds.delete(offer.offerId);
+                console.log('Updated wishlistIds after removing:', Array.from(this.wishlistIds));
+                // Force change detection
+                this.changeDetectorRef.detectChanges();
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Removed from Wishlist!',
+                  text: 'Offer removed from your wishlist successfully.',
+                  timer: 1500,
+                  showConfirmButton: false
+                });
+              },
+              error: (err) => {
+                console.error('Error removing from wishlist:', err);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Could not remove from wishlist!',
+                });
+              }
+            });
+          } else {
+            console.log('Wishlist item not found or invalid ID');
+            // If we can't find the wishlist item but it's in our local state,
+            // remove it from local state anyway
+            this.wishlistIds.delete(offer.offerId);
+            this.changeDetectorRef.detectChanges();
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching wishlist items:', err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Could not fetch wishlist items!',
+          });
+        }
       });
     }
   }
@@ -271,4 +415,62 @@ export class OfferComponent implements OnInit {
       }, 500);
     }
   }
+
+  // -----------------------------------
+  // دالة تحميل توصيات الأعمال بناءً على businessId فقط
+  loadRecommendedBusinesses(): void {
+    this.isLoadingRelatedBusinesses = true;
+    this._MachineService.getBusinessRecommendations(this.businessId).subscribe({
+      next: (recommendations: { businessId: number }[]) => {
+        if (!recommendations || recommendations.length === 0) {
+          this.recommendedBusinesses = [];
+          this.isLoadingRelatedBusinesses = false;
+          return;
+        }
+
+        const requests = recommendations.map(rec =>
+          this._BusinessService.getOneBusiness(rec.businessId).pipe(
+            timeout(5000),
+            tap(businessArray => console.log(`Loaded business ${rec.businessId}`, businessArray)),
+            catchError(err => {
+              console.error(`Error loading business id ${rec.businessId}`, err);
+              return of(null);
+            })
+          )
+        );
+
+        forkJoin(requests).subscribe({
+          next: (businessArrays: (IBusiness[] | null)[]) => {
+            const flatBusinesses = businessArrays
+              .filter(arr => arr !== null && arr.length > 0)
+              .map(arr => arr![0])
+              .filter(business => business && business.images && business.images.length > 0);
+
+            this.recommendedBusinesses = flatBusinesses;
+            this.isLoadingRelatedBusinesses = false;
+            
+            // Initialize swiper after data is loaded
+            setTimeout(() => {
+              this.initializeSwiper();
+            }, 100);
+          },
+          error: err => {
+            console.error('Error loading recommended businesses details:', err);
+            this.recommendedBusinesses = [];
+            this.isLoadingRelatedBusinesses = false;
+          }
+        });
+      },
+      error: err => {
+        console.error('Error loading business recommendations:', err);
+        this.recommendedBusinesses = [];
+        this.isLoadingRelatedBusinesses = false;
+      }
+    });
+  }
+
+  trackById(index: number, item: any): number {
+    return item.businessId;
+  }
 }
+

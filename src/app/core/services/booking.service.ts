@@ -1,17 +1,21 @@
 // src/app/services/booking.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { IBooking } from '../interfaces/ibooking';
+import { catchError } from 'rxjs/operators';
+// import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BookingService {
   private readonly _HttpClient = inject(HttpClient);
-  private readonly apiUrl = 'https://localhost:7273/api/Booking'; // تأكد من المسار الصحيح للـ API
+  private readonly apiUrl = 'https://localhost:7273/api/Booking';
   private cartCountSubject = new BehaviorSubject<number>(0);
   cartCount$ = this.cartCountSubject.asObservable();
+
+  constructor() {}
 
   // Get bookings by user ID
   getBookingsByUser(userId: number): Observable<any> {
@@ -25,10 +29,40 @@ export class BookingService {
 
   // Add a new booking
   addNewBooking(bookingData: any) {
+    console.log('=== BookingService.addNewBooking ===');
+    console.log('API URL:', `${this.apiUrl}/addNewBooking`);
+    console.log('Request Data:', JSON.stringify(bookingData, null, 2));
+    console.log('Headers:', {
+      'Content-Type': 'application/json'
+    });
+
     return this._HttpClient.post(
-      'https://localhost:7273/api/Booking/addNewBooking',
+      `${this.apiUrl}/addNewBooking`,
       bookingData,
-      { responseType: 'text' }
+      { 
+        responseType: 'text',
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        })
+      }
+    ).pipe(
+      tap({
+        next: (response) => {
+          console.log('=== BookingService Response ===');
+          console.log('Status: Success');
+          console.log('Response:', response);
+        },
+        error: (error) => {
+          console.log('=== BookingService Error ===');
+          console.log('Status:', error.status);
+          console.log('Status Text:', error.statusText);
+          console.log('Error Message:', error.message);
+          console.log('Error Details:', error);
+          if (error.error) {
+            console.log('Error Response:', error.error);
+          }
+        }
+      })
     );
   }
 
@@ -45,16 +79,8 @@ export class BookingService {
   }
 
   // Edit Booking
-  editBooking(id: number, quantity: number): Observable<string> {
-    const headers = new HttpHeaders().set('Content-Type', 'text/plain');
-    return this._HttpClient.put(
-      `${this.apiUrl}/${id}?quantity=${quantity}`,
-      {},
-      {
-        headers,
-        responseType: 'text',
-      }
-    );
+  editBooking(bookingId: number, quantity: number): Observable<any> {
+    return this._HttpClient.put(`${this.apiUrl}/editBooking/${bookingId}`, { quantity });
   }
 
   setCartCount(count: number) {
@@ -62,6 +88,18 @@ export class BookingService {
   }
 
   incrementCartCount() {
-    this.cartCountSubject.next(this.cartCountSubject.value + 1);
+    const currentCount = this.cartCountSubject.value;
+    this.cartCountSubject.next(currentCount + 1);
+  }
+
+  decrementCartCount() {
+    const currentCount = this.cartCountSubject.value;
+    if (currentCount > 0) {
+      this.cartCountSubject.next(currentCount - 1);
+    }
+  }
+
+  getCartCount(): Observable<number> {
+    return this.cartCount$;
   }
 }

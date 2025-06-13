@@ -1,12 +1,24 @@
 /* تخصيص لون القلب */
 .text-danger {
-    color: red; /* اللون الأحمر للقلب عند إضافته */
-  }
-  
-  .text-muted {
-    color: #6c757d; /* لون القلب الباهت عندما لا يكون في الويش ليست */
-  }
-  
+  color: red !important;
+  /* اللون الأحمر للقلب عند إضافته */
+}
+
+.text-dark {
+  color: #000 !important;
+  /* لون القلب الأسود عندما لا يكون في الويش ليست */
+}
+
+.text-muted {
+  color: #6c757d;
+  /* لون القلب الباهت عندما لا يكون في الويش ليست */
+}
+
+.fa-heart-o {
+  color: #000 !important;
+  /* لون القلب الأسود عندما لا يكون في الويش ليست */
+}
+
 .page-title {
   font-family: 'Poppins', 'Inter', Arial, sans-serif;
   font-size: 2rem;
@@ -19,15 +31,18 @@
 .offer-hero-section {
   background: #fff;
 }
+
 .main-offer-image img {
   max-height: 340px;
   object-fit: cover;
   border-radius: 1.25rem;
-  box-shadow: 0 4px 24px rgba(255,102,0,0.10);
+  box-shadow: 0 4px 24px rgba(255, 102, 0, 0.10);
 }
+
 .offer-thumbnails {
   gap: 0.5rem;
 }
+
 .thumb-img {
   width: 60px;
   height: 60px;
@@ -37,105 +52,133 @@
   border: 2px solid #eee;
   transition: border 0.2s;
 }
+
 .thumb-img:hover {
   border: 2px solid #ff6600;
 }
+
 .offer-details-card {
   border-radius: 1.25rem;
   background: #fff;
-  box-shadow: 0 4px 24px rgba(255,102,0,0.10);
+  box-shadow: 0 4px 24px rgba(255, 102, 0, 0.10);
 }
+
 .text-accent {
   color: #ff6600 !important;
 }
+
 .coupon-list .coupon-item {
   font-size: 1rem;
 }
+
 .coupon-list .btn-accent {
   font-size: 0.95rem;
   padding: 0.25rem 0.75rem;
 }
+
 .social-share a {
   font-size: 1.2rem;
   opacity: 0.8;
   transition: opacity 0.2s;
 }
+
 .social-share a:hover {
   opacity: 1;
 }
+
 .nav-tabs .nav-link.active {
   background: #ff6600;
   color: #fff;
   border-radius: 0.5rem 0.5rem 0 0;
 }
+
 .tab-content {
   border-radius: 0 0 1rem 1rem;
   border: 1px solid #eee;
 }
+
 .related-offers-section {
   margin-top: 2.5rem;
 }
+
 .related-offers-carousel {
   gap: 1rem;
 }
+
 .min-width-220 {
   min-width: 220px;
 }
+
 .offer-card {
   transition: box-shadow 0.2s, transform 0.2s;
-  box-shadow: 0 4px 24px rgba(255,102,0,0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 24px rgba(255, 102, 0, 0.10), 0 1.5px 6px rgba(0, 0, 0, 0.04);
   background: #fff;
   border-radius: 1.25rem;
 }
+
 .offer-card:hover {
-  box-shadow: 0 12px 48px rgba(255,102,0,0.18), 0 4px 16px rgba(0,0,0,0.10);
+  box-shadow: 0 12px 48px rgba(255, 102, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.10);
   transform: translateY(-4px) scale(1.03);
   border-color: #ff660022;
 }
+
 .offer-img {
   height: 120px;
   object-fit: cover;
   border-radius: 1.25rem 1.25rem 0 0;
 }
-.btn-accent, .btn-outline-accent {
+
+.btn-accent,
+.btn-outline-accent {
   background: #ff6600 !important;
   border-color: #ff6600 !important;
   color: #fff !important;
-  box-shadow: 0 2px 8px rgba(255,102,0,0.08);
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.08);
   transition: background 0.2s, box-shadow 0.2s;
 }
+
 .btn-outline-accent {
   background: #fff !important;
   color: #ff6600 !important;
 }
-.btn-accent:hover, .btn-accent:focus {
+
+.btn-accent:hover,
+.btn-accent:focus {
   background: #e65c00 !important;
   border-color: #e65c00 !important;
   color: #fff !important;
-  box-shadow: 0 4px 16px rgba(255,102,0,0.16);
+  box-shadow: 0 4px 16px rgba(255, 102, 0, 0.16);
 }
-.btn-outline-accent:hover, .btn-outline-accent:focus {
+
+.btn-outline-accent:hover,
+.btn-outline-accent:focus {
   background: #ff6600 !important;
   color: #fff !important;
 }
+
 @media (max-width: 991px) {
   .main-offer-image img {
     max-height: 200px;
   }
+
   .offer-img {
     height: 80px;
   }
 }
+
 @media (max-width: 575px) {
   .main-offer-image img {
     max-height: 120px;
   }
+
   .offer-img {
     height: 60px;
   }
+
   .min-width-220 {
     min-width: 160px;
   }
+
   .page-title {
     font-size: 1.2rem;
   }
@@ -144,7 +187,7 @@
 // Card hover effects
 .card {
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md) !important;
@@ -155,7 +198,7 @@
 .cursor-pointer {
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.05);
     box-shadow: var(--shadow-md) !important;
@@ -172,11 +215,11 @@
 // Button hover effects
 .btn {
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -193,7 +236,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  
+
   &:hover {
     color: white;
   }
@@ -202,17 +245,17 @@
 // Tab styles
 .nav-tabs {
   border-bottom: none;
-  
+
   .nav-link {
     border: none;
     color: var(--text-secondary);
     padding: 0.75rem 1.5rem;
     transition: all 0.3s ease;
-    
+
     &:hover {
       color: var(--primary-color);
     }
-    
+
     &.active {
       color: var(--primary-color);
       background: none;
@@ -225,11 +268,11 @@
 .badge {
   padding: 0.5rem 0.75rem;
   font-weight: 500;
-  
+
   &.bg-danger {
     background-color: var(--danger-color) !important;
   }
-  
+
   &.bg-warning {
     background-color: var(--warning-color) !important;
   }
@@ -239,12 +282,12 @@
 .btn-group {
   .btn {
     padding: 0.25rem 0.75rem;
-    
+
     &:hover {
       transform: none;
     }
   }
-  
+
   .btn.disabled {
     background-color: var(--background-color);
     color: var(--text-primary);
@@ -255,7 +298,7 @@
 // Related offers
 .card-img-top {
   transition: transform 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.05);
   }
@@ -267,6 +310,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -284,7 +328,7 @@
       padding: 0.25rem 0.5rem;
     }
   }
-  
+
   .nav-tabs {
     .nav-link {
       padding: 0.5rem 1rem;
@@ -297,11 +341,11 @@
   &::-webkit-scrollbar {
     height: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: var(--background-color);
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: var(--secondary-color);
     border-radius: 3px;
@@ -330,4 +374,70 @@
     font-size: 1rem;
   }
 }
+
+.btn-outline-dark {
+  border: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0.5rem !important;
+  transition: all 0.3s ease !important;
   
+  &:hover {
+    transform: scale(1.1) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  i {
+    font-size: 1.2rem !important;
+    transition: all 0.3s ease !important;
+    color: #000;
+  }
+}
+
+.recommendations-swiper {
+  width: 100%;
+  padding: 20px 0;
+  margin: 0 -10px;
+  overflow: hidden;
+
+  swiper-slide {
+    padding: 10px;
+    height: auto;
+    width: 100%;
+  }
+}
+
+// Swiper Pagination
+::ng-deep {
+  .swiper-pagination {
+    bottom: 0;
+    position: relative;
+    margin-top: 20px;
+    
+    .swiper-pagination-bullet {
+      background: var(--primary-color);
+      opacity: 0.5;
+      transition: all 0.3s ease;
+      width: 8px;
+      height: 8px;
+
+      &-active {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+  }
+}
+
+// Card Hover Effect
+.hover-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+}

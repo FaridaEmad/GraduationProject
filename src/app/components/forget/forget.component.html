@@ -1,67 +1,86 @@
-<section class="bg-main-light shadow rounded-4 my-5 mt-5 p-4 forget-section">
-
-
-  <h1 class="text-center forget-title">Change Password</h1>
-
-  <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()">
-    <div>
-      <label for="email">Email</label>
-      <input [ngClass]="{
-        'is-valid': !changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched,
-        'is-invalid': changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched
-      }" formControlName="email" type="email" id="email" class="form-control" placeholder="saraabdelmoniaam@gmail.com">
-
-      @if(changePasswordForm.get('email')?.errors && (changePasswordForm.get('email')?.touched || changePasswordForm.get('email')?.dirty)) {
-          <div class="alert alert-danger my-2">
-              @if(changePasswordForm.get('email')?.getError('required')) {
-                  <p class="m-0">Email Is Required</p>
-              }
-              @else if(changePasswordForm.get('email')?.getError('email')) {
-                  <p class="m-0">Please Enter Valid Email: Ex., Sarah&#64;gmail.com</p>
-              }
-          </div>
-      }
-  </div>
-
-    <div>
-      <label for="New password">New Password</label>
-      <div class="position-relative">
-          <input [ngClass]="{
-            'is-valid': !changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched,
-            'is-invalid': changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched
-          }" #inputPassword formControlName="newPassword" type="password" id="newPassword" class="form-control" placeholder="••••••••••">
-          <span class="show position-absolute cr">
-              <i (click)="showPassword()" #showPasswordIcone class="fa-solid fa-eye-slash"></i>
-              <i (click)="hidePassword()" #hidePasswordIcone class="fa-solid fa-eye d-none"></i>
-          </span>
+<!-- Forget Password Container -->
+<div class="login-container">
+  <!-- Form Container -->
+  <div class="login-form-container">
+    <div class="form-wrapper">
+      <div class="form-header">
+        <h1>Reset Password</h1>
+        <p>Enter your email and new password to reset your account</p>
       </div>
 
-      @if(changePasswordForm.get('newPassword')?.errors && (changePasswordForm.get('newPassword')?.touched || changePasswordForm.get('newPassword')?.dirty)) {
-          <div class="alert alert-danger my-2">
-              @if(changePasswordForm.get('newPassword')?.getError('required')) {
-                  <p class="m-0">Password Is Required</p>
-              }
-              @else if(changePasswordForm.get('newPassword')?.getError('pattern')) {
-                  <p class="m-0">Please Enter Strong Valid Password : <br>
-                      Password Must Be At least 6 Characters Long And At least Contains (one uppercase letter, one lowercase letter, one digit, and one special character(!&#64;#$%^&*) ).
-                  </p>
-              }
+      <div *ngIf="msgAlert" class="alert alert-danger error-alert">
+        {{ msgAlert }}
+      </div>
+
+      <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()" class="login-form">
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input 
+              [ngClass]="{
+                'is-valid': !changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched,
+                'is-invalid': changePasswordForm.get('email')?.errors && changePasswordForm.get('email')?.touched
+              }" 
+              formControlName="email" 
+              type="email" 
+              id="email" 
+              placeholder="Enter your email"
+            >
           </div>
-      }
-  </div>
+          <div *ngIf="changePasswordForm.get('email')?.errors && (changePasswordForm.get('email')?.touched || changePasswordForm.get('email')?.dirty)" class="error-message">
+            <p *ngIf="changePasswordForm.get('email')?.getError('required')">Email is required</p>
+            <p *ngIf="changePasswordForm.get('email')?.getError('email')">Please enter a valid email address</p>
+          </div>
+        </div>
 
-    <button [disabled]="isLoading || changePasswordForm.invalid" class="btn btn-main d-block ms-auto mt-3"
-      type="submit">
-      @if(isLoading) {
-      Change <span><i class="fas fa-spin fa-spinner"></i></span>
-      }
-      @else {
-      <span class="forget-icon">🚀</span> Change
-      }
-    </button>
-  </form>
+        <!-- New Password Field -->
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input 
+              #inputPassword 
+              [ngClass]="{
+                'is-valid': !changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched,
+                'is-invalid': changePasswordForm.get('newPassword')?.errors && changePasswordForm.get('newPassword')?.touched
+              }" 
+              formControlName="newPassword" 
+              type="password" 
+              id="newPassword" 
+              placeholder="Enter your new password"
+            >
+            <span class="show">
+              <i (click)="showPassword()" #showPasswordIcone class="fa-solid fa-eye-slash"></i>
+              <i (click)="hidePassword()" #hidePasswordIcone class="fa-solid fa-eye d-none"></i>
+            </span>
+          </div>
+          <div *ngIf="changePasswordForm.get('newPassword')?.errors && (changePasswordForm.get('newPassword')?.touched || changePasswordForm.get('newPassword')?.dirty)" class="error-message">
+            <p *ngIf="changePasswordForm.get('newPassword')?.getError('required')">Password is required</p>
+            <p *ngIf="changePasswordForm.get('newPassword')?.getError('pattern')">
+              Password must be at least 6 characters long and contain one uppercase letter, one lowercase letter, one digit, and one special character (#$%^&*)
+            </p>
+          </div>
+        </div>
 
-  <div *ngIf="msgAlert" class="alert alert-danger mt-3 text-center">
-    {{ msgAlert }}
+        <!-- Actions -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn-login" 
+            [disabled]="isLoading || changePasswordForm.invalid"
+          >
+            <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+            Reset Password
+          </button>
+        </div>
+
+        <!-- Login Link -->
+        <div class="register-link">
+          Remember your password? <a routerLink="/login">Login Now</a>
+        </div>
+      </form>
+    </div>
   </div>
-  </section>
+</div>

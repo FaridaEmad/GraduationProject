@@ -21,10 +21,15 @@ export class ForgetComponent {
   isLoading: boolean = false;
   msgAlert: string = '';
 
+  // changePasswordForm: FormGroup = this._FormBuilder.group({
+  //   email: [null, [Validators.required, Validators.email]],
+  //   newPassword: [null, [Validators.required, Validators.pattern(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&])[A-Za-z\d!@#$%^&]{6,}$/)]]
+  // });
   changePasswordForm: FormGroup = this._FormBuilder.group({
-    email: [null, [Validators.required, Validators.email]],
-    newPassword: [null, [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
-  });
+  email: [null, [Validators.required, Validators.email]],
+  newPassword: [null, [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]]
+});
+
 
   submitChangePassword(): void {
     if (this.changePasswordForm.invalid) return;
@@ -63,6 +68,6 @@ export class ForgetComponent {
     this.myPassword.nativeElement.setAttribute('type', 'password');
     this.showPasswordIcone.nativeElement.classList.remove('d-none');
     this.hidePasswordIcone.nativeElement.classList.add('d-none');
-  }
+  }
 
 }

@@ -60,9 +60,12 @@
                     </span>
                   </button>
                   <button type="button" 
-                          class="btn btn-outline-danger btn-sm" 
+                          class="btn btn-outline-dark btn-sm" 
                           (click)="toggleWishlist(offer)">
-                    <i class="fas" [ngClass]="wishlistIds.has(offer.offerId) ? 'fa-heart' : 'fa-heart-o'"></i>
+                    <i class="fas fa-heart" 
+                       [style.color]="wishlistIds.has(offer.offerId) ? 'red' : 'black'"
+                       style="font-size: 1.2rem;">
+                    </i>
                   </button>
                 </div>
               </div>
@@ -156,33 +159,57 @@
     </div>
 
     <!-- Related Offers -->
-    <div class="mt-5">
-      <h4 class="gradient-text fw-bold mb-4">Related Offers</h4>
-      <div class="row g-4">
-        <div *ngFor="let offer of offersList.slice(1, 6); trackBy: trackByOfferId" 
-             class="col-lg-4 col-md-6 col-12">
-          <div class="card shadow-sm border-0 h-100">
-            <img [src]="offer.image" 
-                 class="card-img-top" 
-                 style="height: 200px; object-fit: cover;"
-                 [alt]="offer.description">
-            <div class="card-body">
-              <h5 class="card-title fw-bold mb-2">{{ offer.description }}</h5>
-              <div class="d-flex align-items-center justify-content-between mb-3">
-                <span class="text-accent fw-bold">{{ offer.price | currency:'USD':'symbol' }}</span>
-                <span *ngIf="offer.discountPercentage" 
-                      class="badge bg-danger">{{ offer.discountPercentage }}% OFF</span>
-              </div>
-              <button class="btn btn-accent w-100 btn-wide" 
-                      (click)="addToCart(offer)">
-                <span>
-                  <ng-container *ngIf="addedOfferIds.has(offer.offerId)">✔ </ng-container>
-                  Add to Cart
-                </span>
-              </button>
-            </div>
-          </div>
+    <div class="row g-4">
+      <h4 class="gradient-text fw-bold mb-4">Related Businesses</h4>
+      
+      <!-- Loading Spinner -->
+      <div *ngIf="isLoadingRelatedBusinesses" class="col-12 text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
         </div>
+        <p class="mt-3 text-muted">Loading related businesses...</p>
+      </div>
+
+      <!-- Related Businesses Slider -->
+      <div *ngIf="!isLoadingRelatedBusinesses && recommendedBusinesses.length > 0" class="col-12">
+        <swiper-container class="recommendations-swiper" [init]="false">
+          <swiper-slide *ngFor="let product of recommendedBusinesses; trackBy: trackById">
+            <div class="card h-100 shadow-sm hover-card">
+              <!-- Card Image -->
+              <div class="position-relative">
+                <a [routerLink]="['/user/offer', product.businessId]" class="text-decoration-none">
+                  <img [src]="product.images && product.images.length > 0 ? product.images[0].url : 'assets/default-offer.jpg'" 
+                       class="card-img-top object-fit-cover" 
+                       alt="Business Image" 
+                       style="height: 200px; object-fit: cover;" />
+                </a>
+                <img [src]="product.logo || 'assets/default-logo.png'" 
+                     class="position-absolute top-100 start-50 translate-middle rounded-circle border border-3 bg-white shadow-sm" 
+                     style="width: 80px; height: 80px; margin-top: -40px;" 
+                     alt="Business Logo" />
+              </div>
+
+              <div class="card-body pt-4 text-center d-flex flex-column justify-content-between">
+                <div>
+                  <h5 class="card-title fw-bold text-truncate mb-2">{{ product.name }}</h5>
+                  <p>{{product.city}}/{{product.area}}</p>
+                </div>
+                <a class="btn btn-primary w-100 rounded-pill" [routerLink]="['/user/offer', product.businessId]">
+                  Show Offers
+                </a>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+        
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+      </div>
+
+      <!-- No Results Message -->
+      <div *ngIf="!isLoadingRelatedBusinesses && recommendedBusinesses.length === 0" 
+           class="col-12 text-center py-5">
+        <p class="text-muted">No related businesses found.</p>
       </div>
     </div>
 
@@ -193,17 +220,6 @@
       </div>
     </div>
 
-    <!-- Wishlist Section -->
-    <div class="row mt-5">
-      <div class="col-12">
-        <h4 class="gradient-text fw-bold mb-4">Wishlist</h4>
-        <div *ngIf="wishlist.length === 0">
-          No items in your wishlist.
-        </div>
-        <div *ngFor="let item of wishlist">
-          <!-- Render wishlist item -->
-        </div>
-      </div>
-    </div>
+  
   </div>
 </section>

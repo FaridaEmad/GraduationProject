@@ -4,23 +4,23 @@ import { PaymentService } from '../../core/services/payment.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../core/services/cart.service';
+import Swal from 'sweetalert2';  // استيراد sweetalert2
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],  // Removed FormsModule as ReactiveFormsModule is enough
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './payment.component.html',
-  styleUrls: ['./payment.component.scss']  // Changed from .css to .scss
+  styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent implements OnInit {
   paymentForm!: FormGroup;
   paymentMethods: any[] = [];
-  totalAmount: number = 0;  // Set to 0 initially, will be updated from cart service
-  userId: string = ''; // Will be set dynamically from localStorage or AuthService
-  isProcessing: boolean = false;  // Added for loading state
-  toastMessage: string | null = null;
-  toastType: 'success' | 'error' | null = null;
-  toastTimeout: any;
+  cartId: number | null = null;
+  userId: number | null = null;
+  isProcessing: boolean = false;
+  showSuccessScreen: boolean = false;
+  totalAmount: number = 0;
 
   constructor(
     private cartService: CartService,
@@ -30,20 +30,39 @@ export class PaymentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userId = localStorage.getItem('user-id') || '';  // Fetch userId from localStorage
+    this.extractUserIdFromToken();
+    this.totalAmount = this.cartService.getTotalAmount(); 
     this.createForm();
     this.getPaymentMethods();
-    this.totalAmount = this.cartService.getTotalAmount();  // Get total amount from cart service
+
+    if (this.userId) {
+      this.cartService.getCartsByUser(this.userId).subscribe({
+        next: (carts: any[]) => {
+          if (Array.isArray(carts) && carts.length > 0) {
+            this.cartId = carts[0].cartId;
+          } else {
+            this.showAlert('لم يتم العثور على أي عربة لهذا المستخدم.', 'error');
+          }
+        },
+        error: (err) => {
+          console.error('Cart fetch error:', err);
+          this.showAlert('حدث خطأ أثناء تحميل بيانات العربة.', 'error');
+        }
+      });
+    }
+  }
+
+  extractUserIdFromToken(): void {
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      const payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      this.userId = +decodedPayload['nameid'];
+    }
   }
 
   createForm(): void {
     this.paymentForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      cardNumber: ['', [Validators.required, Validators.pattern('^[0-9]{16}$')]],
-      expiry: ['', [Validators.required, Validators.pattern('^(0[1-9]|1[0-2])\\/([0-9]{2})$')]],
-      cvc: ['', [Validators.required, Validators.pattern('^[0-9]{3,4}$')]],
-      nameOnCard: ['', [Validators.required, Validators.minLength(3)]],
-      country: ['Egypt', Validators.required],
       methodId: ['', Validators.required]
     });
   }
@@ -53,15 +72,16 @@ export class PaymentComponent implements OnInit {
       next: (res: any) => {
         this.paymentMethods = res;
       },
-      error: (err) => {
-        console.error('Failed to fetch payment methods:', err);
+      error: () => {
+        this.showAlert('فشل في تحميل وسائل الدفع.', 'error');
       }
     });
   }
 
   pay(): void {
-    if (this.paymentForm.invalid) {
+    if (this.paymentForm.invalid || !this.userId || !this.cartId) {
       this.markFormGroupTouched(this.paymentForm);
+      this.showAlert('يجب اختيار وسيلة الدفع ووجود عربة مرتبطة بالمستخدم.', 'error');
       return;
     }
 
@@ -69,43 +89,37 @@ export class PaymentComponent implements OnInit {
 
     const paymentData = {
       userId: this.userId,
-      totalAmount: this.totalAmount,
-      methodId: this.paymentForm.value.methodId,
-      email: this.paymentForm.value.email,
-      cardInfo: {
-        cardNumber: this.paymentForm.value.cardNumber,
-        expiry: this.paymentForm.value.expiry,
-        cvc: this.paymentForm.value.cvc,
-        nameOnCard: this.paymentForm.value.nameOnCard,
-        country: this.paymentForm.value.country
-      }
+      cartId: this.cartId,
+      paymentMethodId: this.paymentForm.value.methodId
     };
 
     this.paymentService.createPayment(paymentData).subscribe({
       next: () => {
         this.isProcessing = false;
-        this.showToast('Payment submitted successfully!', 'success');
-        setTimeout(() => this.router.navigate(['/user/payments']), 1200);
+        this.showSuccessScreen = true;
+        this.showAlert('تم إرسال الدفع بنجاح!', 'success');
+        setTimeout(() => this.router.navigate(['/user/home']), 3000);
       },
       error: (err) => {
         this.isProcessing = false;
-        this.showToast('Payment failed. Please try again.', 'error');
+        this.showAlert('فشل الدفع. حاول مرة أخرى.', 'error');
         console.error('Payment error:', err);
       }
     });
   }
 
-  showToast(message: string, type: 'success' | 'error') {
-    this.toastMessage = message;
-    this.toastType = type;
-    if (this.toastTimeout) clearTimeout(this.toastTimeout);
-    this.toastTimeout = setTimeout(() => {
-      this.toastMessage = null;
-      this.toastType = null;
-    }, 2500);
+  showAlert(message: string, icon: 'success' | 'error') {
+    Swal.fire({
+      icon: icon,
+      title: message,
+      timer: 2500,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      position: 'top-end',
+      toast: true
+    });
   }
 
-  // Helper method to mark all form controls as touched
   private markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -119,9 +133,11 @@ export class PaymentComponent implements OnInit {
     const ripple = btn.querySelector('.ripple') as HTMLElement;
     if (ripple) {
       ripple.classList.remove('show');
-      void ripple.offsetWidth; // Force reflow to restart animation
+      void ripple.offsetWidth;
       ripple.classList.add('show');
       setTimeout(() => ripple.classList.remove('show'), 600);
     }
   }
 }
+
+

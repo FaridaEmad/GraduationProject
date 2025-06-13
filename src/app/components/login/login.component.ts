@@ -25,10 +25,11 @@ export class LoginComponent implements OnDestroy {
 
   loginForm: FormGroup = this._FormBuilder.group({
     email: [null, [Validators.required, Validators.email]],
-    password: [null, [
-      Validators.required,
-      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
-    ]]
+   password: [null, [
+  Validators.required,
+  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
+]]
+
   });
 
   loginSubmit(): void {
@@ -58,21 +59,27 @@ export class LoginComponent implements OnDestroy {
             localStorage.setItem('userData', JSON.stringify(user));
   
             if (user.isAdmin) {
-              this._Router.navigate(['/admin/home']); // ✅ أدمن
+              this._Router.navigate(['/admin/home']);
             } else {
-              this._Router.navigate(['/user/home']); // ✅ يوزر
+              this._Router.navigate(['/user/home']);
             }
           } else {
-            this.serverErrorMessage = 'Invalid response from server.';
+            this.serverErrorMessage = 'An unexpected error occurred. Please try again.';
           }
         },
         error: (err: HttpErrorResponse) => {
           this.isLoading = false;
-          this.serverErrorMessage = err.error?.message || 'Login failed. Please try again.';
+          if (err.status === 401 || err.status === 400) {
+            this.serverErrorMessage = 'Invalid email or password. Please try again.';
+          } else {
+            this.serverErrorMessage = 'Login failed due to a server error. Please try again later.';
+          }
+          console.error('Login error:', err);
         }
       });
     } else {
       this.loginForm.markAllAsTouched();
+      this.serverErrorMessage = 'Please fill in all required fields.';
     }
   }
   
@@ -95,5 +102,5 @@ export class LoginComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.allLoginSubmit?.unsubscribe();
-  }
+  }
 }

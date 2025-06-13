@@ -1,12 +1,22 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-nav-auth',
-  imports: [RouterLink,RouterLinkActive],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './nav-auth.component.html',
-  styleUrl: './nav-auth.component.scss'
+  styleUrls: ['./nav-auth.component.scss']
 })
 export class NavAuthComponent {
+  isMenuOpen = false;
 
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
+  }
 }

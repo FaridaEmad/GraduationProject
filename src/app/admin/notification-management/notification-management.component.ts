@@ -217,5 +217,5 @@ export class NotificationManagementComponent implements OnInit {
 
   onSearch(): void {
     this.filterNotifications();
-  }
+  }
 }

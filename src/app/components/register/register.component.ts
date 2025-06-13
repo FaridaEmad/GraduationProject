@@ -1,15 +1,15 @@
-import { Component, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, NgModule, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, NgClass, NgIf],
+  imports: [ReactiveFormsModule, NgClass, RouterLink, ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
@@ -23,10 +23,22 @@ export class RegisterComponent implements OnDestroy {
   serverErrorMessage: string | null = null;
 
   registerForm: FormGroup = this._FormBuilder.group({
-    name: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
-    phone: [null, [Validators.required, Validators.pattern(/^(?:\+20|0)?1[0125]\d{8}$/)]],
-    email: [null, [Validators.required, Validators.email]],
-    password: [null, [Validators.required, Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)]],
+    name: [null, [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(20),
+      Validators.pattern('^(?=.*[a-zA-Z\u0600-\u06FF])[a-zA-Z\u0600-\u06FF ]+$') // At least one Arabic or English letter, can have spaces
+    ]],
+    phone: [null, [
+      Validators.required,
+      Validators.pattern(/^(?!.*(\d)\1{2,})(?:\+20|0)?1[0125]\d{8}$/)
+    ]],
+    email: [null, [Validators.required, Validators.email , Validators.pattern(/^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/) ]],
+   password: [null, [
+  Validators.required,
+  Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/)
+]],
+
     gender: [null, Validators.required],
     profilePhoto: [null, [Validators.required, Validators.pattern(/https?:\/\/.*\.(jpg|jpeg|png|gif)$/i)]]
 
@@ -58,8 +70,10 @@ export class RegisterComponent implements OnDestroy {
         },
         error: (err: HttpErrorResponse) => {
           this.isLoading = false;
-          if (err.status === 409 || err.error?.message?.includes('already exists')) {
+          if (err.status === 409 || (typeof err.error === 'string' && err.error.includes('already exists'))) {
             this.serverErrorMessage = 'Account already exists. Please login or use a different email.';
+          } else if (typeof err.error === 'string') {
+            this.serverErrorMessage = err.error;
           } else {
             this.serverErrorMessage = 'Registration failed. Please try again.';
           }
@@ -89,5 +103,5 @@ export class RegisterComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.allRegisterSubmit?.unsubscribe();
-  }
+  }
 }

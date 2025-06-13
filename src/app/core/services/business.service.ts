@@ -38,7 +38,7 @@ export class BusinessService {
   /* ========== 2) عمل واحد بالـ ID ========== */
   getOneBusiness(id: number): Observable<any> {
     return this.http
-      .get(`https://localhost:7273/api/Business/${id}`)
+      .get(`https://localhost:7273/api/Business/fastGetById${id}`)
       .pipe(
         catchError(err => {
           console.error(`Error fetching business with id: ${id}`, err);
@@ -54,20 +54,20 @@ export class BusinessService {
 
   /* ========== 4) حسب الفئة ========== */
   getBusinessByCategory(categoryId: number): Observable<any> {
-    return this.http.get(`https://localhost:7273/api/Business/fastGetBusinessByCategory/${categoryId}`);
+    return this.http.get(`https://localhost:7273/api/Business/fastGetBusinessByCategory${categoryId}`);
   }
 
   /* ========== 5) حسب المدينة ========== */
   getBusinessByCity(city: string): Observable<any> {
     return this.http.get(
-      `https://localhost:7273/api/Business/fastGetBusinessByCity/${encodeURIComponent(city)}`
+      `https://localhost:7273/api/Business/fastGetBusinessByCity${encodeURIComponent(city)}`
     );
   }
 
   /* ========== 6) حسب المنطقة ========== */
   getBusinessByArea(area: string): Observable<any> {
     return this.http.get(
-      `https://localhost:7273/api/Business/fastGetBusinessByArea/${encodeURIComponent(area)}`
+      `https://localhost:7273/api/Business/fastGetBusinessByArea${encodeURIComponent(area)}`
     );
   }
 

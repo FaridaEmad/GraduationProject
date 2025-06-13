@@ -47,13 +47,19 @@ export class NavBlankComponent implements OnInit {
     this._AuthService.saveUserData();
 
     const loggedUser = this._AuthService.getUserData();  // نستخدم بيانات المستخدم من الخدمة
+    console.log('Logged user:', loggedUser);
+// if (currentUser && currentUser.profilePhoto) {
+//   this.userPhoto = currentUser.profilePhoto;
+//   console.log('User photo URL:', this.userPhoto);
+// }
 
     if (loggedUser && loggedUser.email) {
       this.__UserService.getallUsers().subscribe({
         next: (users: IUser[]) => {
-          const currentUser = users.find(u => u.email === loggedUser.email);
+          const currentUser = users.find(u=> u.email === loggedUser.email);
           if (currentUser && currentUser.profilePhoto) {
             this.userPhoto = currentUser.profilePhoto;
+            console.log('User photo URL:', this.userPhoto);
           } else {
             console.error('No profile photo found for the user.');
           }

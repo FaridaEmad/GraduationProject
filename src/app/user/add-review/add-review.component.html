@@ -18,7 +18,7 @@
             </div>
             <div class="col-md-4">
               <div *ngFor="let s of starBreakdown" class="d-flex align-items-center mb-1">
-                <span class="me-2">{{ s.star }} star</span>
+                <span class="me-2 text-secondary">{{ s.star }} star</span>
                 <div class="flex-grow-1 bg-light rounded-pill overflow-hidden me-2" style="height: 10px;">
                   <div class="bg-warning" [style.width.%]="s.percent" style="height: 100%;"></div>
                 </div>
@@ -26,7 +26,7 @@
               </div>
             </div>
             <div class="col-md-4">
-              <div class="fw-semibold mb-2">Top reviews</div>
+              <div class="fw-semibold mb-2 text-secondary">Top reviews</div>
               <div *ngFor="let rev of topReviews" class="mb-2 pb-2 border-bottom">
                 <div class="d-flex align-items-center mb-1">
                   <ng-container *ngFor="let star of [1,2,3,4,5]">
@@ -35,7 +35,7 @@
                   <span class="ms-2 text-muted small">User #{{ rev.userId }}</span>
                 </div>
                 <div class="small text-muted mb-1" *ngIf="rev.createdAt">{{ rev.createdAt | date: 'mediumDate' }}</div>
-                <div>{{ rev.text }}</div>
+                <div class="text-secondary">{{ rev.text }}</div>
               </div>
             </div>
           </div>
@@ -43,7 +43,7 @@
       </div>
       <!-- Reviews List Section (left-aligned, no card/border) -->
       <div class="mb-4" style="max-width: 700px;">
-        <h3 class="mb-4">All Reviews</h3>
+        <h3 class="mb-4 text-secondary">All Reviews</h3>
         <div *ngIf="reviews.length > 0" class="reviews-list">
           <div *ngFor="let rev of reviews | slice:0:visibleReviewsCount" class="review-item mb-4 pb-4 border-bottom">
             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -96,7 +96,7 @@
       <!-- Review Form Card -->
       <div class="shadow-sm mb-4">
         <div class="card-body p-4">
-          <h2 class="card-title mb-4 text-accent">
+          <h2 class="card-title mb-4 " style="color: #ff6a00;">
             {{ isEdit ? 'Edit Your Review' : 'Add a Review' }}
           </h2>
 

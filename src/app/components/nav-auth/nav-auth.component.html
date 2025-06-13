@@ -1,50 +1,46 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" routerLink="login">
-            <i class="fa-solid fa-location-dot fa-lg" style="color: #d01111;"></i>
-            Makank
-        </a>
+<!-- Auth Navigation -->
+<nav class="auth-nav">
+  <div class="nav-container">
+    <!-- Logo -->
+    <a routerLink="/" class="logo">
+      <i class="fas fa-map-marker-alt logo-icon"></i>
+      <span class="logo-text">Makank</span>
+    </a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <!-- Social Media Icons -->
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon instagram fa-brands fa-instagram"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon facebook fa-brands fa-facebook"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon tiktok fa-brands fa-tiktok"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon twitter fa-brands fa-twitter"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon linkedin fa-brands fa-linkedin"></i></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="social-icon youtube fa-brands fa-youtube"></i></a>
-                </li>
-
-                <!-- Login and Register Links -->
-                <li class="nav-item">
-                    <a class="nav-link smaller-link" routerLink="login" routerLinkActive="active-link">
-                        Login
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link smaller-link" routerLink="register" routerLinkActive="active-link">
-                        Register
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <!-- Auth Buttons -->
+    <div class="auth-buttons">
+      <a routerLink="/login" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Login</span>
+      </a>
+      <a routerLink="/register" class="btn-register">
+        <i class="fas fa-user-plus"></i>
+        <span>Register</span>
+      </a>
     </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen">
+      <i class="fas" [ngClass]="isMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" [class.show]="isMenuOpen">
+    <div class="mobile-menu-content">
+      
+      <div class="mobile-auth-buttons">
+        <a routerLink="/login" class="btn-login" (click)="closeMenu()">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Login</span>
+        </a>
+        <a routerLink="/register" class="btn-register" (click)="closeMenu()">
+          <i class="fas fa-user-plus"></i>
+          <span>Register</span>
+        </a>
+      </div>
+    </div>
+  </div>
 </nav>
